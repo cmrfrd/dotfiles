@@ -1,0 +1,10 @@
+export EDITOR='emacs'
+
+export HISTSIZE='32768';
+export HISTFILESIZE="${HISTSIZE}";
+export HISTCONTROL='ignoreboth';
+
+export LESS_TERMCAP_md="${yellow}";
+
+export LANG='en_US.UTF-8';
+export LC_ALL='en_US.UTF-8';
