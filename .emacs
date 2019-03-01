@@ -25,7 +25,7 @@
 ;(package-refresh-contents)
 
 ;;;
-;;; Install the use-package package
+;;; install the use-package package
 ;;; This enables us to install packages declaritively
 ;;; 
 (unless (package-installed-p 'use-package)
@@ -47,7 +47,7 @@
     ("cc8d032279b50d4c8a0caa9df6245cbbbfbfcc74f9b2ec26054ea4306fdf6b24" "e2ba9d9a5609c6809615d68b2e3ee6817079cd0195143385c24ee4e4a8e05c23" "e1ad20f721b90cc8e1f57fb8150f81e95deb7ecdec2062939389a4b66584c0cf" "2757944f20f5f3a2961f33220f7328acc94c88ef6964ad4a565edc5034972a53" "9399db70f2d5af9c6e82d4f5879b2354b28bc7b5e00cc8c9d568e5db598255c4" "f97e1d3abc6303757e38130f4003e9e0d76026fc466d9286d661499158a06d99" "e893b3d424a9b8b19fb8ab8612158c5b12b9071ea09bade71ba60f43c69355e6" "35eddbaa052a71ab98bbe0dbc1a5cb07ffbb5d569227ce00412579c2048e7699" "3adb42835b51c3a55bc6c1e182a0dd8d278c158769830da43705646196fc367e" "f4260b30a578a781b4c0858a4a0a6071778aaf69aed4ce2872346cbb28693c1a" default)))
  '(package-selected-packages
    (quote
-    (w3m pymacs flymd bash-completion docker-tramp-compat helm-tramp ein-subpackages ein-notebook ein helm-ag yaml-mode helm-projectile diff-hl magit multi-term company-shell company-ycmd company-flx docker-compose-mode jedi helm projectile shell-pop py-autopep8 transpose-frame docker neotree flycheck elpy company-anaconda pythonic markdown-mode all-the-icons kaolin-themes dockerfile-mode anaconda-mode docker-tramp company-jedi company use-package "company" "htmlize" ranger)))
+    (org-id multiple-cursors w3m pymacs flymd bash-completion docker-tramp-compat helm-tramp ein-subpackages ein-notebook ein helm-ag yaml-mode helm-projectile diff-hl magit multi-term company-shell company-ycmd company-flx docker-compose-mode jedi helm projectile shell-pop py-autopep8 transpose-frame docker neotree flycheck elpy company-anaconda pythonic markdown-mode all-the-icons kaolin-themes dockerfile-mode anaconda-mode docker-tramp company-jedi company use-package "company" "htmlize" ranger)))
  '(shell-pop-full-span t)
  '(shell-pop-shell-type
    (quote
@@ -521,44 +521,15 @@ Repeated invocations toggle between the two most recently open buffers."
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
-
-(defun sh-send-line-or-region (&optional step)
-  (interactive ())
-  (let ((proc (get-process "shell"))
-        pbuf min max command)
-    (unless proc
-      (let ((currbuff (current-buffer)))
-        (shell)
-        (switch-to-buffer currbuff)
-        (setq proc (get-process "shell"))
-        ))
-    (setq pbuff (process-buffer proc))
-    (if (use-region-p)
-        (setq min (region-beginning)
-              max (region-end))
-      (setq min (point-at-bol)
-            max (point-at-eol)))
-    (setq command (concat (buffer-substring min max) "\n"))
-    (with-current-buffer pbuff
-      (goto-char (process-mark proc))
-      (insert command)
-      (move-marker (process-mark proc) (point))
-      (setq comint-scroll-to-bottom-on-output t)
-      ) 
-    (process-send-string  proc command)
-    (display-buffer (process-buffer proc) t)
-    (when step 
-      (goto-char max)
-      (next-line))
-    ))
-(defun sh-send-line-or-region-and-step ()
-  (interactive)
-  (sh-send-line-or-region t))
-
-
+;;
+;; Emacs ipython notebook :)
+;; 
 (use-package ein
   :ensure t)
 
+;;
+;; Send region to running emacs process
+;;
 (global-set-key (kbd "C-u") #'tws-region-to-process)
 (defun tws-region-to-process (arg beg end)
   "Send the current region to a process buffer.
@@ -568,9 +539,9 @@ prefix argument is used (C-u), or the buffer no longer has an
 active process."
   (interactive "P\nr")
   (when (or arg ;; user asks for selection
-            (not (boundp 'tws-process-target)) ;; target not set
-            ;; or target is not set to an active process:
-            (not (process-live-p (get-buffer-process tws-process-target))))
+          (not (boundp 'tws-process-target)) ;; target not set
+          ;; or target is not set to an active process:
+          (not (process-live-p (get-buffer-process tws-process-target))))
     (let (procs buf)
      (setq procs (remove nil (seq-map
                   (lambda (el)
@@ -578,10 +549,13 @@ active process."
                       (buffer-name buf)))
                   (process-list))))
      (if (not procs) (error "No process buffers currently open.")
-      (setq tws-process-target (completing-read "Process: " procs)))))
-  (process-send-region tws-process-target beg end))
+      (setq tws-process-target (completing-read "Process: " procs)))))  
+  ;(process-send-region tws-process-target beg end))
+  (process-send-string tws-process-target (buffer-substring beg end)))
 
-
+;;
+;; Add git repos to projectile
+;;
 (eval-after-load "projectile" 
   '(progn (setq magit-repo-dirs (mapcar (lambda (dir)
                                          (substring dir 0 -1))
@@ -591,3 +565,25 @@ active process."
 
          (setq magit-repo-dirs-depth 1)))
 
+
+;;
+;; Multiepl cursors
+;;
+(use-package multiple-cursors
+  :ensure t
+  :config 
+  (global-set-key (kbd "C-c >") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-c <") 'mc/mark-previous-like-this))
+
+
+
+(use-package org
+  :ensure t
+  :defer t
+  :bind (("C-c l" . org-store-link)
+         ("C-c c" . org-capture)
+         ("C-c a" . org-agenda)
+         :map org-mode-map
+         ;; ("C-h" . org-delete-backward-char)
+         ("C-c !" . org-time-stamp-inactive))
+  :mode ("\\.org$" . org-mode))
