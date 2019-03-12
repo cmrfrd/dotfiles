@@ -22,7 +22,7 @@
                '("melpa-stable" . "https://stable.melpa.org/packages/"))
   (add-to-list 'package-archives
                '("melpa" . "http://melpa.org/packages/")))
-;(package-refresh-contents)
+(package-refresh-contents)
 
 ;;;
 ;;; install the use-package package
@@ -32,6 +32,10 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
+
+;; Get multi term shell plugin
+;(use-package multi-term
+;  :ensure t)
 
 ;;;;;;
 ;;;;;; AUTO CONFIG DO NOT TOUCH
@@ -165,10 +169,6 @@
 ;; add line numbers
 (global-linum-mode t)
 
-;; Interactive shell popping
-(use-package shell-pop
-  :ensure t)
-
 ;; hotkey scrolling
 (defun next-line-and-recenter () (interactive) (next-line) (recenter))
 (defun previous-line-and-recenter () (interactive) (previous-line) (recenter))
@@ -201,23 +201,18 @@
 (use-package all-the-icons
   :ensure all-the-icons)
 
-;; (use-package kaolin-themes
-;;   :ensure t
-;;   :config
-;;   (load-theme 'kaolin-dark t)
-;;   (kaolin-treemacs-theme)
-;;   (set-face-attribute 'region nil :background "#35393C")
-;;   (set-face-foreground 'linum "#42B8A7")
-;;   (setq kaolin-themes-hl-line-colored t)       
-;;   (setq kaolin-themes-distinct-fringe t)  
-;;   (setq kaolin-themes-distinct-company-scrollbar t)  
-;;   )
+(use-package kaolin-themes
+  :ensure t
+  :config
+  (load-theme 'kaolin-dark t)
+  (kaolin-treemacs-theme)
+  (set-face-attribute 'region nil :background "#35393C")
+  (set-face-foreground 'linum "#42B8A7")
+  (setq kaolin-themes-hl-line-colored t)       
+  (setq kaolin-themes-distinct-fringe t)  
+  (setq kaolin-themes-distinct-company-scrollbar t)  
+  )
 
-;(add-to-list 'default-frame-alist '(foreground-color . "#E0DFDB"))
-;(add-to-list 'default-frame-alist '(background-color . "#0f1c26"))
-;;
-;; END Theme installation
-;;
 
 ;;
 ;; IDE like project
@@ -295,11 +290,6 @@
     :ensure t))
 
 ;;
-;; END IDE-like autocomplete.
-;;
-
-
-;;
 ;; Syntax highlithing
 ;;
 (use-package yaml-mode
@@ -320,10 +310,15 @@
   :ensure t)
 (use-package flymake
   :ensure t)
-(use-package elpy
-  :ensure t
-  :config (elpy-enable))
-(setq elpy-company-add-completion-from-shell t)
+(use-package xref
+  :ensure t)
+
+;(use-package elpy
+;  :ensure t
+;  :config
+;  (progn
+;    (setq elpy-rpc-backend "jedi")
+;    (elpy-enable)))
 
 
 (defun iambubbi/python-mode-hook ()
@@ -526,6 +521,36 @@ Repeated invocations toggle between the two most recently open buffers."
 ;; 
 (use-package ein
   :ensure t)
+
+
+;; Interactive shell popping
+;; include screen hook
+(use-package shell-pop
+  :ensure t
+  :config
+
+  ;; Run screen on shell pop startup
+  (defun init-screen-in-process ()
+    (process-send-string "*shell-pop-1*" "screen\n"))
+  (add-hook 'shell-pop-in-after-hook 'init-screen-in-process)
+
+  ;; Remap C-left C-right
+  ;; see https://emacs.stackexchange.com/questions/2396/how-do-i-configure-moving-by-and-deleting-words-in-ansi-term
+  (defun term-send-Cright () (interactive) (term-send-raw-string "\e[1;5C"))
+  (defun term-send-Cleft  () (interactive) (term-send-raw-string "\e[1;5D"))
+  (define-key term-raw-map (kbd "C-<right>")      'term-send-Cright)
+  (define-key term-raw-map (kbd "C-<left>")       'term-send-Cleft)
+
+  ;; Add paste hook in terminal buffer
+  (add-hook 'term-mode-hook
+	    (lambda ()
+	      (define-key term-raw-map (kbd "C-y") 'term-paste)))
+    
+  )
+
+
+
+
 
 ;;
 ;; Send region to running emacs process
