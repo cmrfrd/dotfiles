@@ -271,7 +271,11 @@
 ;; Remote machine editor
 ;;
 (use-package docker-tramp
-  :ensure docker-tramp)
+  :ensure docker-tramp
+  :config
+  (setq docker-tramp-use-names t))
+(use-package vagrant-tramp
+  :ensure t)
 (require 'docker-tramp-compat)
 (use-package tramp
   :ensure t
@@ -464,6 +468,11 @@ Repeated invocations toggle between the two most recently open buffers."
   (define-key term-raw-map (kbd "C-<right>")      'term-send-Cright)
   (define-key term-raw-map (kbd "C-<left>")       'term-send-Cleft)
 
+  (define-key term-raw-map (kbd "C-c <left>")  'windmove-left)
+  (define-key term-raw-map (kbd "C-c <right>") 'windmove-right)
+  (define-key term-raw-map (kbd "C-c <up>")    'windmove-up)
+  (define-key term-raw-map (kbd "C-c <down>")  'windmove-down)
+  
   ;; Add paste hook in terminal buffer
   (add-hook 'term-mode-hook
   	    (lambda ()
@@ -474,7 +483,8 @@ Repeated invocations toggle between the two most recently open buffers."
 
 
 
-
+(use-package buffer-move
+  :ensure t)
 ;;
 ;; Send region to running emacs process
 ;;
