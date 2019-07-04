@@ -20,14 +20,14 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("da30a40c8003409e31cd35f4ea359bd34d0f48f77737bb113c338431cc2273bc" "b693a301c85a5e811698b5604e8c620b7e7914a39e74777d93dba9d3fe13e96b" "27da8fe05c56d8d189ddc04516e2e6ec5adccc08c08a90868428894f216cac6a" "548da76664b25eb9e7798812178b7c6db78573c5b47ab94b07d386841f9e37d2" "f71fbdf06ca876f6290ca9016cff20daa2d4b7e7fd743bf5b2b8fbb490958f85" "e1ac710b757f2c08aa29871e18d21ed764feda3dda98ed8a6751429d7c2dccc1" "d6590c8f4a63740fad0e1072c4549c6f3b41e198ce6420a8bb0521efe42f5b28" "8ba0a9fc75f2e3b4c254183e814b8b7b8bcb1ad6ca049fde50e338e1c61a12a0" "26d613485834c8498d96a664d970e19b7d5286c39a78452f492ae5572cf1bd21" "36c2b7efdc064944eb067e56c7ec65808a6cee0f63ce068b693fb30b110e57e5" "9f08dacc5b23d5eaec9cccb6b3d342bd4fdb05faf144bdcd9c4b5859ac173538" "cc8d032279b50d4c8a0caa9df6245cbbbfbfcc74f9b2ec26054ea4306fdf6b24" "e2ba9d9a5609c6809615d68b2e3ee6817079cd0195143385c24ee4e4a8e05c23" "e1ad20f721b90cc8e1f57fb8150f81e95deb7ecdec2062939389a4b66584c0cf" "2757944f20f5f3a2961f33220f7328acc94c88ef6964ad4a565edc5034972a53" "9399db70f2d5af9c6e82d4f5879b2354b28bc7b5e00cc8c9d568e5db598255c4" "f97e1d3abc6303757e38130f4003e9e0d76026fc466d9286d661499158a06d99" "e893b3d424a9b8b19fb8ab8612158c5b12b9071ea09bade71ba60f43c69355e6" "35eddbaa052a71ab98bbe0dbc1a5cb07ffbb5d569227ce00412579c2048e7699" "3adb42835b51c3a55bc6c1e182a0dd8d278c158769830da43705646196fc367e" "f4260b30a578a781b4c0858a4a0a6071778aaf69aed4ce2872346cbb28693c1a" default)))
+    ("5cdc1832748ae451c19a1546a4bc200750557a924f6124428272f114b6d28ac1" "6f01d5233bf31b3606972faca955b943eb934c896b9a205cdbf7105b917ce290" "da30a40c8003409e31cd35f4ea359bd34d0f48f77737bb113c338431cc2273bc" "b693a301c85a5e811698b5604e8c620b7e7914a39e74777d93dba9d3fe13e96b" "27da8fe05c56d8d189ddc04516e2e6ec5adccc08c08a90868428894f216cac6a" "548da76664b25eb9e7798812178b7c6db78573c5b47ab94b07d386841f9e37d2" "f71fbdf06ca876f6290ca9016cff20daa2d4b7e7fd743bf5b2b8fbb490958f85" "e1ac710b757f2c08aa29871e18d21ed764feda3dda98ed8a6751429d7c2dccc1" "d6590c8f4a63740fad0e1072c4549c6f3b41e198ce6420a8bb0521efe42f5b28" "8ba0a9fc75f2e3b4c254183e814b8b7b8bcb1ad6ca049fde50e338e1c61a12a0" "26d613485834c8498d96a664d970e19b7d5286c39a78452f492ae5572cf1bd21" "36c2b7efdc064944eb067e56c7ec65808a6cee0f63ce068b693fb30b110e57e5" "9f08dacc5b23d5eaec9cccb6b3d342bd4fdb05faf144bdcd9c4b5859ac173538" "cc8d032279b50d4c8a0caa9df6245cbbbfbfcc74f9b2ec26054ea4306fdf6b24" "e2ba9d9a5609c6809615d68b2e3ee6817079cd0195143385c24ee4e4a8e05c23" "e1ad20f721b90cc8e1f57fb8150f81e95deb7ecdec2062939389a4b66584c0cf" "2757944f20f5f3a2961f33220f7328acc94c88ef6964ad4a565edc5034972a53" "9399db70f2d5af9c6e82d4f5879b2354b28bc7b5e00cc8c9d568e5db598255c4" "f97e1d3abc6303757e38130f4003e9e0d76026fc466d9286d661499158a06d99" "e893b3d424a9b8b19fb8ab8612158c5b12b9071ea09bade71ba60f43c69355e6" "35eddbaa052a71ab98bbe0dbc1a5cb07ffbb5d569227ce00412579c2048e7699" "3adb42835b51c3a55bc6c1e182a0dd8d278c158769830da43705646196fc367e" "f4260b30a578a781b4c0858a4a0a6071778aaf69aed4ce2872346cbb28693c1a" default)))
  '(package-archives
    (quote
     (("melpa-stable" . "http://stable.melpa.org/packages/")
      ("melpa" . "http://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (auto-complete-config go-autocomplete evil ensime unicode-fonts emojify org-journal show-paren-mode pylint org-id multiple-cursors w3m pymacs flymd bash-completion docker-tramp-compat helm-tramp helm-ag yaml-mode helm-projectile diff-hl magit multi-term company-shell company-ycmd docker-compose-mode jedi helm projectile shell-pop py-autopep8 docker neotree flycheck elpy company-anaconda pythonic markdown-mode all-the-icons kaolin-themes dockerfile-mode anaconda-mode docker-tramp company-jedi company use-package "company" "htmlize" ranger)))
+    (buffer-move vagrant-tramp go-mode auto-complete-config go-autocomplete evil ensime unicode-fonts emojify org-journal show-paren-mode pylint org-id multiple-cursors w3m pymacs flymd bash-completion docker-tramp-compat helm-tramp helm-ag yaml-mode helm-projectile diff-hl magit multi-term company-shell company-ycmd docker-compose-mode jedi helm projectile shell-pop py-autopep8 docker neotree flycheck elpy company-anaconda pythonic markdown-mode all-the-icons kaolin-themes dockerfile-mode anaconda-mode docker-tramp company-jedi company use-package "company" "htmlize" ranger)))
  '(shell-pop-full-span t)
  '(shell-pop-shell-type
    (quote
@@ -328,7 +328,7 @@
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "/usr/bin/pandoc"))
+  :init (setq markdown-command "markdown"))
 
 ;;
 ;; NEOTREE
@@ -600,3 +600,9 @@ active process."
   (setq kaolin-themes-distinct-fringe t)  
   (setq kaolin-themes-distinct-company-scrollbar t)  
   )
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

@@ -101,6 +101,7 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-alias e="emacs -nw"
-alias se="sudo emacs -nw"
-alias c="clear"
+. ~/.exports
+. ~/.functions
+. ~/.aliases
+. ~/.docker-alias
