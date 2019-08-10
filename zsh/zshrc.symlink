@@ -14,8 +14,14 @@ plugins=(
     git
     docker
     aws
-    docker-compose    
+    docker-compose
 )
+
+if [ -n "$IN_EMACS" ]; then
+   if [ -z "$STY" ]; then
+       [[ $TERM != "screen" ]] && exec screen -q
+   fi
+fi
 
 . ~/.exports
 . ~/.functions
