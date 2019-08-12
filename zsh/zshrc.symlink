@@ -1,4 +1,4 @@
-export PATH=$HOME/bin:/usr/local/bin:$PATH:$HOME/Public/scripts:$HOME/.local/bin
+export PATH=$HOME/bin:/usr/local/bin:$PATH:$HOME/Public/scripts:$HOME/.local/bin:$HOME/.dotfiles/scripts
 
 ZSH_THEME="xiong-chiamiov"
 
@@ -19,7 +19,7 @@ plugins=(
 
 if [ -n "$IN_EMACS" ]; then
    if [ -z "$STY" ]; then
-       [[ $TERM != "screen" ]] && exec screen -q
+      [[ $TERM != "screen*" ]] && exec screen -S $(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13)
    fi
 fi
 
