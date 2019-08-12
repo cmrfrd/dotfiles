@@ -54,6 +54,23 @@ setup_gitconfig () {
 }
 
 ##
+## Setup .config for .config applications
+##
+setup_dotconfig () {
+
+  info 'Making .config dir'
+  mkdir -p ~/.config
+
+  info 'linking files'
+  for src in $(find "$DOTFILES_ROOT/config" -type d | tail -n +2)
+  do
+    dst="$HOME/.config/$(basename $src)"
+    link_file "$src" "$dst"
+  done
+
+}
+
+##
 ## Link file from directory to home
 ##
 link_file () {
@@ -144,6 +161,7 @@ install_dotfiles () {
 }
 
 setup_gitconfig
+setup_dotconfig
 install_dotfiles
 
 # If we're on a Mac, let's install and setup homebrew.
