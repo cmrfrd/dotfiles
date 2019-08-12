@@ -847,9 +847,11 @@ Indent everything by 2 spaces.
 
 I like to use =paredit= in Lisp modes to balance parentheses (and more!).
 
-# #+BEGIN_SRC emacs-lisp
-#   (use-package paredit)
-# #+END_SRC
+#+BEGIN_SRC emacs-lisp
+   (use-package paredit)
+#+END_SRC
+
+#+RESULTS:
 
 =rainbow-delimiters= is convenient for coloring matching parentheses.
 
@@ -874,6 +876,8 @@ highlighting the whole expression when point is on a parenthesis.
                      (paredit-mode)
                      (rainbow-delimiters-mode))))
 #+END_SRC
+
+#+RESULTS:
 
 If I'm writing in Emacs lisp I'd like to use =eldoc-mode= to display
 documentation.
