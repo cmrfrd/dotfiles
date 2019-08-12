@@ -1,0 +1,13 @@
+libXpm
+libgif
+libgtk-3-dev
+libxpm-dev
+libjpeg8-dev
+libgif-dev
+libtiff5-dev
+libtinfo-dev
+librsvg2-dev
+libmagickwand-dev
+libacl1-dev
+libgnutls-dev
+texinfo
