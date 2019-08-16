@@ -11,7 +11,7 @@
 #     \\\;:;::;:;:;\:;:;:;::;:\
 #      \\\;;:;:_:--:\:_:--:_;:;\
 #       \\\_.-"      :      "-._\
-#        \`_..--""--.;.--""--.._=>
+#        \`_..--""--.;.--""--.._.\
 #
 
 This goal of this file `mainconfig.org` is to centralize
@@ -21,15 +21,21 @@ so no matter what system I end up moving too I can have
 a full (or atleast partial) development environment that can
 provide me some nice garuntees
 
-* TODO Garuntees
-...
+* Garuntees
+1. One window to rule them all (editor, terminal, browser)
+2. Language agnostic dev environment
+3. Export/Import with ease
 
 * Configure =use-package=
 
 The primary goal with this configuration file
 is that on loading emacs for the first time, my
 personal development environment will be fully
-setup and ready for me to use.
+setup and ready for use.
+
+To do this we will be using use-package which is
+a lovely declaritive package itself to define how
+to install/configure more packages.
 
 #+BEGIN_SRC emacs-lisp
   (require 'use-package-ensure)
@@ -96,7 +102,7 @@ available.
 #+END_SRC
 
 #+RESULTS:
-: Boulder, CO
+: New York, NY
 
 * Add =resources= to =load-path=
 
@@ -108,9 +114,9 @@ Just write elisp to resources to have it auto eval'd
 
 * =evil-mode=
 
-I'd prefer not to expand abbrevs when I hit escape. That's always jarring and
-usually not what I want. In particular, it makes working with Coq really
-frustrating.
+Evil mode is frustrating at first but allows the
+emacs programmer to be much more fluid in development
+taking the best of these two disparate worlds.
 
 #+BEGIN_SRC emacs-lisp
   (setq evil-want-abbrev-expand-on-insert-exit nil)
@@ -241,6 +247,9 @@ Why not?
 #+BEGIN_SRC emacs-lisp
   (global-prettify-symbols-mode t)
 #+END_SRC
+
+#+RESULTS:
+: t
 
 ** Load up a theme
 
