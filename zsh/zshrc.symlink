@@ -1,6 +1,6 @@
 export PATH=$HOME/bin:/usr/local/bin:$PATH:$HOME/Public/scripts:$HOME/.local/bin:$HOME/.dotfiles/scripts
 
-ZSH_THEME="xiong-chiamiov"
+ZSH_THEME="ys"
 
 # DISABLE_AUTO_UPDATE="true"
 export UPDATE_ZSH_DAYS=42
@@ -17,13 +17,18 @@ plugins=(
     docker-compose
 )
 
-if [ -n "$IN_EMACS" ]; then
-   if [ -z "$STY" ]; then
-      [[ $TERM != "screen*" ]] && exec screen -S $(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13)
-   fi
-fi
-
 . ~/.exports
 . ~/.functions
 . ~/.aliases
 . ~/.docker-alias
+
+## Make log directory
+mkdir -p $LOG_DIR
+touch $LOG_FILE
+
+## Run screen in emacs
+if [ -n "$IN_EMACS" ]; then
+   if [ -z "$STY" ]; then
+      [[ $TERM != "screen*" ]] && exec screen -S $(rand)
+   fi
+fi
