@@ -136,3 +136,6 @@ function tre() {
 	tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX;
 }
 
+function rand() {
+  head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13
+}
