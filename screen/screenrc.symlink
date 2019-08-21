@@ -1,15 +1,14 @@
 escape ^@a
 
 # Window list at the bottom. hostname, centered tabs and redmarked active windows:
-#shelltitle '$ |'
 hardstatus alwayslastline
 hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%? %= %{g}][%{B} %m/%d %{W}%c %{g}]'
 
-screen -t 1
-screen -t 2
-screen -t 3
-screen -t 4
-screen -t 5
+screen -t 1 zsh -ic 'log'
+screen -t 2 zsh -ic 'log'
+screen -t 3 zsh -ic 'log'
+screen -t 4 zsh -ic 'log'
+screen -t 5 zsh -ic 'log'
 
 altscreen on
 term screen-256color
