@@ -1071,6 +1071,7 @@ have. It would be nice to make them easily viewable
 #+END_SRC
 * Terminal
 
+
 For a while I used =shell-pop= for shell sessions but I'm now transitioning
 to using =multi-term= to manage my shell sessions. It's bound to =C-c t=.
 
@@ -1168,6 +1169,15 @@ active process."
   ;(process-send-region tws-process-target beg end))
   (process-send-string tws-process-target (buffer-substring beg end)))
 #+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c C-j") 'term-line-mode)
+  (global-set-key (kbd "C-c C-k") 'term-char-mode)
+#+END_SRC
+
+#+RESULTS:
+: term-char-mode
 
 * Publishing and task management with Org-mode
 
