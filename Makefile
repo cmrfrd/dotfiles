@@ -15,7 +15,11 @@ emacs-build:
 		git clone -b master git://git.sv.gnu.org/emacs.git /tmp/emacs; \
 		cd /tmp/emacs/; \
 		git checkout emacs-25.3; \
-		./configure --with-xpm=no --with-gif=no; \
-		make
+		./configure --with-xpm=no --with-gif --with-jpg --with-png \
+								--with-rsvg --with-tiff --with-xft --with-xpm \
+							  --with-x-toolkit=gtk3 --with-gpm=no --with-dbus \
+								--with-xwidgets; \
+		make bootstrap; \
 		make check; \
+		make; \
 		sudo make install"
