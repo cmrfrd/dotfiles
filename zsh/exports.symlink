@@ -12,3 +12,6 @@ export LC_ALL='en_US.UTF-8';
 export MANPATH="/usr/local/man:$MANPATH"
 
 export MINIKUBE_HOME=/mnt/vm-storage/
+
+export LOG_DIR=~/.logs/$(date +"%Y%m%d%H")
+export LOG_FILE=$LOG_DIR/$TERM-$STY-$WINDOW.log
