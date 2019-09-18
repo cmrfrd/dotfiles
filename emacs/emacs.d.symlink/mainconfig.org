@@ -215,6 +215,17 @@ Define a big ol' bunch of handy utility functions.
 
 La bella figura! Make it beautiful!
 
+** Line and column numbers
+
+   I think it's handy to have a useful modeline with col,row
+   #+BEGIN_SRC emacs-lisp
+     (line-number-mode 1)
+     (column-number-mode 1)
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
 ** Tweak window chrome
 
 I don't usually use the menu or scroll bar, and they take up useful space.
@@ -278,6 +289,8 @@ Themes are a nice switch of pace from the numdane black and white
 
   (use-package kaolin-themes
     :ensure t)
+  (use-package doom-themes
+    :ensure t)
 
   (defun transparency (value)
     "Sets the transparency of the frame window. 0=transparent/100=opaque."
@@ -305,20 +318,24 @@ frame is themed appropriately.
     (ajc/apply-theme))
 #+END_SRC
 
-** Use =moody= for a beautiful modeline
+** Use =doom-modeline= for pretty modeline
 
-This gives me a truly lovely ribbon-based modeline.
+This modeline looks informative and pretty at the same time!
 
 #+BEGIN_SRC emacs-lisp
-  (use-package moody
-    :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
+  (use-package doom-modeline
+        :ensure t
+        :hook (after-init . doom-modeline-mode)
+        :config
+        (setq doom-modeline-icon (display-graphic-p))
+        (setq doom-modeline-buffer-file-name-style 'truncate-all)
+        (setq doom-modeline-buffer-state-icon t)
+        (setq doom-modeline-percentage-info nil)
+        (setq doom-modeline-indent-info t))
 #+END_SRC
 
 #+RESULTS:
-: t
+| global-company-mode | doom-modeline-mode |
 
 ** Use =minions= to hide all minor modes
 
@@ -418,15 +435,11 @@ Note that this overrides the default font-related keybindings from
   (ajc/reset-font-size)
 #+END_SRC
 
-** Highlight the current line
+** Highlight the current line and cursor
 
 =global-hl-line-mode= softly highlights the background color of the line
 containing point. It makes it a bit easier to find point, and it's useful when
 pairing or presenting code.
-
-#+BEGIN_SRC emacs-lisp
-  (global-hl-line-mode)
-#+END_SRC
 
 Make hotkey to turn this on and off. This can be useful
 if I'm showing a presentation and want to show the audience
@@ -1069,6 +1082,21 @@ have. It would be nice to make them easily viewable
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "markdown"))
 #+END_SRC
+** Nix
+   #+BEGIN_SRC emacs-lisp
+        (use-package nix-mode
+          :mode "\\.nix\\'")
+   #+END_SRC
+
+   #+RESULTS:
+** Fish
+   #+BEGIN_SRC emacs-lisp
+        (use-package fish-mode
+          :mode "\\.fish\\'")
+   #+END_SRC
+
+   #+RESULTS:
+
 * Terminal
 
 
@@ -1079,10 +1107,13 @@ to using =multi-term= to manage my shell sessions. It's bound to =C-c t=.
   (use-package multi-term)
   (global-set-key (kbd "C-c t") 'multi-term)
   (setq multi-term-dedicated-select-after-open-p t)
+
+  ; if nix is installed use fish as shell
+  (if (file-directory-p "~/.nix-profile/")
+      (setq multi-term-program "~/.nix-profile/bin/fish"))
 #+END_SRC
 
 #+RESULTS:
-: multi-term
 
 Use a login shell:
 
@@ -1100,6 +1131,8 @@ example).
 #+BEGIN_SRC emacs-lisp
   (evil-set-initial-state 'term-mode 'emacs)
 #+END_SRC
+
+#+RESULTS:
 
 I add a bunch of hooks to =term-mode=:
 
@@ -1119,6 +1152,7 @@ I add a bunch of hooks to =term-mode=:
 
   (add-hook 'term-mode-hook
             (lambda ()
+              (linum-mode 0)
               (goto-address-mode)
               (define-key term-raw-map (kbd "C-y") 'ajc/term-paste)
               (define-key term-raw-map (kbd "<mouse-2>") 'ajc/term-paste)
@@ -1132,12 +1166,13 @@ I add a bunch of hooks to =term-mode=:
               (defun term-send-Cleft  () (interactive) (term-send-raw-string "\e[1;5D"))
               (define-key term-raw-map (kbd "C-<right>")      'term-send-Cright)
               (define-key term-raw-map (kbd "C-<left>")       'term-send-Cleft)
-
-              (setq yas-dont-activate t)))
+              (setq yas-dont-activate t)
+              (setq global-hl-line-mode nil)
+              ))
 #+END_SRC
 
 #+RESULTS:
-| (lambda nil (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) | multi-term-keystroke-setup | (lambda nil (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (evil-local-set-key (quote insert) (kbd C-r) (quote term-send-Cr)) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) | (lambda nil (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) | (lambda nil (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (define-key term-raw-map (kbd C-r) (quote multi-term-prev)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) | (lambda nil (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (setq yas-dont-activate t)) |
+| (lambda nil (linum-mode 0) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil)) | multi-term-keystroke-setup | (lambda nil (linum-mode 0) (setq global-hl-line-mode nil) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) | (lambda nil (linum-mode 0) (global-hl-line-mode 0) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) | (lambda nil (linum-mode 0) (global-hl-line-mode) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) | (lambda nil (linum-mode 0) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defalias (quote term-send-Cr) (function (lambda nil (interactive) (term-send-raw-string )))) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defalias (quote term-send-Cright) (function (lambda nil (interactive) (term-send-raw-string [1;5C)))) (defalias (quote term-send-Cleft) (function (lambda nil (interactive) (term-send-raw-string [1;5D)))) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) |
 
 I have this really cool function so I can send regions to a terminal. Really
 handy when you want to execute selections without copying and pasting
@@ -1170,6 +1205,8 @@ active process."
   (process-send-string tws-process-target (buffer-substring beg end)))
 #+END_SRC
 
+Sometimes I want to cut things from the terminal into another buffer,
+so here I can switch from one to another
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-c C-j") 'term-line-mode)
@@ -1220,6 +1257,15 @@ new one (which shows the same information).
 #+BEGIN_SRC emacs-lisp
   (setq org-src-window-setup 'current-window)
 #+END_SRC
+
+I like shift selection, importing old knowledge...
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-support-shift-select t)
+#+END_SRC
+
+#+RESULTS:
+: t
 
 Quickly insert a block of elisp:
 
@@ -1583,7 +1629,6 @@ Open a file with an external program (that is, through =xdg-open=) by hitting
 : t
 
 * Editing settings
-
 ** Quickly visit Emacs configuration
 
 I futz around with my dotfiles a lot. This binds =C-c e= to quickly open my
@@ -1592,7 +1637,7 @@ Emacs configuration file.
 #+BEGIN_SRC emacs-lisp
   (defun ajc/visit-emacs-config ()
     (interactive)
-    (find-file "~/.emacs.d/configuration.org"))
+    (find-file "~/.emacs.d/mainconfig.org"))
 
   (global-set-key (kbd "C-c e") 'ajc/visit-emacs-config)
 #+END_SRC
@@ -1604,6 +1649,28 @@ Assume that I always want to kill the current buffer when hitting =C-x k=.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-x k") 'ajc/kill-current-buffer)
 #+END_SRC
+
+** Rename buffer and file
+
+   Sometimes it's handy to rename the current file and buffer
+   when the name is not appropriate
+
+   #+BEGIN_SRC emacs-lisp
+     (defun rename-file-and-buffer (new-name)
+       "Renames both current buffer and file it's visiting to NEW-NAME."
+       (interactive "sNew name: ")
+       (let ((name (buffer-name))
+             (filename (buffer-file-name)))
+         (if (not filename)
+             (message "Buffer '%s' is not visiting a file!" name)
+           (if (get-buffer new-name)
+               (message "A buffer named '%s' already exists!" new-name)
+             (progn
+               (rename-file filename new-name 1)
+               (rename-buffer new-name)
+               (set-visited-file-name new-name)
+               (set-buffer-modified-p nil))))))
+   #+END_SRC
 
 ** Set up =helpful=
 
@@ -1901,7 +1968,6 @@ This section is mainly for emacs...helm...packages...
 Just a few handy functions.
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-w") 'backward-kill-word)
   (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
 
