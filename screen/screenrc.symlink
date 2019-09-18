@@ -4,11 +4,14 @@ escape ^@a
 hardstatus alwayslastline
 hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%? %= %{g}][%{B} %m/%d %{W}%c %{g}]'
 
-screen -t 1 zsh -ic 'log'
-screen -t 2 zsh -ic 'log'
-screen -t 3 zsh -ic 'log'
-screen -t 4 zsh -ic 'log'
-screen -t 5 zsh -ic 'log'
+screen -t 1 /home/$USER/.nix-profile/bin/fish
+screen -t 2 /home/$USER/.nix-profile/bin/fish
+screen -t 3 /home/$USER/.nix-profile/bin/fish
+screen -t 4 /home/$USER/.nix-profile/bin/fish
+screen -t 5 /home/$USER/.nix-profile/bin/fish
 
 altscreen on
 term screen-256color
+nethack on
+defutf8 on
+defencoding utf8
