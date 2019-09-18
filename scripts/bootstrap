@@ -61,6 +61,8 @@ setup_dotconfig () {
   info 'Making .config dir'
   mkdir -p ~/.config
 
+  local overwrite_all=false backup_all=false skip_all=false
+
   info 'linking files'
   for src in $(find "$DOTFILES_ROOT/config" -type d | tail -n +2)
   do
