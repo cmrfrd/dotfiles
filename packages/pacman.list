@@ -15,3 +15,5 @@ make
 curl
 dmenu
 dmenu_run_aliases
+webkit2gtk
+openssl

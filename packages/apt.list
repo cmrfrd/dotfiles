@@ -11,3 +11,4 @@ libmagickwand-dev
 libacl1-dev
 libgnutls-dev
 texinfo
+openssl
