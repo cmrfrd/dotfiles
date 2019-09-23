@@ -2,13 +2,13 @@ escape ^@a
 
 # Window list at the bottom. hostname, centered tabs and redmarked active windows:
 hardstatus alwayslastline
-hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%? %= %{g}][%{B} %m/%d %{W}%c %{g}]'
+hardstatus string '%{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%? %= %{g}%=[%{B} %m/%d %{W}%c %{g}]'
 
-screen -t 1 /home/$USER/.nix-profile/bin/fish
-screen -t 2 /home/$USER/.nix-profile/bin/fish
-screen -t 3 /home/$USER/.nix-profile/bin/fish
-screen -t 4 /home/$USER/.nix-profile/bin/fish
-screen -t 5 /home/$USER/.nix-profile/bin/fish
+screen /home/$USER/.nix-profile/bin/fish -ic "log /home/$USER/.nix-profile/bin/fish"
+screen /home/$USER/.nix-profile/bin/fish -ic "log /home/$USER/.nix-profile/bin/fish"
+screen /home/$USER/.nix-profile/bin/fish -ic "log /home/$USER/.nix-profile/bin/fish"
+screen /home/$USER/.nix-profile/bin/fish -ic "log /home/$USER/.nix-profile/bin/fish"
+screen /home/$USER/.nix-profile/bin/fish -ic "log /home/$USER/.nix-profile/bin/fish"
 
 altscreen on
 term screen-256color
