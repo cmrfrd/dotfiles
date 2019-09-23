@@ -1,25 +1,36 @@
 .PHONY: all zsh update
 
+BUILD_PATH = $(eval BUILD_PATH :=			\
+		$(shell NIX_PATH=$(NIXPATH)				\
+			    nix-build $(BUILD_ARGS)))$(BUILD_PATH)
+
 all:
-	$(MAKE) zsh
 	$(MAKE) update
 
 update:
 	./scripts/bootstrap
 
-zsh:
-	curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -o /tmp/install.sh && bash /tmp/install.sh
 
-emacs-build:
-	bash -c "\
-		git clone -b master git://git.sv.gnu.org/emacs.git /tmp/emacs; \
-		cd /tmp/emacs/; \
-		git checkout emacs-25.3; \
-		./configure --with-xpm=no --with-gif --with-jpg --with-png \
-								--with-rsvg --with-tiff --with-xft --with-xpm \
-							  --with-x-toolkit=gtk3 --with-gpm=no --with-dbus \
-								--with-xwidgets; \
-		make bootstrap; \
-		make check; \
-		make; \
-		sudo make install"
+nix-setup:
+	sudo bash -c "                                   \
+		mkdir -p /nix /etc/nix;                        \
+		chmod a+rwx /nix;                              \
+		echo 'sandbox = false' > /etc/nix/nix.conf;"
+
+nix-install:
+	bash -c "bash <(curl https://nixos.org/nix/install)"
+
+nix-update:
+	nix-channel --add https://github.com/rycee/home-manager/archive/release-19.03.tar.gz home-manager
+	nix-channel --update
+	nix-shell '<home-manager>' -A install
+	home-manager build
+
+nix-update-shell:
+	sudo bash -c "echo '$$HOME/.nix-profile/bin/zsh' >> /etc/shells"
+	chsh -s $$HOME/.nix-profile/bin/zsh
+
+nix: nix-setup nix-install nix-update
+
+nix-clean:
+	sudo rm -rf /etc/nix /nix /root/.nix-profile /root/.nix-defexpr /root/.nix-channels ~/.nix-profile ~/.nix-defexpr ~/.nix-channels
