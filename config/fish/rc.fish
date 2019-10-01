@@ -9,9 +9,6 @@ function dotreload
     source ~/.config/fish/theme.fish
     source ~/.config/fish/functions.fish
     source ~/.config/fish/aliases.fish
-    # if test -d ~/.nix-profile
-    #     . ~/.nix-profile/etc/profile.d/nix.sh
-    # end
 end
 dotreload
 
