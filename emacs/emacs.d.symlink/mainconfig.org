@@ -120,7 +120,11 @@ taking the best of these two disparate worlds.
 
 #+BEGIN_SRC emacs-lisp
   (setq evil-want-abbrev-expand-on-insert-exit nil)
+  (setq evil-toggle-key "C-q C-z")
 #+END_SRC
+
+#+RESULTS:
+: C-q C-z
 
 Use =evil=.
 
@@ -130,6 +134,9 @@ Use =evil=.
     (evil-mode 1)
 (setq evil-default-state 'emacs))
 #+END_SRC
+
+#+RESULTS:
+: t
 
 Enable =surround= everywhere.
 
@@ -638,97 +645,97 @@ This is a similar functionality of spacemacs with a foldable structure.
 Pretty handy when dealing with a large code base
 
 #+BEGIN_SRC emacs-lisp
-(use-package neotree
-  :ensure t
-  :init
-  (progn
-    ;; Every time when the neotree window is opened, it will try to find current
-    ;; file and jump to node.
-    (setq-default neo-smart-open t)
-    (setq-default neo-dont-be-alone t)
-    (setq-default neo-window-fixed-size nil)
-    (setq-default neo-show-hidden-files t))
-  :config
-  (progn
-    (setq projectile-switch-project-action 'neotree-projectile-action)
-    (setq neo-theme 'nerd) ; 'classic, 'nerd, 'ascii, 'arrow
-    (setq neo-vc-integration '(face char))
+  (use-package neotree
+    :ensure t
+    :init
+    (progn
+      ;; Every time when the neotree window is opened, it will try to find current
+      ;; file and jump to node.
+      (setq-default neo-smart-open t)
+      (setq-default neo-dont-be-alone t)
+      (setq-default neo-window-fixed-size nil)
+      (setq-default neo-show-hidden-files t))
+    :config
+    (progn
+      (setq projectile-switch-project-action 'neotree-projectile-action)
+      (setq neo-theme 'nerd) ; 'classic, 'nerd, 'ascii, 'arrow
+      (setq neo-vc-integration '(face char))
 
-    ;; Patch to fix vc integration
-    (defun neo-vc-for-node (node)
-      (let* ((backend (vc-backend node))
-             (vc-state (when backend (vc-state node backend))))
-        ;; (message "%s %s %s" node backend vc-state)
-        (cons (cdr (assoc vc-state neo-vc-state-char-alist))
-              (cl-case vc-state
-                (up-to-date       neo-vc-up-to-date-face)
-                (edited           neo-vc-edited-face)
-                (needs-update     neo-vc-needs-update-face)
-                (needs-merge      neo-vc-needs-merge-face)
-                (unlocked-changes neo-vc-unlocked-changes-face)
-                (added            neo-vc-added-face)
-                (removed          neo-vc-removed-face)
-                (conflict         neo-vc-conflict-face)
-                (missing          neo-vc-missing-face)
-                (ignored          neo-vc-ignored-face)
-                (unregistered     neo-vc-unregistered-face)
-                (user             neo-vc-user-face)
-                (t                neo-vc-default-face)))))
+      ;; Patch to fix vc integration
+      (defun neo-vc-for-node (node)
+        (let* ((backend (vc-backend node))
+               (vc-state (when backend (vc-state node backend))))
+          ;; (message "%s %s %s" node backend vc-state)
+          (cons (cdr (assoc vc-state neo-vc-state-char-alist))
+                (cl-case vc-state
+                  (up-to-date       neo-vc-up-to-date-face)
+                  (edited           neo-vc-edited-face)
+                  (needs-update     neo-vc-needs-update-face)
+                  (needs-merge      neo-vc-needs-merge-face)
+                  (unlocked-changes neo-vc-unlocked-changes-face)
+                  (added            neo-vc-added-face)
+                  (removed          neo-vc-removed-face)
+                  (conflict         neo-vc-conflict-face)
+                  (missing          neo-vc-missing-face)
+                  (ignored          neo-vc-ignored-face)
+                  (unregistered     neo-vc-unregistered-face)
+                  (user             neo-vc-user-face)
+                  (t                neo-vc-default-face)))))
 
-    (defun modi/neotree-go-up-dir ()
-      (interactive)
-      (goto-char (point-min))
-      (forward-line 2)
-      (neotree-change-root))
+      (defun modi/neotree-go-up-dir ()
+        (interactive)
+        (goto-char (point-min))
+        (forward-line 2)
+        (neotree-change-root))
 
-    ;; http://emacs.stackexchange.com/a/12156/115
-    (defun modi/find-file-next-in-dir (&optional prev)
-      "Open the next file in the directory.
-When PREV is non-nil, open the previous file in the directory."
-      (interactive "P")
-      (let ((neo-init-state (neo-global--window-exists-p)))
-        (if (null neo-init-state)
-            (neotree-show))
-        (neo-global--select-window)
-        (if (if prev
-                (neotree-previous-line)
-              (neotree-next-line))
+      ;; http://emacs.stackexchange.com/a/12156/115
+      (defun modi/find-file-next-in-dir (&optional prev)
+        "Open the next file in the directory.
+  When PREV is non-nil, open the previous file in the directory."
+        (interactive "P")
+        (let ((neo-init-state (neo-global--window-exists-p)))
+          (if (null neo-init-state)
+              (neotree-show))
+          (neo-global--select-window)
+          (if (if prev
+                  (neotree-previous-line)
+                (neotree-next-line))
+              (progn
+                (neo-buffer--execute nil
+                                     (quote neo-open-file)
+                                     (lambda (full-path &optional arg)
+                                       (message "Reached dir: %s/" full-path)
+                                       (if prev
+                                           (neotree-next-line)
+                                         (neotree-previous-line)))))
             (progn
-              (neo-buffer--execute nil
-                                   (quote neo-open-file)
-                                   (lambda (full-path &optional arg)
-                                     (message "Reached dir: %s/" full-path)
-                                     (if prev
-                                         (neotree-next-line)
-                                       (neotree-previous-line)))))
-          (progn
-            (if prev
-                (message "You are already on the first file in the directory.")
-              (message "You are already on the last file in the directory."))))
-        (if (null neo-init-state)
-            (neotree-hide))))
+              (if prev
+                  (message "You are already on the first file in the directory.")
+                (message "You are already on the last file in the directory."))))
+          (if (null neo-init-state)
+              (neotree-hide))))
 
-    (defun modi/find-file-prev-in-dir ()
-      "Open the next file in the directory."
-      (interactive)
-      (modi/find-file-next-in-dir :prev))
+      (defun modi/find-file-prev-in-dir ()
+        "Open the next file in the directory."
+        (interactive)
+        (modi/find-file-next-in-dir :prev))
 
-    (bind-keys
-     :map neotree-mode-map
-      ("^" . modi/neotree-go-up-dir)
-      ("<C-return>" . neotree-change-root)
-      ("C" . neotree-change-root)
-      ("c" . neotree-create-node)
-      ("+" . neotree-create-node)
-      ("d" . neotree-delete-node)
-      ("r" . neotree-rename-node)))
+      (bind-keys
+       :map neotree-mode-map
+        ("^" . modi/neotree-go-up-dir)
+        ("<C-return>" . neotree-change-root)
+        ("C" . neotree-change-root)
+        ("c" . neotree-create-node)
+        ("+" . neotree-create-node)
+        ("d" . neotree-delete-node)
+        ("r" . neotree-rename-node)))
 
-  (add-to-list 'window-size-change-functions
-               (lambda (frame)
-                 (let ((neo-window (neo-global--get-window)))
-                   (unless (null neo-window)
-                     (setq neo-window-width (window-width neo-window))))))
-  (global-set-key [f8] 'neotree-toggle))
+    (add-to-list 'window-size-change-functions
+                 (lambda (frame)
+                   (let ((neo-window (neo-global--get-window)))
+                     (unless (null neo-window)
+                       (setq neo-window-width (window-width neo-window))))))
+    (global-set-key [f8] 'neotree-toggle))
 #+END_SRC
 
 * Programming environments
@@ -1506,7 +1513,6 @@ Include the =minted= package in all of my LaTeX exports.
   (setq org-latex-listings 'minted)
 #+END_SRC
 
-
 ** TeX configuration
 
 I rarely write LaTeX directly any more, but I often export through it with
@@ -1544,6 +1550,19 @@ I'm usually actually in an org document.
               (LaTeX-math-mode)
               (setq TeX-master t)))
 #+END_SRC
+
+** Kanban
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-kanban
+       :config
+       (define-key global-map (kbd "C-c k") 'org-kanban/shift)
+       )
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
 * =dired=
 
 Hide dotfiles by default, but toggle their visibility with =.=.
@@ -1955,13 +1974,12 @@ This section is mainly for emacs...helm...packages...
   (helm-projectile-on))
 (use-package helm-tramp
   :ensure t
-  :bind ("C-c s" . helm-tramp)
-  :config
-   (setq tramp-default-method "docker"))
+  :bind ("C-c s" . helm-tramp))
+(setq tramp-default-method "docker")
 #+END_SRC
 
 #+RESULTS:
-: helm-tramp
+: docker
 
 * Set custom keybindings
 

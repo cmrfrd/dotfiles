@@ -27,7 +27,7 @@ case "$1" in
 
         # Make it the terminator!
         case $cmd in
-            *)    cmdexec="terminator -e \"$cmdexec\"" ;;
+            *)    cmdexec="terminator -e \"zsh -ic '$cmdexec'\"" ;;
         esac
 
         # Ugly workaround to run functions...
