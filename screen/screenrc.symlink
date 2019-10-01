@@ -4,11 +4,14 @@ escape ^@a
 hardstatus alwayslastline
 hardstatus string '%{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%? %= %{g}%=[%{B} %m/%d %{W}%c %{g}]'
 
-screen /home/$USER/.nix-profile/bin/fish -ic "log /home/$USER/.nix-profile/bin/fish"
-screen /home/$USER/.nix-profile/bin/fish -ic "log /home/$USER/.nix-profile/bin/fish"
-screen /home/$USER/.nix-profile/bin/fish -ic "log /home/$USER/.nix-profile/bin/fish"
-screen /home/$USER/.nix-profile/bin/fish -ic "log /home/$USER/.nix-profile/bin/fish"
-screen /home/$USER/.nix-profile/bin/fish -ic "log /home/$USER/.nix-profile/bin/fish"
+screen /home/$USER/.nix-profile/bin/fish
+screen /home/$USER/.nix-profile/bin/fish
+screen /home/$USER/.nix-profile/bin/fish
+screen /home/$USER/.nix-profile/bin/fish
+screen /home/$USER/.nix-profile/bin/fish
+
+## Add this for terminal recording
+## -ic "log /home/$USER/.nix-profile/bin/fish"
 
 altscreen on
 term screen-256color
