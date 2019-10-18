@@ -1,5 +1,7 @@
 .PHONY: all zsh update
 
+MY_USER = $(eval MY_USER := $(shell USER=$(USER)))$(USER)
+
 BUILD_PATH = $(eval BUILD_PATH :=			\
 		$(shell NIX_PATH=$(NIXPATH)				\
 			    nix-build $(BUILD_ARGS)))$(BUILD_PATH)
@@ -17,20 +19,29 @@ nix-setup:
 		chmod a+rwx /nix;                              \
 		echo 'sandbox = false' > /etc/nix/nix.conf;"
 
+
 nix-install:
-	bash -c "bash <(curl https://nixos.org/nix/install)"
+  sudo mkdir /nix \
+	sudo chmod $(MY_USER) -R /nix \
+	bash -c "\
+	  bash <(curl https://nixos.org/nix/install)\
+    && . ~/.nix-profile/etc/profile.d/nix.sh"
 
 nix-update:
-	nix-channel --add https://github.com/rycee/home-manager/archive/release-19.03.tar.gz home-manager
-	nix-channel --update
-	nix-shell '<home-manager>' -A install
-	home-manager build
+	bash -c "\
+		NIX_PATH=$$HOME/.nix-defexpr/channels \
+		&& source ~/.nix-profile/etc/profile.d/nix.sh \
+		&& nix-channel --add https://github.com/rycee/home-manager/archive/release-19.03.tar.gz home-manager \
+		&& nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs \
+		&& nix-channel --update \
+		&& nix-shell '<home-manager>' -A install \
+		&& home-manager build"
 
 nix-update-shell:
 	sudo bash -c "echo '$$HOME/.nix-profile/bin/zsh' >> /etc/shells"
 	chsh -s $$HOME/.nix-profile/bin/zsh
 
-nix: nix-setup nix-install nix-update
+nix: nix-setup nix-install nix-update nix-update-shell
 
 nix-clean:
 	sudo rm -rf /etc/nix /nix /root/.nix-profile /root/.nix-defexpr /root/.nix-channels ~/.nix-profile ~/.nix-defexpr ~/.nix-channels
