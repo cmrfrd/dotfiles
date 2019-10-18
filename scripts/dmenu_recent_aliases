@@ -3,7 +3,7 @@
 # Make files and set variables
 touch ~/.cache/dmenu_run && cache=~/.cache/dmenu_run
 touch ~/.dmenu_history && freq=~/.dmenu_history
-touch ~/.aliases && aliases=~/.aliases
+aliases=~/.dotfiles/config/fish/aliases.fish
 source $aliases
 
 case "$1" in
@@ -27,7 +27,7 @@ case "$1" in
 
         # Make it the terminator!
         case $cmd in
-            *)    cmdexec="terminator -e \"zsh -ic '$cmdexec'\"" ;;
+            *)    cmdexec="terminator -e \"fish -c '$cmdexec'\"" ;;
         esac
 
         # Ugly workaround to run functions...
