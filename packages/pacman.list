@@ -10,10 +10,9 @@ clang
 firefox
 git
 i3-wm
-i3-status
+i3status
 make
 curl
 dmenu
-dmenu_run_aliases
 webkit2gtk
 openssl
