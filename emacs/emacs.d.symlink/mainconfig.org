@@ -1047,6 +1047,35 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
    "\\.rhtml$")
 #+END_SRC
 
+** Typescript
+
+   Typescript is a super awesome language that is definately worth
+   using, emacs has only one ide type minor mode for this
+
+   #+BEGIN_SRC emacs-lisp
+    (defun setup-tide-mode ()
+      "Set up Tide mode."
+      (interactive)
+      (tide-setup)
+      (flycheck-mode +1)
+      (setq flycheck-check-syntax-automatically '(save-mode-enabled))
+      (eldoc-mode +1)
+      (tide-hl-identifier-mode +1)
+      (company-mode +1))
+
+    (use-package tide
+      :ensure t
+      :config
+      (setq company-tooltip-align-annotations t)
+      (add-hook 'before-save-hook 'tide-format-before-save)
+      ;;    (add-hook 'js2-mode-hook #'setup-tide-mode)
+      (add-hook 'js-mode-hook #'setup-tide-mode)
+      (add-hook 'typescript-mode-hook #'setup-tide-mode))
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
 ** YAML
 
 #+BEGIN_SRC emacs-lisp
