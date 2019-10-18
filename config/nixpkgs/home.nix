@@ -3,7 +3,9 @@
 let user = builtins.getEnv "USER";
 in rec {
 
+
   home.packages = [
+    pkgs.nodejs
     pkgs.xsel
     pkgs.wmctrl
     pkgs.fish
@@ -40,6 +42,10 @@ in rec {
     oh-my-zsh.theme = "daveverwer";
   };
 
+  programs.feh = {
+    enable = true;
+  };
+
   programs.home-manager = {
     enable = true;
   };
@@ -49,4 +55,6 @@ in rec {
     defaultCacheTtl = 1800;
     enableSshSupport = true;
   };
+
+  # imports = ["/home/iambubbi/.dotfiles/config/nixpkgs/yes.nix"];
 }
