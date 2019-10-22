@@ -1,0 +1,15 @@
+#!/bin/bash
+
+NAME=graph-easy
+
+cat << EOF > /tmp/Dockerfile.${NAME}
+FROM alpine
+RUN apk add --update git perl
+WORKDIR /
+RUN git clone https://github.com/ironcamel/Graph-Easy
+WORKDIR /Graph-Easy
+ENTRYPOINT ["perl", "-I", "./lib", "-X", "./bin/graph-easy"]
+EOF
+
+docker build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles > /dev/null
+cat - | docker run --rm -i ${NAME} $@
