@@ -1,3 +1,20 @@
+[global_config]
+  enabled_plugins = APTURLHandler, LaunchpadCodeURLHandler, LaunchpadBugURLHandler
+[keybindings]
+  resize_down = None
+  resize_left = None
+  resize_right = None
+  resize_up = None
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+[plugins]
 [profiles]
   [[default]]
-    show_titlebar = false
+    cursor_color = "#aaaaaa"
+    show_titlebar = False
