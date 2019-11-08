@@ -1,3 +1,5 @@
+set fish_pager_color_secondary ecf9ef
+
 # Set PWD segment style
 if not set -q dangerous_pwdstyle
   set -U dangerous_pwdstyle short long none
