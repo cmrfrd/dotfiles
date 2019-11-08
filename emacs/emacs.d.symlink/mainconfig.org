@@ -1053,28 +1053,50 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
    using, emacs has only one ide type minor mode for this
 
    #+BEGIN_SRC emacs-lisp
-    (defun setup-tide-mode ()
-      "Set up Tide mode."
-      (interactive)
-      (tide-setup)
-      (flycheck-mode +1)
-      (setq flycheck-check-syntax-automatically '(save-mode-enabled))
-      (eldoc-mode +1)
-      (tide-hl-identifier-mode +1)
-      (company-mode +1))
+     (defun setup-tide-mode ()
+       "Set up Tide mode."
+       (interactive)
+       (tide-setup)
+       (flycheck-mode +1)
+       (setq flycheck-check-syntax-automatically '(save-mode-enabled))
+       (eldoc-mode +1)
+       (tide-hl-identifier-mode +1)
+       (company-mode +1))
 
-    (use-package tide
-      :ensure t
-      :config
-      (setq company-tooltip-align-annotations t)
-      (add-hook 'before-save-hook 'tide-format-before-save)
-      ;;    (add-hook 'js2-mode-hook #'setup-tide-mode)
-      (add-hook 'js-mode-hook #'setup-tide-mode)
-      (add-hook 'typescript-mode-hook #'setup-tide-mode))
+     (use-package tide
+       :ensure t
+       :after (typescript-mode company flycheck)
+       :hook ((typescript-mode . tide-setup)
+              (typescript-mode . tide-hl-identifier-mode)
+              (before-save . tide-format-before-save))
+       :config
+       (setq company-tooltip-align-annotations t)
+       (add-hook 'before-save-hook 'tide-format-before-save)
+       (add-hook 'js-mode-hook #'setup-tide-mode)
+       (add-hook 'typescript-mode-hook #'setup-tide-mode))
    #+END_SRC
 
    #+RESULTS:
-   : t
+   | tide-format-before-save | gofmt-before-save | delete-trailing-whitespace |
+
+   #+BEGIN_SRC emacs-lisp
+     (require 'web-mode)
+     (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+     (add-hook 'web-mode-hook
+               (lambda ()
+                 (when (string-equal "tsx" (file-name-extension buffer-file-name))
+                   (setup-tide-mode))))
+     (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
+     (add-hook 'web-mode-hook
+               (lambda ()
+                 (when (string-equal "ts" (file-name-extension buffer-file-name))
+                   (setup-tide-mode))))
+     ;; enable typescript-tslint checker
+     (flycheck-add-mode 'typescript-tslint 'web-mode)
+   #+END_SRC
+
+   #+RESULTS:
+   | web-mode | web-mode | web-mode | web-mode | typescript-mode |
 
 ** YAML
 
@@ -1211,7 +1233,7 @@ I add a bunch of hooks to =term-mode=:
 | (lambda nil (linum-mode 0) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil)) | multi-term-keystroke-setup | (lambda nil (linum-mode 0) (setq global-hl-line-mode nil) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) | (lambda nil (linum-mode 0) (global-hl-line-mode 0) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) | (lambda nil (linum-mode 0) (global-hl-line-mode) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) | (lambda nil (linum-mode 0) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defalias (quote term-send-Cr) (function (lambda nil (interactive) (term-send-raw-string )))) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defalias (quote term-send-Cright) (function (lambda nil (interactive) (term-send-raw-string [1;5C)))) (defalias (quote term-send-Cleft) (function (lambda nil (interactive) (term-send-raw-string [1;5D)))) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t)) |
 
 I have this really cool function so I can send regions to a terminal. Really
-handy when you want to execute selections without copying and pasting
+andy when you want to execute selections without copying and pasting
 
 #+BEGIN_SRC emacs-lisp
 ;;
@@ -1757,6 +1779,52 @@ Never use tabs. Tabs are the devil’s whitespace.
 #+BEGIN_SRC emacs-lisp
   (setq-default indent-tabs-mode nil)
 #+END_SRC
+
+** Move lines up and down
+
+Sometimes its super handy to move individual lines up and down
+
+#+BEGIN_SRC emacs-lisp
+(defun move-text-internal (arg)
+   (cond
+    ((and mark-active transient-mark-mode)
+     (if (> (point) (mark))
+            (exchange-point-and-mark))
+     (let ((column (current-column))
+              (text (delete-and-extract-region (point) (mark))))
+       (forward-line arg)
+       (move-to-column column t)
+       (set-mark (point))
+       (insert text)
+       (exchange-point-and-mark)
+       (setq deactivate-mark nil)))
+    (t
+     (beginning-of-line)
+     (when (or (> arg 0) (not (bobp)))
+       (forward-line)
+       (when (or (< arg 0) (not (eobp)))
+            (transpose-lines arg))
+       (forward-line -1)))))
+
+(defun move-text-down (arg)
+   "Move region (transient-mark-mode active) or current line
+  arg lines down."
+   (interactive "*p")
+   (move-text-internal arg))
+
+(defun move-text-up (arg)
+   "Move region (transient-mark-mode active) or current line
+  arg lines up."
+   (interactive "*p")
+   (move-text-internal (- arg)))
+
+(global-set-key [\C-\S-up] 'move-text-up)
+(global-set-key [\C-\S-down] 'move-text-down)
+#+END_SRC
+
+#+RESULTS:
+: move-text-down
+
 
 ** Install and configure =which-key=
 
