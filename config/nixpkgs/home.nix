@@ -15,7 +15,9 @@ in rec {
     pkgs.git
     pkgs.gnumake
     pkgs.openssl
+    pkgs.openssh
     pkgs.curl
+    pkgs.feh
   ];
 
   programs.emacs = {
@@ -55,6 +57,4 @@ in rec {
     defaultCacheTtl = 1800;
     enableSshSupport = true;
   };
-
-  # imports = ["/home/iambubbi/.dotfiles/config/nixpkgs/yes.nix"];
 }
