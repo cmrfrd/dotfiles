@@ -1,5 +1,8 @@
 [global_config]
   enabled_plugins = APTURLHandler, LaunchpadCodeURLHandler, LaunchpadBugURLHandler
+  focus = sloppy
+  borderless = True
+  title_use_system_font = False
 [keybindings]
   resize_down = None
   resize_left = None
@@ -18,3 +21,5 @@
   [[default]]
     cursor_color = "#aaaaaa"
     show_titlebar = False
+    icon_bell = False
+    scrollbar_position = "disabled"
