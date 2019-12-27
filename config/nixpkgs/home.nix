@@ -18,6 +18,7 @@ in rec {
     pkgs.openssh
     pkgs.curl
     pkgs.feh
+    pkgs.terminator
   ];
 
   programs.emacs = {
