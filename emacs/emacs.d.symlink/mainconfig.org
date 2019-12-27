@@ -261,9 +261,13 @@ project:
 ** Make tabs
 
 #+BEGIN_SRC emacs-lisp
-  (use-package elscreen
-    :config
-    (elscreen-start))
+      (use-package elscreen
+        :config
+        (custom-set-variables '(elscreen-tab-display-kill-screen nil) ; hide kill button
+                              '(elscreen-display-tab t))
+        (custom-set-faces '(elscreen-tab-current-screen-face ((t (:inherit default :weight bold)))))
+        (elscreen-start)
+        )
 #+END_SRC
 
 #+RESULTS:
@@ -1097,6 +1101,11 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
                (lambda ()
                  (when (string-equal "tsx" (file-name-extension buffer-file-name))
                    (setup-tide-mode))))
+     (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+     (add-hook 'web-mode-hook
+               (lambda ()
+                 (when (string-equal "jsx" (file-name-extension buffer-file-name))
+                   (setup-tide-mode))))
      (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
      (add-hook 'web-mode-hook
                (lambda ()
@@ -1228,6 +1237,7 @@ I add a bunch of hooks to =term-mode=:
             (lambda ()
               (linum-mode 0)
               (goto-address-mode)
+              (setq comint-process-echoes t)
               (define-key term-raw-map (kbd "C-y") 'ajc/term-paste)
               (define-key term-raw-map (kbd "<mouse-2>") 'ajc/term-paste)
               (define-key term-raw-map (kbd "M-o") 'other-window)
@@ -1243,13 +1253,6 @@ I add a bunch of hooks to =term-mode=:
               (setq yas-dont-activate t)
               (setq global-hl-line-mode nil)
               (defun term-my-tab () (print "yo"))
-              (defun my-comint-tab ()
-                (interactive)
-                (let* ((proc (get-buffer-process (current-buffer)))
-                       (str (buffer-substring (process-mark proc) (point))))
-                  (print "asdf")
-                  (process-send-string proc (concat str "\t"))))
-              (define-key term-raw-map (kbd "TAB") 'my-comint-tab)
               ))
 #+END_SRC
 
@@ -1303,8 +1306,26 @@ so here I can switch from one to another
 * Publishing and task management with Org-mode
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org)
+  (use-package org
+    :ensure org-plus-contrib)
+
+  (add-to-list 'org-modules 'org-tempo)
+
+  (use-package ox-gfm
+    :config
+    (eval-after-load "org"
+      '(require 'ox-gfm nil t)))
+
+  (use-package ox-reveal
+    :ensure t)
 #+END_SRC
+
+Org languages for src blocks
+#+begin_src emacs-lisp
+  (use-package ob-go :ensure t)
+#+end_src
+
+#+RESULTS:
 
 ** Display preferences
 
@@ -2167,3 +2188,11 @@ Great for jupyter notebook things
 (use-package ein
   :ensure t)
 #+END_SRC
+
+
+#+begin_src emacs-lisp
+(defun insert-shell-command-output (command)
+  "Get shell COMMAND output and insert it at point in current
+buffer."
+  (insert (shell-command-to-string command)))
+#+end_src
