@@ -27,3 +27,6 @@ set -U LC_TELEPHONE "en_US.UTF-8"
 set -U LC_MEASUREMENT "en_US.UTF-8"
 set -U LC_IDENTIFICATION "en_US.UTF-8"
 set -U LC_ALL
+
+set -U FONTCONFIG_PATH /etc/fonts
+set -gx BROWSER firefox
