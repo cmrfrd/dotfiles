@@ -1,8 +1,10 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let user = builtins.getEnv "USER";
+    nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+      inherit pkgs;
+    };
 in rec {
-
 
   home.packages = [
     pkgs.nodejs
@@ -28,6 +30,17 @@ in rec {
       withGTK2 = false;
       withXwidgets = true;
     });
+  };
+
+  programs.firefox = {
+    enable = true;
+    extensions = with nur.repos.rycee.firefox-addons; [
+      https-everywhere
+      ghostery
+      react-devtools
+      refined-github
+      umatrix
+    ];
   };
 
   programs.fish = {
