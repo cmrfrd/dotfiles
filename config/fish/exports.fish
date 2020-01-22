@@ -1,4 +1,5 @@
 set -U fish_user_paths $HOME/bin /usr/local/bin $HOME/Public/scripts $HOME/.local/bin $HOME/.dotfiles/scripts $HOME/.nix-profile/bin/
+set -U fish_greeting
 set -U SHELL $HOME/.nix-profile/bin/fish
 set -U EDITOR 'emacs'
 set -U HISTSIZE '32768';
