@@ -1,6 +1,6 @@
 alias a="alsamixer"
 alias c="clear"
-alias e="set -l IN_EMACS 1; emacs -nw;"
+alias e="set -l IN_EMACS 1; emacs-26.3 -nw;"
 alias g='git'
 alias m="make"
 alias k="kubectl"
