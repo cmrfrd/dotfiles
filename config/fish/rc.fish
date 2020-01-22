@@ -6,7 +6,6 @@ end
 
 function dotreload
     source ~/.config/fish/exports.fish
-    source ~/.config/fish/theme.fish
     source ~/.config/fish/functions.fish
     source ~/.config/fish/aliases.fish
 end
