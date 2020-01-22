@@ -1,6 +1,6 @@
 .PHONY: all zsh update
 
-MY_USER = $(eval MY_USER := $(shell USER=$(USER)))$(USER)
+MY_USER = $(eval MY_USER := $(shell whoami))
 
 BUILD_PATH = $(eval BUILD_PATH :=			\
 		$(shell NIX_PATH=$(NIXPATH)				\
