@@ -20,6 +20,17 @@ function cleanlog
   sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g"
 end
 
+function not3
+    set s (echo $argv | head -c 1)
+    set m (echo $argv | cut -c2- | wc -c)
+    set e (echo $argv | tail -c 2)
+    echo $s$m$e
+end
+
+function stc
+    screen -t (not3 $argv) fish -c {$argv}; screen -X other
+end
+
 # # Start an HTTP server from a directory, optionally specifying the port
 # function server() {
 # 	local port="${1:-8000}";
