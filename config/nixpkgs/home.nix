@@ -23,6 +23,24 @@ in rec {
     pkgs.terminator
   ];
 
+  fonts.fonts.fontconfig.enable = true;
+
+  gtk = {
+    enable = true;
+    font = {
+      name = "Noto Sans 10";
+      package = pkgs.noto-fonts;
+    };
+    iconTheme = {
+      name = "Adwaita";
+      package = pkgs.gnome3.adwaita-icon-theme;
+    };
+    theme = {
+      name = "Adapta-Nokto-Eta";
+      package = pkgs.adapta-gtk-theme;
+    };
+  };
+
   programs.emacs = {
     enable = true;
     package = (pkgs.emacs.override {
