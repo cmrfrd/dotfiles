@@ -14,6 +14,8 @@
 #        \`_..--""--.;.--""--.._.\
 #
 
+
+
 This goal of this file `mainconfig.org` is to centralize
 most of my development environment configuration to a single
 easily searchable, modifyable, and portable format/place
@@ -342,22 +344,37 @@ frame is themed appropriately.
 
 ** Use =doom-modeline= for pretty modeline
 
-This modeline looks informative and pretty at the same time!
+   This modeline looks informative and pretty at the same time!
 
-#+BEGIN_SRC emacs-lisp
-  (use-package doom-modeline
-        :ensure t
-        :hook (after-init . doom-modeline-mode)
-        :config
-        (setq doom-modeline-icon (display-graphic-p))
-        (setq doom-modeline-buffer-file-name-style 'truncate-all)
-        (setq doom-modeline-buffer-state-icon t)
-        (setq doom-modeline-percentage-info nil)
-        (setq doom-modeline-indent-info t))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package doom-modeline
+           :ensure t
+           :hook (after-init . doom-modeline-mode)
+           :config
+           (setq doom-modeline-icon (display-graphic-p))
+           (set-face-attribute 'mode-line nil :height 75)
+           (set-face-attribute 'mode-line-inactive nil :height 75)
+           (setq doom-modeline-buffer-file-name-style 'truncate-all)
+           (setq doom-modeline-buffer-state-icon t)
+           (setq doom-modeline-percentage-info nil)
+           (setq doom-modeline-indent-info t)
+           (setq doom-modeline-major-modees-icon t)
+           (setq doom-modeline-major-mode-color-icon t)
+           (setq doom-modeline-minor-modes nil)
+           (setq doom-modeline-github nil)
+           (all-the-icons-install-fonts t))
+   #+END_SRC
 
-#+RESULTS:
-| global-company-mode | doom-modeline-mode |
+   #+RESULTS:
+   | global-company-mode | doom-modeline-mode | x-wm-set-size-hint | table--make-cell-map | emojify-download-emoji-maybe |
+
+** Emojis!
+
+   #+begin_src emacs-lisp
+     ; (use-package emojify)
+   #+end_src
+
+   #+RESULTS:
 
 ** Use =minions= to hide all minor modes
 
@@ -486,6 +503,7 @@ programming.
     (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
 #+END_SRC
 
+
 * Project management
 
 Here are a few emacs packages that are extremely useful including
@@ -560,7 +578,7 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
     ("C-x g" . magit-status)
 
     :config
-    (use-package evil-magit)
+    ;; (use-package evil-magit)
     (use-package with-editor)
     (setq magit-push-always-verify nil)
     (setq git-commit-summary-max-length 50)
@@ -572,6 +590,9 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
 
     (add-hook 'with-editor-mode-hook 'evil-insert-state))
 #+END_SRC
+
+#+RESULTS:
+: magit-status
 
 I've been playing around with the newly-released =forge= for managing GitHub PRs
 and issues. Seems slick so far.
@@ -1101,21 +1122,28 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
                (lambda ()
                  (when (string-equal "tsx" (file-name-extension buffer-file-name))
                    (setup-tide-mode))))
-     (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
-     (add-hook 'web-mode-hook
-               (lambda ()
-                 (when (string-equal "jsx" (file-name-extension buffer-file-name))
-                   (setup-tide-mode))))
-     (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
-     (add-hook 'web-mode-hook
-               (lambda ()
-                 (when (string-equal "js" (file-name-extension buffer-file-name))
-                   (setup-tide-mode))))
-     (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
      (add-hook 'web-mode-hook
                (lambda ()
                  (when (string-equal "ts" (file-name-extension buffer-file-name))
                    (setup-tide-mode))))
+     (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
+
+     (use-package rjsx-mode
+       :ensure t)
+     (add-to-list 'auto-mode-alist '("\\.jsx\\'" . rjsx-mode))
+     (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
+
+     ;; (add-hook 'web-mode-hook
+     ;;           (lambda ()
+     ;;             (when (string-equal "jsx" (file-name-extension buffer-file-name))
+     ;;               (setup-tide-mode))))
+
+     ;; (add-hook 'web-mode-hook
+     ;;           (lambda ()
+     ;;             (when (string-equal "js" (file-name-extension buffer-file-name))
+     ;;               (setup-tide-mode))))
+
+
      ;; enable typescript-tslint checker
      (flycheck-add-mode 'typescript-tslint 'web-mode)
    #+END_SRC
@@ -1182,7 +1210,6 @@ have. It would be nice to make them easily viewable
 
 * Terminal
 
-
 For a while I used =shell-pop= for shell sessions but I'm now transitioning
 to using =multi-term= to manage my shell sessions. It's bound to =C-c t=.
 
@@ -1226,13 +1253,19 @@ I add a bunch of hooks to =term-mode=:
 - I bind =M-o= to quickly change windows. I'd like that in terminals, too.
 - I don't want to perform =yasnippet= expansion when tab-completing.
 
-#+BEGIN_SRC emacs-lisp
+
+#+begin_src emacs-lisp
   (defun ajc/term-paste (&optional string)
     (interactive)
     (process-send-string
      (get-buffer-process (current-buffer))
      (if string string (current-kill 0))))
+#+end_src
 
+#+RESULTS:
+: ajc/term-paste
+
+#+BEGIN_SRC emacs-lisp
   (add-hook 'term-mode-hook
             (lambda ()
               (linum-mode 0)
@@ -1244,22 +1277,28 @@ I add a bunch of hooks to =term-mode=:
               (define-key term-raw-map (kbd "M-n") 'multi-term-next)
               (define-key term-raw-map (kbd "M-p") 'multi-term-prev)
               (defun term-send-Cr () (interactive) (term-send-raw-string "\C-r"))
-                                          ;(evil-local-set-key 'insert (kbd "C-r") 'term-send-Cr)
+              ;(evil-local-set-key 'insert (kbd "C-r") 'term-send-Cr)
               (define-key term-raw-map (kbd "C-r")      'term-send-Cr)
+              (defun term-send-tab () (interactive) (term-send-raw-string "\t") )
+              (define-key term-raw-map (kbd "TAB")      'term-send-tab)
+              (define-key term-raw-map (kbd "<tab>")      'term-send-tab)
+              (defun term-send-Cspc () (interactive) (term-send-raw-string (string 0)))
+              (define-key term-raw-map (kbd "M-SPC") 'term-send-Cspc)
+              (define-key term-raw-map (kbd "C-t") 'term-send-Cspc)
+              (setq indent-tabs-mode nil)
+              (setq tab-width 0)
               (defun term-send-Cright () (interactive) (term-send-raw-string "\e[1;5C"))
               (defun term-send-Cleft  () (interactive) (term-send-raw-string "\e[1;5D"))
               (define-key term-raw-map (kbd "C-<right>")      'term-send-Cright)
               (define-key term-raw-map (kbd "C-<left>")       'term-send-Cleft)
-              (setq yas-dont-activate t)
+              (yas-minor-mode -1)
               (setq global-hl-line-mode nil)
-              (defun term-my-tab () (print "yo"))
+              (setq bidi-paragraph-direction 'left-to-right)
               ))
 #+END_SRC
 
-
-
 #+RESULTS:
-| (lambda nil (linum-mode 0) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil) (defun term-my-tab nil (print yo)) (defun my-comint-tab nil (interactive) (let* ((proc (get-buffer-process (current-buffer))) (str (buffer-substring (process-mark proc) (point)))) (print asdf) (process-send-string proc (concat str 	)))) (define-key term-raw-map (kbd TAB) (quote my-comint-tab))) | multi-term-keystroke-setup | (lambda nil (linum-mode 0) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil) (defun term-my-tab nil (print yo)) (defun my-comint-tab nil (interactive) (let* ((proc (get-buffer-process (current-buffer))) (str (buffer-substring (process-mark proc) (point)))) (process-send-string proc (concat str 	)))) (define-key term-raw-map (kbd TAB) (quote my-comint-tab))) | (lambda nil (linum-mode 0) (goto-address-mode) (defun term-my-tab nil (print yo)) (define-key term-raw-map (kbd TAB) (quote term-my-tab)) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil)) | (lambda nil (linum-mode 0) (goto-address-mode) (defun term-my-tab nil (print yo)) (define-key term-raw-map (kbd <tab>) (quote term-my-tab)) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil)) | (lambda nil (linum-mode 0) (goto-address-mode) (defun term-my-tab nil (interactive) (print yo) (term-send-raw-string )) (define-key term-raw-map (kbd <tab>) (quote term-my-tab)) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil)) | (lambda nil (linum-mode 0) (goto-address-mode) (defun term-my-tab nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd <tab>) (quote term-my-tab)) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil)) | (lambda nil (linum-mode 0) (goto-address-mode) (defun term-my-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd <tab>) (quote term-my-tab)) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil)) | (lambda nil (linum-mode 0) (goto-address-mode) (define-key term-raw-map (kbd <tab>) (quote tab-to-tab-stop)) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil)) | (lambda nil (linum-mode 0) (goto-address-mode) (setq indent-tabs-mode nil) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil)) | (lambda nil (linum-mode 0) (goto-address-mode) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defalias (quote term-send-Cr) (function (lambda nil (interactive) (term-send-raw-string )))) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defalias (quote term-send-Cright) (function (lambda nil (interactive) (term-send-raw-string [1;5C)))) (defalias (quote term-send-Cleft) (function (lambda nil (interactive) (term-send-raw-string [1;5D)))) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (setq yas-dont-activate t) (setq global-hl-line-mode nil)) |
+| (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd M-SPC) (quote term-send-Cspc)) (define-key term-raw-map (kbd C-t) (quote term-send-Cspc)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | multi-term-keystroke-setup | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd <M-space>) (quote term-send-Cspc)) (define-key term-raw-map (kbd C-t) (quote term-send-Cspc)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd <C-space>) (quote term-send-Cspc)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd C-SPC) (quote term-send-Cspc)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (local-set-key (kbd C-SPC) (quote term-send-Cspc))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd C-SPC) (quote term-send-Cspc))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right)) (defun term-send-CSPC nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd C-SPC) (quote term-send-CSPC))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right)) (defun term-send-CSPC nil (interactive) (term-send-raw-string (string 0))) (define-key term-mode-map (kbd C-SPC) (quote term-send-CSPC))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right)) (define-key term-mode-map (kbd C-SPC) (lambda nil (interactive) (term-send-raw-string (string 0))))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (define-key term-mode-map (kbd C-SPC) (lambda nil (interactive) (term-send-raw-string (string 0)))) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (define-key term-mode-map (kbd C-<SPC>) (quote term-send-raw)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (define-key term-mode-map (kbd C-<SPC>) (lambda nil (interactive) (term-send-raw-string (string 0)))) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (define-key term-raw-map (kbd C-<SPC>) nil) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defalias (quote term-send-Cr) (function (lambda nil (interactive) (term-send-raw-string )))) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defalias (quote term-send-tab) (function (lambda nil (interactive) (term-send-raw-string 	)))) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defalias (quote term-send-Cright) (function (lambda nil (interactive) (term-send-raw-string [1;5C)))) (defalias (quote term-send-Cleft) (function (lambda nil (interactive) (term-send-raw-string [1;5D)))) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) |
 
 I have this really cool function so I can send regions to a terminal. Really
 andy when you want to execute selections without copying and pasting
@@ -1872,6 +1911,19 @@ Sometimes its super handy to move individual lines up and down
 #+RESULTS:
 : move-text-down
 
+** Synonyms
+
+   #+begin_src emacs-lisp
+     (use-package synosaurus
+       :diminish synosaurus-mode
+       :init    (synosaurus-mode)
+       :config  (setq synosaurus-choose-method 'popup) ;; 'ido is default.
+       (global-set-key (kbd "M-#") 'synosaurus-choose-and-replace)
+       )
+   #+end_src
+
+   #+RESULTS:
+   : t
 
 ** Install and configure =which-key=
 
@@ -2182,12 +2234,16 @@ buffers for any what reason
   :ensure t)
 #+END_SRC
 
+#+RESULTS:
+
 Great for jupyter notebook things
 
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t)
 #+END_SRC
+
+#+RESULTS:
 
 
 #+begin_src emacs-lisp
@@ -2196,3 +2252,6 @@ Great for jupyter notebook things
 buffer."
   (insert (shell-command-to-string command)))
 #+end_src
+
+#+RESULTS:
+: insert-shell-command-output
