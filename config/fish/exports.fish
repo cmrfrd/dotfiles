@@ -14,6 +14,7 @@ set -U LOG_DIR $HOME/.logs/(date +"%Y%m%d%H")
 set -U LOG_FILE $LOG_DIR/$TERM-$STY-$WINDOW.log
 set -U MINIKUBE_HOME /mnt/vm-storage/
 set -U NIX_PATH $HOME/.nix-defexpr/channels $NIX_PATH
+set -U GIT_EDITOR emacs
 
 set -U LANG en_US.UTF-8
 set -U LC_CTYPE "en_US.UTF-8"
