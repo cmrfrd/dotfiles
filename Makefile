@@ -38,8 +38,8 @@ nix-update:
 		&& home-manager build"
 
 nix-update-shell:
-	sudo bash -c "echo '$$HOME/.nix-profile/bin/zsh' >> /etc/shells"
-	chsh -s $$HOME/.nix-profile/bin/zsh
+	sudo bash -c "echo '$$HOME/.nix-profile/bin/fish' >> /etc/shells"
+	chsh -s /home/$(MY_USER)/.nix-profile/bin/fish
 
 nix: nix-setup nix-install nix-update nix-update-shell
 
