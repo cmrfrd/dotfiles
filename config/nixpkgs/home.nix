@@ -21,9 +21,10 @@ in rec {
     pkgs.curl
     pkgs.feh
     pkgs.terminator
+    pkgs.wordnet
+    pkgs.glib-networking
+    pkgs.plantuml
   ];
-
-  fonts.fonts.fontconfig.enable = true;
 
   gtk = {
     enable = true;
@@ -44,10 +45,15 @@ in rec {
   programs.emacs = {
     enable = true;
     package = (pkgs.emacs.override {
+      withX = true;
       withGTK3 = true;
       withGTK2 = false;
       withXwidgets = true;
     });
+  };
+
+  services.emacs = {
+    enable = true;
   };
 
   programs.firefox = {
