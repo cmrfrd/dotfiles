@@ -12,8 +12,8 @@ end
 dotreload
 
 ## Make log directory
-mkdir -p $LOG_DIR
-touch $LOG_FILE
+# mkdir -p $LOG_DIR
+# touch $LOG_FILE
 
 set LANG en_US.utf8
 set LC_ALL
