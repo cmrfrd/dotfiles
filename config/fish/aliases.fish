@@ -1,6 +1,7 @@
 alias a="alsamixer"
 alias c="clear"
-alias e="set -l IN_EMACS 1; emacs-26.3 -nw;"
+alias e="set -l IN_EMACS 1; emacs-26.3;"
+alias ec="set -l IN_EMACS 1; emacsclient -c -a emacs-26.3;"
 alias g='git'
 alias m="make"
 alias k="kubectl"
@@ -51,7 +52,6 @@ alias gcb='git checkout -b'
 alias gcf='git config --list'
 alias gcl='git clone --recurse-submodules'
 alias gclean='git clean -id'
-alias gpristine='git reset --hard && git clean -dfx'
 alias gcm='git checkout master'
 alias gcd='git checkout develop'
 alias gcmsg='git commit -m'
