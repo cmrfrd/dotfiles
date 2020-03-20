@@ -120,14 +120,6 @@ Evil mode is frustrating at first but allows the
 emacs programmer to be much more fluid in development
 taking the best of these two disparate worlds.
 
-#+BEGIN_SRC emacs-lisp
-  (setq evil-want-abbrev-expand-on-insert-exit nil)
-  (setq evil-toggle-key "C-q C-z")
-#+END_SRC
-
-#+RESULTS:
-: C-q C-z
-
 Use =evil=.
 
 #+BEGIN_SRC emacs-lisp
@@ -139,6 +131,14 @@ Use =evil=.
 
 #+RESULTS:
 : t
+
+#+BEGIN_SRC emacs-lisp
+  (setq evil-want-abbrev-expand-on-insert-exit nil)
+  (setq evil-toggle-key "C-q C-z")
+#+END_SRC
+
+#+RESULTS:
+: C-q C-z
 
 Enable =surround= everywhere.
 
@@ -177,6 +177,16 @@ Define a big ol' bunch of handy utility functions.
             (find-file new-name)
             (message "Renamed '%s' -> '%s'" filename new-name))
         (message "Buffer '%s' isn't backed by a file!" (buffer-name)))))
+
+  (defmacro safe-wrap (fn &rest clean-up)
+    `(unwind-protect
+      (let (retval)
+        (condition-case ex
+          (setq retval (progn ,fn))
+          ('error
+           (setq retval (cons 'exception (list ex)))))
+        retval)
+      ,@clean-up))
 
   (defun ajc/generate-scratch-buffer ()
     "Create and switch to a temporary scratch buffer with a random
@@ -219,6 +229,9 @@ Define a big ol' bunch of handy utility functions.
     (setenv "PATH" (concat (getenv "PATH") ":" path))
     (add-to-list 'exec-path path))
 #+END_SRC
+
+#+RESULTS:
+: ajc/append-to-path
 
 * UI
 
@@ -263,17 +276,21 @@ project:
 ** Make tabs
 
 #+BEGIN_SRC emacs-lisp
-      (use-package elscreen
-        :config
-        (custom-set-variables '(elscreen-tab-display-kill-screen nil) ; hide kill button
-                              '(elscreen-display-tab t))
-        (custom-set-faces '(elscreen-tab-current-screen-face ((t (:inherit default :weight bold)))))
-        (elscreen-start)
-        )
+    (use-package elscreen
+      :ensure t
+      :init
+      (setq elscreen-prefix-key "\C-q")
+      (elscreen-start)
+      )
+    (use-package elscreen-tab
+      :ensure t
+      :init
+      (elscreen-tab-mode)
+      (elscreen-tab-set-position 'top)
+      )
 #+END_SRC
 
 #+RESULTS:
-: t
 
 ** Use fancy lambdas
 
@@ -293,24 +310,6 @@ I pretty much don't care about wallpapers or transparency but i'll enable a bit 
 Themes are a nice switch of pace from the numdane black and white
 
 #+BEGIN_SRC emacs-lisp
-  (use-package solarized-theme
-    :config
-    (load-theme 'tsdh-dark t)
-
-    (setq solarized-use-variable-pitch nil
-          solarized-height-plus-1 1.0
-          solarized-height-plus-2 1.0
-          solarized-height-plus-3 1.0
-          solarized-height-plus-4 1.0)
-
-    (let ((line (face-attribute 'mode-line :underline)))
-      (set-face-attribute 'mode-line          nil :overline   line)
-      (set-face-attribute 'mode-line-inactive nil :overline   line)
-      (set-face-attribute 'mode-line-inactive nil :underline  line)
-      (set-face-attribute 'mode-line          nil :box        nil)
-      (set-face-attribute 'mode-line-inactive nil :box        nil)
-      (set-face-attribute 'mode-line-inactive nil :background "#f9f2d9")))
-
   (use-package kaolin-themes
     :ensure t)
   (use-package doom-themes
@@ -324,7 +323,6 @@ Themes are a nice switch of pace from the numdane black and white
   (defun ajc/apply-theme ()
     "Apply the `tsdh-dark' theme and make frames just slightly transparent."
     (interactive)
-    (load-theme 'tsdh-dark t)
     (transparency 10))
 #+END_SRC
 
@@ -352,8 +350,6 @@ frame is themed appropriately.
            :hook (after-init . doom-modeline-mode)
            :config
            (setq doom-modeline-icon (display-graphic-p))
-           (set-face-attribute 'mode-line nil :height 75)
-           (set-face-attribute 'mode-line-inactive nil :height 75)
            (setq doom-modeline-buffer-file-name-style 'truncate-all)
            (setq doom-modeline-buffer-state-icon t)
            (setq doom-modeline-percentage-info nil)
@@ -362,11 +358,40 @@ frame is themed appropriately.
            (setq doom-modeline-major-mode-color-icon t)
            (setq doom-modeline-minor-modes nil)
            (setq doom-modeline-github nil)
-           (all-the-icons-install-fonts t))
+           (set-face-attribute 'mode-line nil :height 80)
+           (set-face-attribute 'mode-line-inactive nil :height 80)
+           (safe-wrap (all-the-icons-install-fonts t) (message "no update icons")))
    #+END_SRC
 
    #+RESULTS:
-   | global-company-mode | doom-modeline-mode | x-wm-set-size-hint | table--make-cell-map | emojify-download-emoji-maybe |
+   | global-company-mode | #[0 \302\300\301"\207 [custom-safe-themes (2cdc13ef8c76a22daa0f46370011f54e79bae00d5736340a5ddfe656a767fddf) customize-push-and-save] 3] | doom-modeline-mode | x-wm-set-size-hint | table--make-cell-map | emojify-download-emoji-maybe |
+
+   Also don't forget about doom themes!!!
+
+   #+begin_src emacs-lisp
+      (use-package doom-themes
+        :config
+        ;; Global settings (defaults)
+        (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+              doom-themes-enable-italic t) ; if nil, italics is universally disabled
+        (load-theme 'doom-one t)
+
+        ;; Enable flashing mode-line on errors
+        (doom-themes-visual-bell-config)
+
+        ;; Enable custom neotree theme (all-the-icons must be installed!)
+        ;; (doom-themes-neotree-config)
+        ;; or for treemacs users
+        ;; (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+        ;; (doom-themes-treemacs-config)
+
+        ;; Corrects (and improves) org-mode's native fontification.
+        (doom-themes-org-config)
+        (load-theme 'doom-opera t))
+   #+end_src
+
+   #+RESULTS:
+   : t
 
 ** Emojis!
 
@@ -453,17 +478,12 @@ Note that this overrides the default font-related keybindings from
   (defun ajc/increase-font-size ()
     "Increase current font size by a factor of `ajc/font-change-increment'."
     (interactive)
-    (setq ajc/current-font-size
-          (ceiling (* ajc/current-font-size ajc/font-change-increment)))
-    (ajc/set-font-size))
+    (text-scale-increase 1))
 
   (defun ajc/decrease-font-size ()
     "Decrease current font size by a factor of `ajc/font-change-increment', down to a minimum size of 1."
     (interactive)
-    (setq ajc/current-font-size
-          (max 1
-               (floor (/ ajc/current-font-size ajc/font-change-increment))))
-    (ajc/set-font-size))
+    (text-scale-decrease 1))
 
   (define-key global-map (kbd "C-)") 'ajc/reset-font-size)
   (define-key global-map (kbd "C-+") 'ajc/increase-font-size)
@@ -473,6 +493,8 @@ Note that this overrides the default font-related keybindings from
 
   (ajc/reset-font-size)
 #+END_SRC
+
+#+RESULTS:
 
 ** Highlight the current line and cursor
 
@@ -502,7 +524,6 @@ programming.
     (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
     (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
 #+END_SRC
-
 
 * Project management
 
@@ -627,9 +648,9 @@ project root (if I'm not in a "real" project).
     ("C-c v" . 'projectile-ag)
 
     :config
-    (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
-    (evil-define-key 'motion ag-mode-map (kbd "C-p") 'projectile-find-file)
-    (evil-define-key 'motion rspec-mode-map (kbd "C-p") 'projectile-find-file)
+    ;; (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
+    ;; (evil-define-key 'motion ag-mode-map (kbd "C-p") 'projectile-find-file)
+    ;; (evil-define-key 'motion rspec-mode-map (kbd "C-p") 'projectile-find-file)
 
     (projectile-mode +1)
 
@@ -774,6 +795,9 @@ Pretty handy when dealing with a large code base
     (global-set-key [f8] 'neotree-toggle))
 #+END_SRC
 
+#+RESULTS:
+: t
+
 * Programming environments
 
 I like shallow indentation, but tabs are displayed as 8 characters by default.
@@ -782,6 +806,8 @@ This reduces that.
 #+BEGIN_SRC emacs-lisp
   (setq-default tab-width 2)
 #+END_SRC
+
+Auto closing parenthesis and brackets is really sweet and extra mental offloading
 
 Treating terms in CamelCase symbols as separate words makes editing a little
 easier for me, so I like to use =subword-mode= everywhere.
@@ -980,8 +1006,8 @@ Enable =elpy=. This provides automatic indentation, auto-completion, syntax
 checking, etc.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package elpy)
-  (elpy-enable)
+  ;;(use-package elpy)
+  ;;(elpy-enable)
 #+END_SRC
 
 Use =flycheck= for syntax checking:
@@ -1004,7 +1030,7 @@ Configure Jedi along with the associated =company= mode:
   (use-package company-jedi)
   (add-to-list 'company-backends 'company-jedi)
 
-  (add-hook 'python-mode-hook 'jedi:setup)
+  ;(add-hook 'python-mode-hook 'jedi:setup)
   (setq jedi:complete-on-dot t)
 #+END_SRC
 
@@ -1048,8 +1074,8 @@ Don't show the startup message with launching ENSIME:
 Bind a few keys to common operations:
 
 #+BEGIN_SRC emacs-lisp
-  (evil-define-key 'normal ensime-mode-map (kbd "C-t") 'ensime-type-at-point)
-  (evil-define-key 'normal ensime-mode-map (kbd "M-.") 'ensime-edit-definition)
+  ;; (evil-define-key 'normal ensime-mode-map (kbd "C-t") 'ensime-type-at-point)
+  ;; (evil-define-key 'normal ensime-mode-map (kbd "M-.") 'ensime-edit-definition)
 #+END_SRC
 
 ** =web-mode=
@@ -1128,20 +1154,20 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
                    (setup-tide-mode))))
      (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
 
-     (use-package rjsx-mode
-       :ensure t)
-     (add-to-list 'auto-mode-alist '("\\.jsx\\'" . rjsx-mode))
-     (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
+     ;; (use-package rjsx-mode
+     ;;   :ensure t)
+     ;; (add-to-list 'auto-mode-alist '("\\.jsx\\'" . rjsx-mode))
+     ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
 
-     ;; (add-hook 'web-mode-hook
-     ;;           (lambda ()
-     ;;             (when (string-equal "jsx" (file-name-extension buffer-file-name))
-     ;;               (setup-tide-mode))))
+     (add-hook 'web-mode-hook
+               (lambda ()
+                 (when (string-equal "jsx" (file-name-extension buffer-file-name))
+                   (setup-tide-mode))))
 
-     ;; (add-hook 'web-mode-hook
-     ;;           (lambda ()
-     ;;             (when (string-equal "js" (file-name-extension buffer-file-name))
-     ;;               (setup-tide-mode))))
+     (add-hook 'web-mode-hook
+               (lambda ()
+                 (when (string-equal "js" (file-name-extension buffer-file-name))
+                   (setup-tide-mode))))
 
 
      ;; enable typescript-tslint checker
@@ -1149,7 +1175,7 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
    #+END_SRC
 
    #+RESULTS:
-   | web-mode | web-mode | typescript-mode |
+   | web-mode | web-mode | web-mode | web-mode | web-mode | web-mode | web-mode | typescript-mode |
 
 ** YAML
 
@@ -1207,6 +1233,138 @@ have. It would be nice to make them easily viewable
    #+END_SRC
 
    #+RESULTS:
+** LSP
+
+   LSP sounds really cool [[https://langserver.org/]]
+
+   Sounds like a really useful tool for any modern IDE
+
+   #+begin_src emacs-lisp
+     (use-package lsp-mode
+       :ensure t
+       :config
+       (setq read-process-output-max (* 1024 1024))
+       (setq lsp-auto-guess-root t        ; Detect project root
+           lsp-keep-workspace-alive nil ; Auto-kill LSP server
+           lsp-enable-indentation nil
+           lsp-enable-on-type-formatting nil
+           lsp-keymap-prefix "C-c l")
+       )
+   #+end_src
+
+   #+RESULTS:
+   : t
+
+   Now to install the "UI"
+
+   #+begin_src emacs-lisp
+     (use-package lsp-ui
+          :custom-face
+          (lsp-ui-sideline-code-action ((t (:inherit warning))))
+          :bind (("C-c u" . lsp-ui-imenu))
+          :hook (lsp-mode . lsp-ui-mode)
+          :init (setq lsp-ui-doc-enable t
+                      lsp-ui-doc-use-webkit nil
+                      lsp-ui-doc-delay 0.2
+                      lsp-ui-doc-include-signature t
+                      lsp-ui-doc-position 'at-point
+                      lsp-ui-doc-border (face-foreground 'default)
+                      lsp-eldoc-enable-hover nil ; Disable eldoc displays in minibuffer
+
+                      lsp-ui-sideline-enable t
+                      lsp-ui-sideline-show-hover nil
+                      lsp-ui-sideline-show-diagnostics nil
+                      lsp-ui-sideline-ignore-duplicate t
+
+                      lsp-ui-imenu-enable t
+                      lsp-ui-imenu-colors `(,(face-foreground 'font-lock-keyword-face)
+                                            ,(face-foreground 'font-lock-string-face)
+                                            ,(face-foreground 'font-lock-constant-face)
+                                            ,(face-foreground 'font-lock-variable-name-face)))
+          :config
+          (add-to-list 'lsp-ui-doc-frame-parameters '(right-fringe . 8))
+
+          ;; `C-g'to close doc
+          (advice-add #'keyboard-quit :before #'lsp-ui-doc-hide)
+
+          ;; Reset `lsp-ui-doc-background' after loading theme
+          (add-hook 'after-load-theme-hook
+                    (lambda ()
+                      (setq lsp-ui-doc-border (face-foreground 'default))
+                      (set-face-background 'lsp-ui-doc-background
+                                           (face-background 'tooltip))))
+
+          ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
+          ;; @see https://github.com/emacs-lsp/lsp-ui/issues/243
+          (defun my-lsp-ui-imenu-hide-mode-line ()
+            "Hide the mode-line in lsp-ui-imenu."
+            (setq mode-line-format nil))
+          (advice-add #'lsp-ui-imenu :after #'my-lsp-ui-imenu-hide-mode-line))
+   #+end_src
+
+   #+RESULTS:
+   : lsp-ui-imenu
+
+   Now completion for company
+
+   #+begin_src emacs-lisp
+     (use-package company-lsp
+          :init (setq company-lsp-cache-candidates 'auto)
+          :config
+          (with-no-warnings
+            ;; WORKAROUND: Fix tons of unrelated completion candidates shown
+            ;; when a candidate is fulfilled
+            ;; @see https://github.com/emacs-lsp/lsp-python-ms/issues/79
+            (add-to-list 'company-lsp-filter-candidates '(mspyls))
+
+            (defun my-company-lsp--on-completion (response prefix)
+              "Handle completion RESPONSE.
+     PREFIX is a string of the prefix when the completion is requested.
+     Return a list of strings as the completion candidates."
+              (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
+                     (items (cond ((hash-table-p response) (gethash "items" response))
+                                  ((sequencep response) response)))
+                     (candidates (mapcar (lambda (item)
+                                           (company-lsp--make-candidate item prefix))
+                                         (lsp--sort-completions items)))
+                     (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
+                     (should-filter (or (eq company-lsp-cache-candidates 'auto)
+                                        (and (null company-lsp-cache-candidates)
+                                             (company-lsp--get-config company-lsp-filter-candidates server-id)))))
+                (when (null company-lsp--completion-cache)
+                  (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
+                  (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
+                (when (eq company-lsp-cache-candidates 'auto)
+                  ;; Only cache candidates on auto mode. If it's t company caches the
+                  ;; candidates for us.
+                  (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
+                (if should-filter
+                    (company-lsp--filter-candidates candidates prefix)
+                  candidates)))
+            (advice-add #'company-lsp--on-completion :override #'my-company-lsp--on-completion)))
+   #+end_src
+
+   #+RESULTS:
+   : t
+
+   I am a helm user so HELM ALL THE WAY!
+
+
+   #+begin_src emacs-lisp
+     (use-package helm-lsp
+       :commands helm-lsp-workspace-symbol)
+   #+end_src
+
+   #+RESULTS:
+
+   python lsp test
+   #+begin_src emacs-lisp
+     (use-package lsp-python-ms
+       :hook (python-mode . (lambda () (require 'lsp-python-ms))))
+   #+end_src
+
+   #+RESULTS:
+   | (lambda nil (require (quote lsp-python-ms))) | doom-modeline-env-setup-python | jedi:setup | elpy-mode | #[0  |
 
 * Terminal
 
@@ -1215,15 +1373,19 @@ to using =multi-term= to manage my shell sessions. It's bound to =C-c t=.
 
 #+BEGIN_SRC emacs-lisp
   (use-package multi-term)
-  (global-set-key (kbd "C-c t") 'multi-term)
-  (setq multi-term-dedicated-select-after-open-p t)
+  (use-package vterm
+    :ensure t)
+  (load-file "~/.emacs.d/resources/multi-libvterm.el")
+
+  (global-set-key (kbd "C-c t") 'multi-libvterm)
 
   ; if nix is installed use fish as shell
   (if (file-directory-p "~/.nix-profile/")
-      (setq multi-term-program "~/.nix-profile/bin/fish"))
+      (setq multi-libvterm-program "~/.nix-profile/bin/fish"))
 #+END_SRC
 
 #+RESULTS:
+: ~/.nix-profile/bin/fish
 
 Use a login shell:
 
@@ -1264,6 +1426,29 @@ I add a bunch of hooks to =term-mode=:
 
 #+RESULTS:
 : ajc/term-paste
+
+#+begin_src emacs-lisp
+  (add-hook 'vterm-mode-hook
+    (lambda ()
+      (define-key vterm-mode-map (kbd "M-n") 'multi-libvterm-next)
+      (define-key vterm-mode-map (kbd "M-p") 'multi-libvterm-prev)
+      (defun vterm-send-Cright ()
+        (interactive)
+        (vterm-send-key "<right>" nil nil t))
+      (defun vterm-send-Cleft  ()
+        (interactive)
+        (vterm-send-key "<left>" nil nil t))
+      (define-key vterm-mode-map (kbd "C-<right>")      'vterm-send-Cright)
+      (define-key vterm-mode-map (kbd "C-<left>")       'vterm-send-Cleft)
+      (define-key vterm-mode-map (kbd "C-y") 'ajc/term-paste)
+      (define-key vterm-mode-map (kbd "C-q") nil)))
+#+end_src
+
+#+RESULTS:
+| lambda | nil | (defun vterm-send-Cright nil (interactive) (vterm-send-key <right> nil nil t))                                     | (defun vterm-send-Cleft nil (interactive) (vterm-send-key <left> nil nil t))                                 | (define-key vterm-mode-map (kbd C-<right>) (quote vterm-send-Cright)) | (define-key vterm-mode-map (kbd C-<left>) (quote vterm-send-Cleft)) | (define-key vterm-mode-map (kbd C-y) (quote ajc/term-paste)) | (define-key vterm-mode-map (kbd C-q) nil) |
+| lambda | nil | (defun term-send-Cright nil (interactive) (vterm-copy-mode) (term-send-raw-string [1;5C) (vterm-copy-mode-done)) | (defun term-send-Cleft nil (vterm-copy-mode) (term-send-raw-string [1;5D) (vterm-copy-mode))               | (define-key vterm-mode-map (kbd C-<right>) (quote term-send-Cright))  | (define-key vterm-mode-map (kbd C-<left>) (quote term-send-Cleft))  | (define-key vterm-mode-map (kbd C-y) (quote ajc/term-paste)) | (define-key vterm-mode-map (kbd C-q) nil) |
+| lambda | nil | (defun term-send-Cright nil (interactive) (vterm-copy-mode) (term-send-raw-string [1;5C) (vterm-copy-mode))      | (defun term-send-Cleft nil (interactive) (vterm-copy-mode) (term-send-raw-string [1;5D) (vterm-copy-mode)) | (define-key vterm-mode-map (kbd C-<right>) (quote term-send-Cright))  | (define-key vterm-mode-map (kbd C-<left>) (quote term-send-Cleft))  | (define-key vterm-mode-map (kbd C-y) (quote ajc/term-paste)) | (define-key vterm-mode-map (kbd C-q) nil) |
+| lambda | nil | (define-key term-raw-map (kbd C-y) (quote ajc/term-paste))                                                         | (define-key vterm-mode-map (kbd C-q) nil)                                                                    |                                                                       |                                                                     |                                                              |                                           |
 
 #+BEGIN_SRC emacs-lisp
   (add-hook 'term-mode-hook
@@ -1350,6 +1535,10 @@ so here I can switch from one to another
 
   (add-to-list 'org-modules 'org-tempo)
 
+  (add-hook 'org-mode-hook
+          (lambda ()
+            (require 'org-tempo)))
+
   (use-package ox-gfm
     :config
     (eval-after-load "org"
@@ -1358,6 +1547,8 @@ so here I can switch from one to another
   (use-package ox-reveal
     :ensure t)
 #+END_SRC
+
+#+RESULTS:
 
 Org languages for src blocks
 #+begin_src emacs-lisp
@@ -1739,8 +1930,8 @@ files. We're using:
 Use "j" and "k" to move around in =dired=.
 
 #+BEGIN_SRC emacs-lisp
-  (evil-define-key 'normal dired-mode-map (kbd "j") 'dired-next-line)
-  (evil-define-key 'normal dired-mode-map (kbd "k") 'dired-previous-line)
+  ;; (evil-define-key 'normal dired-mode-map (kbd "j") 'dired-next-line)
+  ;; (evil-define-key 'normal dired-mode-map (kbd "k") 'dired-previous-line)
 #+END_SRC
 
 Kill buffers of files/directories that are deleted in =dired=.
@@ -1839,7 +2030,7 @@ buffers.
   (global-set-key (kbd "C-h f") #'helpful-callable)
   (global-set-key (kbd "C-h v") #'helpful-variable)
   (global-set-key (kbd "C-h k") #'helpful-key)
-  (evil-define-key 'normal helpful-mode-map (kbd "q") 'quit-window)
+  ;; (evil-define-key 'normal helpful-mode-map (kbd "q") 'quit-window)
 #+END_SRC
 
 ** Look for executables in =/usr/local/bin=
@@ -1999,19 +2190,20 @@ makes that automatic.
     "Split the window horizontally, then switch to the new pane."
     (interactive)
     (split-window-below)
-    (balance-windows)
     (other-window 1))
 
   (defun ajc/split-window-right-and-switch ()
     "Split the window vertically, then switch to the new pane."
     (interactive)
     (split-window-right)
-    (balance-windows)
     (other-window 1))
 
   (global-set-key (kbd "C-x 2") 'ajc/split-window-below-and-switch)
   (global-set-key (kbd "C-x 3") 'ajc/split-window-right-and-switch)
 #+END_SRC
+
+#+RESULTS:
+: ajc/split-window-right-and-switch
 
 ** Mass editing of =grep= results
 
@@ -2077,6 +2269,29 @@ Enable [[https://github.com/ajc/engine-mode][engine-mode]] and define a few usef
 
   (engine-mode t)
 #+END_SRC
+
+** Multiple cursors
+
+   Having multiple cursors for editing selections is awesome! Agnostic of any
+   programming language
+
+   #+begin_src emacs-lisp
+     (use-package mark-multiple
+       :ensure t
+       :bind ("C-c q" . 'mark-next-like-this))
+   #+end_src
+
+   #+RESULTS:
+   : mark-next-like-this
+
+** Edit as sudo
+
+   #+begin_src emacs-lisp
+     (use-package sudo-edit
+       :ensure t
+       :bind
+         ("s-e" . sudo-edit))
+   #+end_src
 
 * Helm
 
