@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+col=$1
+shift
+awk -v col="$col" '{print $col}' "${@--}"
