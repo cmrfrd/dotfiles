@@ -59,6 +59,52 @@ Always compile packages, and use the newest version available.
 #+RESULTS:
 : t
 
+* Setup =straight= package manager
+
+  #+begin_src emacs-lisp
+    (defvar bootstrap-version)
+    (let ((bootstrap-file
+           (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+          (bootstrap-version 5))
+      (unless (file-exists-p bootstrap-file)
+        (with-current-buffer
+            (url-retrieve-synchronously
+             "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+             'silent 'inhibit-cookies)
+          (goto-char (point-max))
+          (eval-print-last-sexp)))
+      (load bootstrap-file nil 'nomessage))
+  #+end_src
+
+  #+RESULTS:
+  : t
+
+  #+begin_src emacs-lisp
+    (straight-use-package 'enwc)
+    (setq enwc-default-backend 'nm)
+  #+end_src
+
+  #+RESULTS:
+  : nm
+
+  #+begin_src emacs-lisp
+    (defun nm-connect-to-wifi-network ()
+      (interactive)
+      (shell-command
+       (concat "nmcli device wifi connect "
+         (completing-read "Select network: "
+              (progn
+                (setq enwc-scan-interactive t)
+                (map 'list
+               (lambda (net) (enwc-value-from-scan 'essid net))
+               (enwc-get-networks))))
+         " password "
+         (read-passwd "Enter password: "))))
+  #+end_src
+
+  #+RESULTS:
+  : nm-connect-to-wifi-network
+
 * Use sensible-defaults.el
 
 [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] is a fantastic setup script allowing users
@@ -114,6 +160,9 @@ Just write elisp to resources to have it auto eval'd
   (add-to-list 'load-path "~/.emacs.d/resources/")
 #+END_SRC
 
+#+RESULTS:
+| ~/.emacs.d/resources/ | /home/thehumpo/.emacs.d/straight/build/enwc | /home/thehumpo/.emacs.d/straight/build/straight | /home/thehumpo/.emacs.d/elpa/ag-20190726.9 | /home/thehumpo/.emacs.d/elpa/auto-compile-20191020.1040 | /home/thehumpo/.emacs.d/elpa/auto-complete-20170125.245 | /home/thehumpo/.emacs.d/elpa/buffer-move-20160615.1803 | /home/thehumpo/.emacs.d/elpa/centaur-tabs-20200325.1236 | /home/thehumpo/.emacs.d/elpa/coffee-mode-20200315.1133 | /home/thehumpo/.emacs.d/elpa/company-anaconda-20200404.1859 | /home/thehumpo/.emacs.d/elpa/anaconda-mode-20200129.1718 | /home/thehumpo/.emacs.d/elpa/company-go-20190203.19 | /home/thehumpo/.emacs.d/elpa/company-jedi-20200324.25 | /home/thehumpo/.emacs.d/elpa/company-lsp-20190612.1553 | /home/thehumpo/.emacs.d/elpa/default-text-scale-20191226.2234 | /home/thehumpo/.emacs.d/elpa/diff-hl-20200406.37 | /home/thehumpo/.emacs.d/elpa/dired-hide-dotfiles-20170314.2039 | /home/thehumpo/.emacs.d/elpa/dired-open-20180922.1113 | /home/thehumpo/.emacs.d/elpa/dired-sidebar-20200409.801 | /home/thehumpo/.emacs.d/elpa/dired-subtree-20180922.1615 | /home/thehumpo/.emacs.d/elpa/dired-hacks-utils-20190522.950 | /home/thehumpo/.emacs.d/elpa/dired-toggle-20190616.303 | /home/thehumpo/.emacs.d/elpa/dmenu-20190908.44 | /home/thehumpo/.emacs.d/elpa/docker-20200420.1156 | /home/thehumpo/.emacs.d/elpa/docker-compose-mode-20180324.1752 | /home/thehumpo/.emacs.d/elpa/docker-tramp-20170207.325 | /home/thehumpo/.emacs.d/elpa/dockerfile-mode-20200106.2126 | /home/thehumpo/.emacs.d/elpa/doom-modeline-20200418.724 | /home/thehumpo/.emacs.d/elpa/all-the-icons-20200411.520 | /home/thehumpo/.emacs.d/elpa/doom-themes-20200331.1901 | /home/thehumpo/.emacs.d/elpa/dumb-jump-20200406.1956 | /home/thehumpo/.emacs.d/elpa/ein-20200415.238 | /home/thehumpo/.emacs.d/elpa/elpy-20200329.1830 | /home/thehumpo/.emacs.d/elpa/company-20200324.2145 | /home/thehumpo/.emacs.d/elpa/elscreen-fr-20160920.953 | /home/thehumpo/.emacs.d/elpa/elscreen-tab-20190203.1619 | /home/thehumpo/.emacs.d/elpa/emojify-20200309.553 | /home/thehumpo/.emacs.d/elpa/engine-mode-20191105.750 | /home/thehumpo/.emacs.d/elpa/evil-magit-20200409.1909 | /home/thehumpo/.emacs.d/elpa/evil-org-20200101.2017 | /home/thehumpo/.emacs.d/elpa/evil-surround-20191217.1131 | /home/thehumpo/.emacs.d/elpa/evil-20200417.1238 | /home/thehumpo/.emacs.d/elpa/exwm-x-20190224.1152 | /home/thehumpo/.emacs.d/elpa/counsel-20200319.1329 | /home/thehumpo/.emacs.d/elpa/eyebrowse-20190928.1458 | /home/thehumpo/.emacs.d/elpa/fish-mode-20200213.2137 | /home/thehumpo/.emacs.d/elpa/flx-20191115.659 | /home/thehumpo/.emacs.d/elpa/flycheck-package-20200304.2151 | /home/thehumpo/.emacs.d/elpa/ghub-20200309.936 | /home/thehumpo/.emacs.d/elpa/gnuplot-20200322.53 | /home/thehumpo/.emacs.d/elpa/go-errcheck-20160723.43 | /home/thehumpo/.emacs.d/elpa/go-mode-20200412.1909 | /home/thehumpo/.emacs.d/elpa/goto-chg-20190110.2114 | /home/thehumpo/.emacs.d/elpa/graphviz-dot-mode-20200304.432 | /home/thehumpo/.emacs.d/elpa/haskell-mode-20200408.247 | /home/thehumpo/.emacs.d/elpa/helm-elscreen-20170709.914 | /home/thehumpo/.emacs.d/elpa/elscreen-20181009.451 | /home/thehumpo/.emacs.d/elpa/helm-exwm-20200325.1022 | /home/thehumpo/.emacs.d/elpa/exwm-0.23 | /home/thehumpo/.emacs.d/elpa/helm-lsp-20200420.1546 | /home/thehumpo/.emacs.d/elpa/helm-projectile-20190731.1538 | /home/thehumpo/.emacs.d/elpa/helm-tramp-20190616.125 | /home/thehumpo/.emacs.d/elpa/helm-20200419.757 | /home/thehumpo/.emacs.d/elpa/helm-core-20200413.823 | /home/thehumpo/.emacs.d/elpa/helpful-20200111.2324 | /home/thehumpo/.emacs.d/elpa/elisp-refs-20190323.1331 | /home/thehumpo/.emacs.d/elpa/highlight-indentation-20181204.839 | /home/thehumpo/.emacs.d/elpa/jedi-core-20191011.1750 | /home/thehumpo/.emacs.d/elpa/epc-20140610.534 | /home/thehumpo/.emacs.d/elpa/ctable-20171006.11 | /home/thehumpo/.emacs.d/elpa/concurrent-20161229.330 | /home/thehumpo/.emacs.d/elpa/json-mode-20190123.422 | /home/thehumpo/.emacs.d/elpa/json-reformat-20160212.853 | /home/thehumpo/.emacs.d/elpa/json-snatcher-20150512.347 | /home/thehumpo/.emacs.d/elpa/kaolin-themes-20200324.1349 | /home/thehumpo/.emacs.d/elpa/autothemer-20180920.923 | /home/thehumpo/.emacs.d/elpa/less-css-mode-20161001.453 | /home/thehumpo/.emacs.d/elpa/loop-20160813.1407 | /home/thehumpo/.emacs.d/elpa/lsp-origami-20190331.1723 | /home/thehumpo/.emacs.d/elpa/lsp-python-ms-20200223.2136 | /home/thehumpo/.emacs.d/elpa/lsp-ui-20200402.839 | /home/thehumpo/.emacs.d/elpa/lsp-mode-20200420.814 | /home/thehumpo/.emacs.d/elpa/dash-functional-20191109.1327 | /home/thehumpo/.emacs.d/elpa/magit-20200420.310 | /home/thehumpo/.emacs.d/elpa/git-commit-20200207.1819 | /home/thehumpo/.emacs.d/elpa/mark-multiple-20121118.1554 | /home/thehumpo/.emacs.d/elpa/markdown-mode-20200416.116 | /home/thehumpo/.emacs.d/elpa/memoize-20200103.2036 | /home/thehumpo/.emacs.d/elpa/minions-20200204.1950 | /home/thehumpo/.emacs.d/elpa/multi-term-20200112.533 | /home/thehumpo/.emacs.d/elpa/neotree-20200324.1946 | /home/thehumpo/.emacs.d/elpa/nix-mode-20190904.1440 | /home/thehumpo/.emacs.d/elpa/ob-go-20190201.2040 | /home/thehumpo/.emacs.d/elpa/org-bullets-20200317.1740 | /home/thehumpo/.emacs.d/elpa/org-kanban-20200329.543 | /home/thehumpo/.emacs.d/elpa/org-plus-contrib-20200420 | /home/thehumpo/.emacs.d/elpa/origami-20200331.1019 | /home/thehumpo/.emacs.d/elpa/ox-gfm-20170628.2102 | /home/thehumpo/.emacs.d/elpa/ox-reveal-20200327.1636 | /home/thehumpo/.emacs.d/elpa/package-lint-20200419.406 | /home/thehumpo/.emacs.d/elpa/packed-20180318.1729 | /home/thehumpo/.emacs.d/elpa/paredit-20191121.2328 | /home/thehumpo/.emacs.d/elpa/perspective-20200418.1815 | /home/thehumpo/.emacs.d/elpa/polymode-20200411.915 | /home/thehumpo/.emacs.d/elpa/popup-20160709.1429 | /home/thehumpo/.emacs.d/elpa/posframe-20200426.819 | /home/thehumpo/.emacs.d/elpa/prettier-js-20180109.726 | /home/thehumpo/.emacs.d/elpa/projectile-speedbar-20190807.2010 | /home/thehumpo/.emacs.d/elpa/py-autopep8-20160925.1052 | /home/thehumpo/.emacs.d/elpa/python-environment-20150310.853 | /home/thehumpo/.emacs.d/elpa/deferred-20170901.1330 | /home/thehumpo/.emacs.d/elpa/python-mode-20200417.648 | /home/thehumpo/.emacs.d/elpa/pythonic-20200304.1901 | /home/thehumpo/.emacs.d/elpa/pyvenv-20191202.1039 | /home/thehumpo/.emacs.d/elpa/quickrun-20200315.1029 | /home/thehumpo/.emacs.d/elpa/rainbow-delimiters-20191018.1233 | /home/thehumpo/.emacs.d/elpa/ranger-20200218.203 | /home/thehumpo/.emacs.d/elpa/request-20200219.2257 | /home/thehumpo/.emacs.d/elpa/rjsx-mode-20200120.1446 | /home/thehumpo/.emacs.d/elpa/sbt-mode-20200106.753 | /home/thehumpo/.emacs.d/elpa/scala-mode-20190929.1522 | /home/thehumpo/.emacs.d/elpa/scss-mode-20180123.1708 | /home/thehumpo/.emacs.d/elpa/shrink-path-20190208.1335 | /home/thehumpo/.emacs.d/elpa/skewer-mode-20200304.1142 | /home/thehumpo/.emacs.d/elpa/js2-mode-20200211.2057 | /home/thehumpo/.emacs.d/elpa/simple-httpd-20191103.1446 | /home/thehumpo/.emacs.d/elpa/smartparens-20200324.2147 | /home/thehumpo/.emacs.d/elpa/smex-20151212.2209 | /home/thehumpo/.emacs.d/elpa/solarized-theme-20200411.1026 | /home/thehumpo/.emacs.d/elpa/spinner-1.7.3 | /home/thehumpo/.emacs.d/elpa/sr-speedbar-20161025.831 | /home/thehumpo/.emacs.d/elpa/start-menu-20160426.1225 | /home/thehumpo/.emacs.d/elpa/config-parser-20160426.1219 | /home/thehumpo/.emacs.d/elpa/string-inflection-20180827.1301 | /home/thehumpo/.emacs.d/elpa/sudo-edit-20180731.1908 | /home/thehumpo/.emacs.d/elpa/swiper-20200319.1334 | /home/thehumpo/.emacs.d/elpa/ivy-20200319.1247 | /home/thehumpo/.emacs.d/elpa/switch-window-20181104.340 | /home/thehumpo/.emacs.d/elpa/symon-lingr-20150719.1342 | /home/thehumpo/.emacs.d/elpa/symon-20170224.833 | /home/thehumpo/.emacs.d/elpa/synosaurus-20191125.552 | /home/thehumpo/.emacs.d/elpa/tabbar-ruler-20160802.307 | /home/thehumpo/.emacs.d/elpa/mode-icons-20190627.2121 | /home/thehumpo/.emacs.d/elpa/powerline-20200105.2053 | /home/thehumpo/.emacs.d/elpa/tabbar-20180726.1735 | /home/thehumpo/.emacs.d/elpa/tablist-20200227.1918 | /home/thehumpo/.emacs.d/elpa/tide-20200327.1218 | /home/thehumpo/.emacs.d/elpa/flycheck-20200405.2310 | /home/thehumpo/.emacs.d/elpa/let-alist-1.0.6 | /home/thehumpo/.emacs.d/elpa/transient-20200226.1612 | /home/thehumpo/.emacs.d/elpa/treemacs-projectile-20200114.1715 | /home/thehumpo/.emacs.d/elpa/treemacs-20200420.1418 | /home/thehumpo/.emacs.d/elpa/ht-20200217.2331 | /home/thehumpo/.emacs.d/elpa/hydra-20200306.913 | /home/thehumpo/.emacs.d/elpa/lv-20200227.1301 | /home/thehumpo/.emacs.d/elpa/pfuture-20200113.620 | /home/thehumpo/.emacs.d/elpa/ace-window-20200311.1025 | /home/thehumpo/.emacs.d/elpa/avy-20200311.1106 | /home/thehumpo/.emacs.d/elpa/projectile-20200329.1908 | /home/thehumpo/.emacs.d/elpa/pkg-info-20150517.1143 | /home/thehumpo/.emacs.d/elpa/epl-20180205.2049 | /home/thehumpo/.emacs.d/elpa/treepy-20191108.2217 | /home/thehumpo/.emacs.d/elpa/typescript-mode-20200312.2235 | /home/thehumpo/.emacs.d/elpa/undo-tree-0.7.4 | /home/thehumpo/.emacs.d/elpa/use-package-20200322.2110 | /home/thehumpo/.emacs.d/elpa/bind-key-20191110.416 | /home/thehumpo/.emacs.d/elpa/vagrant-tramp-20200118.2324 | /home/thehumpo/.emacs.d/elpa/volume-20150718.2009 | /home/thehumpo/.emacs.d/elpa/vterm-toggle-20200402.1516 | /home/thehumpo/.emacs.d/elpa/vterm-20200418.1610 | /home/thehumpo/.emacs.d/elpa/web-mode-20200419.2159 | /home/thehumpo/.emacs.d/elpa/websocket-20200419.2124 | /home/thehumpo/.emacs.d/elpa/wgrep-20200217.1030 | /home/thehumpo/.emacs.d/elpa/which-key-20200216.1350 | /home/thehumpo/.emacs.d/elpa/with-editor-20200217.1015 | /home/thehumpo/.emacs.d/elpa/async-20200113.1745 | /home/thehumpo/.emacs.d/elpa/workgroups2-20141102.1922 | /home/thehumpo/.emacs.d/elpa/f-20191110.1357 | /home/thehumpo/.emacs.d/elpa/s-20180406.808 | /home/thehumpo/.emacs.d/elpa/anaphora-20180618.2200 | /home/thehumpo/.emacs.d/elpa/wrap-region-20140117.720 | /home/thehumpo/.emacs.d/elpa/dash-20200119.2310 | /home/thehumpo/.emacs.d/elpa/xelb-0.18 | /home/thehumpo/.emacs.d/elpa/yaml-mode-20191127.2314 | /home/thehumpo/.emacs.d/elpa/yasnippet-20200413.2221 | /nix/store/p8p1ac02zabzfrpini4a90jz7iz5qjky-emacs-packages-deps/share/emacs/site-lisp | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/site-lisp | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/site-lisp | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/vc | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/url | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/textmodes | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/progmodes | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/play | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/org | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/nxml | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/net | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/mh-e | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/mail | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/leim | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/language | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/international | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/image | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/gnus | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/eshell | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/erc | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/emulation | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/emacs-lisp | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/cedet | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/calendar | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/calc | /nix/store/zp0gnrpbnn8g56l6z76f210yr6vz9g59-emacs-26.3/share/emacs/26.3/lisp/obsolete |
+
 * =evil-mode=
 
 Evil mode is frustrating at first but allows the
@@ -148,6 +197,9 @@ Enable =surround= everywhere.
     (global-evil-surround-mode 1))
 #+END_SRC
 
+#+RESULTS:
+: t
+
 Use =evil= with Org agendas.
 
 #+BEGIN_SRC emacs-lisp
@@ -160,6 +212,10 @@ Use =evil= with Org agendas.
     (require 'evil-org-agenda)
     (evil-org-agenda-set-keys))
 #+END_SRC
+
+#+RESULTS:
+: t
+
 * Utility functions
 
 Define a big ol' bunch of handy utility functions.
@@ -171,7 +227,7 @@ Define a big ol' bunch of handy utility functions.
       (if filename
           (progn
             (when (buffer-modified-p)
-               (save-buffer))
+              (save-buffer))
             (rename-file filename new-name t)
             (kill-buffer (current-buffer))
             (find-file new-name)
@@ -180,17 +236,22 @@ Define a big ol' bunch of handy utility functions.
 
   (defmacro safe-wrap (fn &rest clean-up)
     `(unwind-protect
-      (let (retval)
-        (condition-case ex
-          (setq retval (progn ,fn))
-          ('error
-           (setq retval (cons 'exception (list ex)))))
-        retval)
-      ,@clean-up))
+         (let (retval)
+           (condition-case ex
+               (setq retval (progn ,fn))
+             ('error
+              (setq retval (cons 'exception (list ex)))))
+           retval)
+       ,@clean-up))
+#+END_SRC
 
+#+RESULTS:
+: safe-wrap
+
+#+BEGIN_SRC emacs-lisp
   (defun ajc/generate-scratch-buffer ()
     "Create and switch to a temporary scratch buffer with a random
-       name."
+         name."
     (interactive)
     (switch-to-buffer (make-temp-name "scratch-")))
 
@@ -233,6 +294,26 @@ Define a big ol' bunch of handy utility functions.
 #+RESULTS:
 : ajc/append-to-path
 
+#+BEGIN_SRC emacs-lisp
+  (defvar auto-answer 'ask
+    "When bound, yes-or-no questions will not prompt.
+     When this variable is bound to a boolean value, the functions
+     `yes-or-no-p' and `y-or-n-p' will return that value without
+     prompting.  With its default value (the symbol `ask'), the
+     functions will prompt normally.")
+
+  (defun auto-answer (oldfun &rest args)
+    (if (booleanp auto-answer)
+        auto-answer
+      (apply oldfun args)))
+
+  (advice-add 'y-or-n-p :around 'auto-answer)
+  (advice-add 'yes-or-no-p :around 'auto-answer)
+#+END_SRC
+
+#+RESULTS:
+
+
 * UI
 
 La bella figura! Make it beautiful!
@@ -253,11 +334,15 @@ La bella figura! Make it beautiful!
 I don't usually use the menu or scroll bar, and they take up useful space.
 
 #+BEGIN_SRC emacs-lisp
+  (setq default-directory "~/")
   (tool-bar-mode 0)
   (menu-bar-mode 0)
-  (scroll-bar-mode -1)
+  (scroll-bar-mode 0)
   (global-linum-mode t)
 #+END_SRC
+
+#+RESULTS:
+: t
 
 There's a tiny scroll bar that appears in the minibuffer window. This disables
 that:
@@ -270,24 +355,26 @@ The default frame title isn't useful. This binds it to the name of the current
 project:
 
 #+BEGIN_SRC emacs-lisp
-  (setq frame-title-format '((:eval (projectile-project-name))))
+  (setq frame-title-format nil)
 #+END_SRC
+
+#+RESULTS:
 
 ** Make tabs
 
 #+BEGIN_SRC emacs-lisp
-    (use-package elscreen
-      :ensure t
-      :init
-      (setq elscreen-prefix-key "\C-q")
-      (elscreen-start)
-      )
-    (use-package elscreen-tab
-      :ensure t
-      :init
-      (elscreen-tab-mode)
-      (elscreen-tab-set-position 'top)
-      )
+  (use-package elscreen
+    :ensure t
+    :init
+    (setq elscreen-prefix-key "\C-q")
+    (elscreen-start)
+    )
+  (use-package elscreen-tab
+    :ensure t
+    :init
+    (elscreen-tab-mode)
+    (elscreen-tab-set-position 'top)
+    )
 #+END_SRC
 
 #+RESULTS:
@@ -600,7 +687,10 @@ I use =magit= to handle version control. It's lovely, but I tweak a few things:
 
     :config
     ;; (use-package evil-magit)
-    (use-package with-editor)
+    (use-package with-editor
+      :ensure t
+      :config
+      (setq-default with-editor-emacsclient-executable "emacsclient"))
     (setq magit-push-always-verify nil)
     (setq git-commit-summary-max-length 50)
 
@@ -915,25 +1005,6 @@ use smart indentation.
   (ajc/append-to-path "~/.cabal/bin")
 #+END_SRC
 
-** JavaScript and CoffeeScript
-
-Install =coffee-mode= from editing CoffeeScript code.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package coffee-mode)
-#+END_SRC
-
-Indent everything by 2 spaces.
-
-#+BEGIN_SRC emacs-lisp
-  (setq js-indent-level 2)
-
-  (add-hook 'coffee-mode-hook
-            (lambda ()
-              (yas-minor-mode 1)
-              (setq coffee-tab-width 2)))
-#+END_SRC
-
 ** Lisps
 
 I like to use =paredit= in Lisp modes to balance parentheses (and more!).
@@ -1091,12 +1162,14 @@ If I'm in =web-mode=, I'd like to:
 - Indent everything with 2 spaces.
 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (rainbow-mode)
-              (rspec-mode)
-              (setq web-mode-markup-indent-offset 2)))
+  ; (add-hook 'web-mode-hook
+  ;          (lambda ()
+  ;            (rainbow-mode)
+  ;            (rspec-mode)
+  ;            (setq web-mode-markup-indent-offset 2)))
 #+END_SRC
+
+#+RESULTS:
 
 Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 
@@ -1110,6 +1183,31 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 #+END_SRC
 
 ** Typescript
+*** Formatter
+
+    Looking at this [[https://patrickskiba.com/emacs/2019/09/07/emacs-for-react-dev.html][blog post]], this guy says to install ~prettier~. His blog
+    looks pretty professional so I'm gonna trust him.
+
+    #+begin_src emacs-lisp
+      (use-package prettier-js
+        :ensure t
+        :config
+        (setq prettier-js-args '())
+        ;(setq prettier-js-args '(
+        ;                         "--trailing-comma" "none"
+        ;                         "--bracket-spacing" "true"
+        ;                         "--single-quote" "true"
+        ;                         "--no-semi" "false"
+        ;                         "--jsx-single-quote" "true"
+        ;                         "--jsx-bracket-same-line" "true"
+        ;                         "--print-width" "100"))
+        )
+    #+end_src
+
+    #+RESULTS:
+    : t
+
+*** Typescript setup
 
    Typescript is a super awesome language that is definately worth
    using, emacs has only one ide type minor mode for this
@@ -1119,63 +1217,76 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
        "Set up Tide mode."
        (interactive)
        (tide-setup)
+       (tide-mode +1)
+
+       (setq flycheck-eslint-args '("--ext" ".js"  "--ext" ".jsx" "--ext" ".ts"  "--ext" ".tsx"))
        (flycheck-mode +1)
-       (setq flycheck-check-syntax-automatically '(save-mode-enabled))
+       ; (flycheck-select-checker 'javascript-eslint)
+
+       (setq flycheck-check-syntax-automatically '(mode-enabled save))
        (eldoc-mode +1)
        (tide-hl-identifier-mode +1)
-       (company-mode +1))
+       (company-mode +1)
+       (prettier-js-mode +1)
+       ;; (lsp)
+       )
 
      (use-package tide
        :ensure t
        :after (typescript-mode company flycheck)
        :hook ((typescript-mode . tide-setup)
-              (typescript-mode . tide-hl-identifier-mode)
-              (before-save . tide-format-before-save))
+              (typescript-mode . tide-hl-identifier-mode))
        :config
        (setq company-tooltip-align-annotations t)
-       (add-hook 'before-save-hook 'tide-format-before-save)
+       ; (add-hook 'before-save-hook 'tide-format-before-save)
        (add-hook 'js-mode-hook #'setup-tide-mode)
-       (add-hook 'typescript-mode-hook #'setup-tide-mode))
+       (add-hook 'typescript-mode-hook #'setup-tide-mode)
+			 (flycheck-add-mode 'javascript-eslint 'web-mode)
+			 (flycheck-add-mode 'tsx-tide 'web-mode)
+			 (flycheck-add-mode 'typescript-tide 'web-mode)
+			 (flycheck-add-next-checker 'tsx-tide '(t . javascript-eslint) 'append)
+			 (flycheck-add-next-checker 'typescript-tide '(t . javascript-eslint) 'append)
+			 )
    #+END_SRC
 
    #+RESULTS:
-   | tide-format-before-save | gofmt-before-save | delete-trailing-whitespace |
+   | setup-tide-mode | tide-hl-identifier-mode | tide-setup |
 
    #+BEGIN_SRC emacs-lisp
-     (require 'web-mode)
-     (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-     (add-hook 'web-mode-hook
-               (lambda ()
-                 (when (string-equal "tsx" (file-name-extension buffer-file-name))
-                   (setup-tide-mode))))
-     (add-hook 'web-mode-hook
-               (lambda ()
-                 (when (string-equal "ts" (file-name-extension buffer-file-name))
-                   (setup-tide-mode))))
-     (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
+          (require 'web-mode)
+          (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+          (add-hook 'web-mode-hook
+                    (lambda ()
+                      (when (string-equal "tsx" (file-name-extension buffer-file-name))
+                        (setup-tide-mode)
+                        (flycheck-select-checker 'tsx-tide))))
+          (add-hook 'web-mode-hook
+                    (lambda ()
+                      (when (string-equal "ts" (file-name-extension buffer-file-name))
+                        (setup-tide-mode)
+                        (flycheck-select-checker 'typescript-tide))))
+          (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
 
-     ;; (use-package rjsx-mode
-     ;;   :ensure t)
-     ;; (add-to-list 'auto-mode-alist '("\\.jsx\\'" . rjsx-mode))
-     ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
+          (add-hook 'web-mode-hook
+                    (lambda ()
+                      (when (string-equal "jsx" (file-name-extension buffer-file-name))
+                        (setup-tide-mode))))
 
-     (add-hook 'web-mode-hook
-               (lambda ()
-                 (when (string-equal "jsx" (file-name-extension buffer-file-name))
-                   (setup-tide-mode))))
-
-     (add-hook 'web-mode-hook
-               (lambda ()
-                 (when (string-equal "js" (file-name-extension buffer-file-name))
-                   (setup-tide-mode))))
-
-
-     ;; enable typescript-tslint checker
-     (flycheck-add-mode 'typescript-tslint 'web-mode)
+          (add-hook 'web-mode-hook
+                    (lambda ()
+                      (when (string-equal "js" (file-name-extension buffer-file-name))
+                        (setup-tide-mode))))
    #+END_SRC
 
    #+RESULTS:
-   | web-mode | web-mode | web-mode | web-mode | web-mode | web-mode | web-mode | typescript-mode |
+   | lambda | nil | (when (string-equal js (file-name-extension buffer-file-name)) (setup-tide-mode))                                                         |
+   | lambda | nil | (when (string-equal jsx (file-name-extension buffer-file-name)) (setup-tide-mode))                                                        |
+   | lambda | nil | (when (string-equal ts (file-name-extension buffer-file-name)) (setup-tide-mode) (flycheck-select-checker (quote typescript-tide)))       |
+   | lambda | nil | (when (string-equal tsx (file-name-extension buffer-file-name)) (setup-tide-mode) (flycheck-select-checker (quote tsx-tide)))             |
+   | lambda | nil | (if (string-equal js (file-name-extension buffer-file-name)) (progn (setup-tide-mode)))                                                   |
+   | lambda | nil | (if (string-equal jsx (file-name-extension buffer-file-name)) (progn (setup-tide-mode)))                                                  |
+   | lambda | nil | (if (string-equal ts (file-name-extension buffer-file-name)) (progn (flycheck-select-checker (quote typescript-tide)) (setup-tide-mode))) |
+   | lambda | nil | (if (string-equal tsx (file-name-extension buffer-file-name)) (progn (flycheck-select-checker (quote tsx-tide)) (setup-tide-mode)))       |
 
 ** YAML
 
@@ -1189,6 +1300,18 @@ the tests from any buffer.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'yaml-mode-hook 'rspec-mode)
 #+END_SRC
+
+** JSON
+
+   #+begin_src emacs-lisp
+     (use-package json-mode
+       :ensure t
+       :config
+       (add-to-list 'auto-mode-alist '("\\.json$" . json-mode)))
+   #+end_src
+
+   #+RESULTS:
+   : t
 
 ** Docker
 
@@ -1258,48 +1381,48 @@ have. It would be nice to make them easily viewable
    Now to install the "UI"
 
    #+begin_src emacs-lisp
-     (use-package lsp-ui
-          :custom-face
-          (lsp-ui-sideline-code-action ((t (:inherit warning))))
-          :bind (("C-c u" . lsp-ui-imenu))
-          :hook (lsp-mode . lsp-ui-mode)
-          :init (setq lsp-ui-doc-enable t
-                      lsp-ui-doc-use-webkit nil
-                      lsp-ui-doc-delay 0.2
-                      lsp-ui-doc-include-signature t
-                      lsp-ui-doc-position 'at-point
-                      lsp-ui-doc-border (face-foreground 'default)
-                      lsp-eldoc-enable-hover nil ; Disable eldoc displays in minibuffer
+          (use-package lsp-ui
+               :custom-face
+               (lsp-ui-sideline-code-action ((t (:inherit warning))))
+               :bind (("C-c u" . lsp-ui-imenu))
+               :hook (lsp-mode . lsp-ui-mode)
+               :init (setq lsp-ui-doc-enable t
+                           lsp-ui-doc-use-webkit nil
+                           lsp-ui-doc-delay 0.2
+                           lsp-ui-doc-include-signature t
+                           lsp-ui-doc-position 'at-point
+                           lsp-ui-doc-border (face-foreground 'default)
+                           lsp-eldoc-enable-hover nil ; Disable eldoc displays in minibuffer
 
-                      lsp-ui-sideline-enable t
-                      lsp-ui-sideline-show-hover nil
-                      lsp-ui-sideline-show-diagnostics nil
-                      lsp-ui-sideline-ignore-duplicate t
+                           lsp-ui-sideline-enable t
+                           lsp-ui-sideline-show-hover nil
+                           lsp-ui-sideline-show-diagnostics nil
+                           lsp-ui-sideline-ignore-duplicate t
 
-                      lsp-ui-imenu-enable t
-                      lsp-ui-imenu-colors `(,(face-foreground 'font-lock-keyword-face)
-                                            ,(face-foreground 'font-lock-string-face)
-                                            ,(face-foreground 'font-lock-constant-face)
-                                            ,(face-foreground 'font-lock-variable-name-face)))
-          :config
-          (add-to-list 'lsp-ui-doc-frame-parameters '(right-fringe . 8))
+                           lsp-ui-imenu-enable t
+                           lsp-ui-imenu-colors `(,(face-foreground 'font-lock-keyword-face)
+                                                 ,(face-foreground 'font-lock-string-face)
+                                                 ,(face-foreground 'font-lock-constant-face)
+                                                 ,(face-foreground 'font-lock-variable-name-face)))
+               :config
+               (add-to-list 'lsp-ui-doc-frame-parameters '(right-fringe . 8))
 
-          ;; `C-g'to close doc
-          (advice-add #'keyboard-quit :before #'lsp-ui-doc-hide)
+               ;; `C-g'to close doc
+               (advice-add #'keyboard-quit :before #'lsp-ui-doc-hide)
 
-          ;; Reset `lsp-ui-doc-background' after loading theme
-          (add-hook 'after-load-theme-hook
-                    (lambda ()
-                      (setq lsp-ui-doc-border (face-foreground 'default))
-                      (set-face-background 'lsp-ui-doc-background
-                                           (face-background 'tooltip))))
+               ;; Reset `lsp-ui-doc-background' after loading theme
+               (add-hook 'after-load-theme-hook
+                         (lambda ()
+                           (setq lsp-ui-doc-border (face-foreground 'default))
+                           (set-face-background 'lsp-ui-doc-background
+                                                (face-background 'tooltip))))
 
-          ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
-          ;; @see https://github.com/emacs-lsp/lsp-ui/issues/243
-          (defun my-lsp-ui-imenu-hide-mode-line ()
-            "Hide the mode-line in lsp-ui-imenu."
-            (setq mode-line-format nil))
-          (advice-add #'lsp-ui-imenu :after #'my-lsp-ui-imenu-hide-mode-line))
+               ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
+               ;; @see https://github.com/emacs-lsp/lsp-ui/issues/243
+               (defun my-lsp-ui-imenu-hide-mode-line ()
+                 "Hide the mode-line in lsp-ui-imenu."
+                 (setq mode-line-format nil))
+               (advice-add #'lsp-ui-imenu :after #'my-lsp-ui-imenu-hide-mode-line))
    #+end_src
 
    #+RESULTS:
@@ -1369,7 +1492,7 @@ have. It would be nice to make them easily viewable
 * Terminal
 
 For a while I used =shell-pop= for shell sessions but I'm now transitioning
-to using =multi-term= to manage my shell sessions. It's bound to =C-c t=.
+to using =multi-term= and =vterm= to manage my shell sessions. It's bound to =C-c t=.
 
 #+BEGIN_SRC emacs-lisp
   (use-package multi-term)
@@ -1405,6 +1528,7 @@ example).
 #+END_SRC
 
 #+RESULTS:
+| term-mode | 5x5-mode | archive-mode | bbdb-mode | biblio-selection-mode | blackbox-mode | bookmark-bmenu-mode | bookmark-edit-annotation-mode | browse-kill-ring-mode | bubbles-mode | bzr-annotate-mode | calc-mode | cfw:calendar-mode | completion-list-mode | Custom-mode | custom-theme-choose-mode | debugger-mode | delicious-search-mode | desktop-menu-blist-mode | desktop-menu-mode | doc-view-mode | dun-mode | dvc-bookmarks-mode | dvc-diff-mode | dvc-info-buffer-mode | dvc-log-buffer-mode | dvc-revlist-mode | dvc-revlog-mode | dvc-status-mode | dvc-tips-mode | ediff-mode | ediff-meta-mode | efs-mode | Electric-buffer-menu-mode | emms-browser-mode | emms-mark-mode | emms-metaplaylist-mode | emms-playlist-mode | ess-help-mode | etags-select-mode | fj-mode | gc-issues-mode | gdb-breakpoints-mode | gdb-disassembly-mode | gdb-frames-mode | gdb-locals-mode | gdb-memory-mode | gdb-registers-mode | gdb-threads-mode | gist-list-mode | git-rebase-mode | gnus-article-mode | gnus-browse-mode | gnus-group-mode | gnus-server-mode | gnus-summary-mode | gomoku-mode | google-maps-static-mode | ibuffer-mode | jde-javadoc-checker-report-mode | magit-cherry-mode | magit-diff-mode | magit-log-mode | magit-log-select-mode | magit-popup-mode | magit-popup-sequence-mode | magit-process-mode | magit-reflog-mode | magit-refs-mode | magit-revision-mode | magit-stash-mode | magit-stashes-mode | magit-status-mode | mh-folder-mode | monky-mode | mpuz-mode | mu4e-main-mode | mu4e-headers-mode | mu4e-view-mode | notmuch-hello-mode | notmuch-search-mode | notmuch-show-mode | notmuch-tree-mode | occur-mode | org-agenda-mode | package-menu-mode | pdf-outline-buffer-mode | pdf-view-mode | proced-mode | rcirc-mode | rebase-mode | recentf-dialog-mode | reftex-select-bib-mode | reftex-select-label-mode | reftex-toc-mode | sldb-mode | slime-inspector-mode | slime-thread-control-mode | slime-xref-mode | snake-mode | solitaire-mode | sr-buttons-mode | sr-mode | sr-tree-mode | sr-virtual-mode | tar-mode | tetris-mode | tla-annotate-mode | tla-archive-list-mode | tla-bconfig-mode | tla-bookmarks-mode | tla-branch-list-mode | tla-browse-mode | tla-category-list-mode | tla-changelog-mode | tla-follow-symlinks-mode | tla-inventory-file-mode | tla-inventory-mode | tla-lint-mode | tla-logs-mode | tla-revision-list-mode | tla-revlog-mode | tla-tree-lint-mode | tla-version-list-mode | twittering-mode | urlview-mode | vc-annotate-mode | vc-dir-mode | vc-git-log-view-mode | vc-hg-log-view-mode | vc-svn-log-view-mode | vm-mode | vm-summary-mode | w3m-mode | wab-compilation-mode | xgit-annotate-mode | xgit-changelog-mode | xgit-diff-mode | xgit-revlog-mode | xhg-annotate-mode | xhg-log-mode | xhg-mode | xhg-mq-mode | xhg-mq-sub-mode | xhg-status-extra-mode |
 
 I add a bunch of hooks to =term-mode=:
 
@@ -1414,7 +1538,6 @@ I add a bunch of hooks to =term-mode=:
   middle-click to yank the way we'd expect.
 - I bind =M-o= to quickly change windows. I'd like that in terminals, too.
 - I don't want to perform =yasnippet= expansion when tab-completing.
-
 
 #+begin_src emacs-lisp
   (defun ajc/term-paste (&optional string)
@@ -1483,7 +1606,8 @@ I add a bunch of hooks to =term-mode=:
 #+END_SRC
 
 #+RESULTS:
-| (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd M-SPC) (quote term-send-Cspc)) (define-key term-raw-map (kbd C-t) (quote term-send-Cspc)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | multi-term-keystroke-setup | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd <M-space>) (quote term-send-Cspc)) (define-key term-raw-map (kbd C-t) (quote term-send-Cspc)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd <C-space>) (quote term-send-Cspc)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd C-SPC) (quote term-send-Cspc)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (local-set-key (kbd C-SPC) (quote term-send-Cspc))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right)) (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd C-SPC) (quote term-send-Cspc))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right)) (defun term-send-CSPC nil (interactive) (term-send-raw-string (string 0))) (define-key term-raw-map (kbd C-SPC) (quote term-send-CSPC))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right)) (defun term-send-CSPC nil (interactive) (term-send-raw-string (string 0))) (define-key term-mode-map (kbd C-SPC) (quote term-send-CSPC))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right)) (define-key term-mode-map (kbd C-SPC) (lambda nil (interactive) (term-send-raw-string (string 0))))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (define-key term-mode-map (kbd C-SPC) (lambda nil (interactive) (term-send-raw-string (string 0)))) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (define-key term-mode-map (kbd C-<SPC>) (quote term-send-raw)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (define-key term-mode-map (kbd C-<SPC>) (lambda nil (interactive) (term-send-raw-string (string 0)))) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (define-key term-raw-map (kbd C-<SPC>) nil) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defun term-send-Cr nil (interactive) (term-send-raw-string )) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defun term-send-tab nil (interactive) (term-send-raw-string 	)) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C)) (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D)) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) | (lambda nil (linum-mode 0) (goto-address-mode) (setq comint-process-echoes t) (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) (define-key term-raw-map (kbd M-o) (quote other-window)) (define-key term-raw-map (kbd M-n) (quote multi-term-next)) (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) (defalias (quote term-send-Cr) (function (lambda nil (interactive) (term-send-raw-string )))) (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) (defalias (quote term-send-tab) (function (lambda nil (interactive) (term-send-raw-string 	)))) (define-key term-raw-map (kbd TAB) (quote term-send-tab)) (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) (setq indent-tabs-mode nil) (setq tab-width 0) (defalias (quote term-send-Cright) (function (lambda nil (interactive) (term-send-raw-string [1;5C)))) (defalias (quote term-send-Cleft) (function (lambda nil (interactive) (term-send-raw-string [1;5D)))) (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) (yas-minor-mode -1) (setq global-hl-line-mode nil) (setq bidi-paragraph-direction (quote left-to-right))) |
+| lambda | nil | (linum-mode 0) | (goto-address-mode) | (setq comint-process-echoes t) | (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) | (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) | (define-key term-raw-map (kbd M-o) (quote other-window)) | (define-key term-raw-map (kbd M-n) (quote multi-term-next)) | (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) | (defun term-send-Cr nil (interactive) (term-send-raw-string ))                                | (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) | (defun term-send-tab nil (interactive) (term-send-raw-string 	))                                | (define-key term-raw-map (kbd TAB) (quote term-send-tab)) | (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) | (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0)))                                | (define-key term-raw-map (kbd M-SPC) (quote term-send-Cspc)) | (define-key term-raw-map (kbd C-t) (quote term-send-Cspc)) | (setq indent-tabs-mode nil) | (setq tab-width 0) | (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C))                                | (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D))                                | (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) | (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) | (yas-minor-mode -1) | (setq global-hl-line-mode nil) | (setq bidi-paragraph-direction (quote left-to-right)) |
+| lambda | nil | (linum-mode 0) | (goto-address-mode) | (setq comint-process-echoes t) | (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) | (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) | (define-key term-raw-map (kbd M-o) (quote other-window)) | (define-key term-raw-map (kbd M-n) (quote multi-term-next)) | (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) | (defalias (quote term-send-Cr) (function (lambda nil (interactive) (term-send-raw-string )))) | (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) | (defalias (quote term-send-tab) (function (lambda nil (interactive) (term-send-raw-string 	)))) | (define-key term-raw-map (kbd TAB) (quote term-send-tab)) | (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) | (defalias (quote term-send-Cspc) (function (lambda nil (interactive) (term-send-raw-string (string 0))))) | (define-key term-raw-map (kbd M-SPC) (quote term-send-Cspc)) | (define-key term-raw-map (kbd C-t) (quote term-send-Cspc)) | (setq indent-tabs-mode nil) | (setq tab-width 0) | (defalias (quote term-send-Cright) (function (lambda nil (interactive) (term-send-raw-string [1;5C)))) | (defalias (quote term-send-Cleft) (function (lambda nil (interactive) (term-send-raw-string [1;5D)))) | (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) | (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) | (yas-minor-mode -1) | (setq global-hl-line-mode nil) | (setq bidi-paragraph-direction (quote left-to-right)) |
 
 I have this really cool function so I can send regions to a terminal. Really
 andy when you want to execute selections without copying and pasting
@@ -1815,10 +1939,13 @@ I'd like to always use Firefox, so:
 
 #+BEGIN_SRC emacs-lisp
   (setq browse-url-browser-function 'browse-url-generic
-        browse-url-generic-program "firefox")
+        browse-url-generic-program "brave")
 
-  (setenv "BROWSER" "firefox")
+  (setenv "BROWSER" "brave")
 #+END_SRC
+
+#+RESULTS:
+: brave
 
 **** Exporting to PDF
 
@@ -2293,6 +2420,16 @@ Enable [[https://github.com/ajc/engine-mode][engine-mode]] and define a few usef
          ("s-e" . sudo-edit))
    #+end_src
 
+** String casing
+
+   It's super useful to be able to change a string from kebab case
+   to camel case, etc.
+
+   #+begin_src emacs-lisp
+     (use-package string-inflection
+       :ensure t)
+   #+end_src
+
 * Helm
 
 Man the ship! Helm is a sub community of emacs users who build
@@ -2439,10 +2576,207 @@ Nice sliding window scrolling
 (global-set-key (kbd "C-p") 'previous-line-and-recenter)
 #+END_SRC
 
-* Extra
+* EXWM
+
+An attempt to switch from i3 to a better X window manager is EXWM.
+
+In my opinion it is a pretty amazing blend of X and emacs
+
+#+BEGIN_SRC emacs-lisp
+
+  (eval-and-compile
+    (straight-use-package 'exwm)
+    (require 'exwm-core))
+
+  (use-package exwm
+    :ensure t
+    :config
+    (require 'exwm-config)
+    (exwm-enable)
+
+                                          ; (require 'exwm-systemtray)
+                                          ; (exwm-systemtray-enable)
+
+    ;; Make a bunch of workspaces
+    (setq exwm-workspace-number 8)
+    (dotimes (i 8)
+      (exwm-input-set-key (kbd (format "s-%d" i))
+                          `(lambda ()
+                             (interactive)
+                             (exwm-workspace-switch-create ,i))))
+
+    ;; config vars
+    (setq exwm-manage-codnfigurations '((t line-mode t)))
+    (setq exwm-workspace-show-all-buffers t)
+    (setq exwm-layout-show-all-buffers t)
+
+    (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+    (define-key exwm-mode-map (kbd "C-c") nil)
+
+    (defun exwm-workspace--current-to-previous-index (_x)
+      (setq exwm-workspace-previous-index exwm-workspace-current-index))
+
+    (defun exwm-workspace-previous ()
+      (interactive)
+      "Switch to the previous workspace."
+      (let ((index exwm-workspace-current-index))
+        (if (= index 0)
+            (exwm-workspace-switch (- exwm-workspace-number 1))
+          (exwm-workspace-switch (% (- index 1) exwm-workspace-number)))))
+
+    (defun exwm-workspace-next ()
+      (interactive)
+      "Switch to the next workspace."
+      (let ((index exwm-workspace-current-index))
+        (exwm-workspace-switch (% (+ index 1) exwm-workspace-number))))
+
+    (exwm-input-set-key (kbd "s-S-<up>") 'windmove-up)
+    (exwm-input-set-key (kbd "s-S-<down>") 'windmove-down)
+    (exwm-input-set-key (kbd "s-S-<left>") 'windmove-left)
+    (exwm-input-set-key (kbd "s-S-<right>") 'windmove-right)
+
+    (exwm-input-set-key (kbd "C-M-<left>") 'shrink-window-horizontally)
+    (exwm-input-set-key (kbd "C-M-<right>") 'enlarge-window-horizontally)
+    (exwm-input-set-key (kbd "C-M-<down>") 'shrink-window)
+    (exwm-input-set-key (kbd "C-M-<up>") 'enlarge-window)
+
+    (setq exwm-input-global-keys
+          `(([?\s-r] . exwm-reset)
+            ([?\s-w] . exwm-workspace-switch)
+            ([?\s-n] . exwm-workspace-next)
+            ([?\s-p] . exwm-workspace-previous)
+            ([?\s-&] . (lambda (command)
+                         (interactive (list (read-shell-command "$ ")))
+                         (start-process-shell-command command nil command)))
+            ,@(mapcar (lambda (i)
+                        `(,(kbd (format "s-%d" i)) .
+                          (lambda ()
+                            (interactive)
+                            (exwm-workspace-switch-create ,i))))
+                      (number-sequence 0 8))))
+
+    (add-hook 'exwm-update-class-hook
+              (lambda ()
+                (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                            (string= "gimp" exwm-instance-name))
+                  (exwm-workspace-rename-buffer exwm-class-name))))
+    (add-hook 'exwm-update-title-hook
+              (lambda ()
+                (when (or (not exwm-instance-name)
+                          (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                          (string= "gimp" exwm-instance-name))
+                  (exwm-workspace-rename-buffer exwm-title))))
+
+    (setq window-divider-default-right-width 1)
+    (window-divider-mode)
+    )
+  (use-package helm-exwm
+    :ensure t
+    :bind (("s-x" . helm-exwm))
+    )
+
+#+END_SRC
+
+#+RESULTS:
+: helm-exwm
+
+#+begin_src emacs-lisp
+  (use-package dmenu
+    :ensure t
+    :config
+    (setq dmenu-prompt-string "dmenu: ")
+    (exwm-input-set-key (kbd "s-<return>") 'dmenu))
+#+end_src
+
+#+RESULTS:
+: t
+
+#+begin_src emacs-lisp
+  (use-package windmove
+    :ensure t)
+#+end_src
+
+#+RESULTS:
+
+#+begin_src emacs-lisp
+(global-set-key (kbd "<s-up>")     'buf-move-up)
+(global-set-key (kbd "<s-down>")   'buf-move-down)
+(global-set-key (kbd "<s-left>")   'buf-move-left)
+(global-set-key (kbd "<s-right>")  'buf-move-right)
+#+end_src
+
+#+RESULTS:
+: buf-move-right
+
+#+begin_src emacs-lisp
+  (require 'exwm-randr)
+  (exwm-randr-enable)
+  (require 'exwm-systemtray)
+  (exwm-systemtray-enable)
+#+end_src
+
+#+RESULTS:
+| exwm-systemtray--exit | exwm-randr--exit |
+
+Run polybar in the background
+#+begin_src emacs-lisp
+    (defun kill_polybar ()
+      (let ((auto-answer t))
+        (when (get-buffer "*trigger_polybar*")
+        (kill-buffer "*trigger_polybar*"))))
+
+
+    (defun trigger_polybar (&optional default-monitor)
+      (unless default-monitor (setq default-monitor ""))
+      (kill_polybar)
+      (let ((display-buffer-alist
+             (cons (cons "\\*trigger_polybar\\*.*"
+                         (cons #'display-buffer-no-window nil))
+                   display-buffer-alist))) ;; suppress async shell command window
+        (async-shell-command
+         (concat "trigger_polybar " default-monitor) "*trigger_polybar*")))
+
+    (trigger_polybar)
+#+end_src
+
+#+RESULTS:
+
+
+#+begin_src emacs-lisp
+  (defun my/exwm-randr-auto-get-monitor ()
+    (let* ((result)
+     (monitors (nth 1 (exwm-randr--get-monitors))))
+      (dotimes (i (/ (length monitors) 2))
+        (push (nth (* i 2) monitors) result)
+        (push i result))
+      result))
+
+  (defun monitor-home-setup ()
+    (interactive)
+    (kill_polybar)
+    (setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "HDMI1"))
+    (shell-command "xrandr --output HDMI1 --mode 1920x1080 --above eDP1")
+    (trigger_polybar "eDP1"))
+
+  (defun monitor-home-teardown ()
+    (interactive)
+    (kill_polybar)
+    (setq exwm-randr-workspace-output-plist '(0 "eDP1"))
+    (shell-command "xrandr --output eDP1 --auto --output HDMI1 --off")
+    (trigger_polybar "eDP1"))
+#+end_src
+
+#+RESULTS:
+: monitor-home-teardown
+
+#+RESULTS:
+: #<window 10 on *Async Shell Command*>
+
+* extra
 
 I don't know where to put this... it's really handy when re-arranging
 buffers for any what reason
+
 
 #+BEGIN_SRC emacs-lisp
 (use-package buffer-move
@@ -2464,7 +2798,7 @@ Great for jupyter notebook things
 #+begin_src emacs-lisp
 (defun insert-shell-command-output (command)
   "Get shell COMMAND output and insert it at point in current
-buffer."
+  buffer."
   (insert (shell-command-to-string command)))
 #+end_src
 
