@@ -7,23 +7,61 @@ let user = builtins.getEnv "USER";
 in rec {
 
   home.packages = [
-    pkgs.nodejs
+
+    ## Browser
+    pkgs.brave
+
+    ## Bars
+    pkgs.polybar
+
+    ## font
+    pkgs.font-awesome-ttf
+
+    ## windowing
     pkgs.xsel
     pkgs.wmctrl
-    pkgs.fish
-    pkgs.tree
-    pkgs.bash
     pkgs.screen
+    pkgs.xdotool
+
+    ## shells
+    pkgs.fish
+    pkgs.bash
+
+    ## cli/tools
+    pkgs.jq
+    pkgs.tree
     pkgs.git
     pkgs.gnumake
+    pkgs.parallel
     pkgs.openssl
     pkgs.openssh
     pkgs.curl
     pkgs.feh
-    pkgs.terminator
     pkgs.wordnet
-    pkgs.glib-networking
+    pkgs.shutter
     pkgs.plantuml
+    pkgs.imagemagick
+
+    ## containers
+    pkgs.docker
+    pkgs.docker_compose
+
+    ## pl
+    pkgs.nodejs
+
+    ## extra...
+    pkgs.terminator
+    pkgs.glib-networking
+    pkgs.nodePackages.eslint
+    pkgs.nodePackages.jsonlint
+    pkgs.nodePackages.prettier
+    pkgs.nodePackages.typescript-language-server
+    pkgs.nodePackages.typescript
+    pkgs.nodePackages.vscode-html-languageserver-bin
+    pkgs.nodePackages.vscode-css-languageserver-bin
+    pkgs.nodePackages.node2nix
+    pkgs.haskellPackages.hledger
+
   ];
 
   gtk = {
@@ -40,6 +78,19 @@ in rec {
       name = "Adapta-Nokto-Eta";
       package = pkgs.adapta-gtk-theme;
     };
+  };
+
+
+
+  services.picom = {
+    enable = true;
+    extraOptions = ''
+      unredir-if-possible = true;
+      backend = "xrender";
+      dbe = false;
+      paint-on-overlay = true;
+      vsync = "opengl-swc";
+    '';
   };
 
   programs.emacs = {
@@ -65,6 +116,24 @@ in rec {
       refined-github
       umatrix
     ];
+    profiles = {
+      default = {
+        isDefault = true;
+        settings = {
+          "browser.display.background_color" = "#bdbdbd";
+          "devtools.theme" = "dark";
+          "experiments.activeExperiment" = false;
+          "experiments.enabled" = false;
+          "experiments.supported" = false;
+          "general.smoothScroll" = false;
+          "layout.css.devPixelsPerPx" = "1";
+          "network.IDN_show_punycode" = true;
+          "network.allow-experiments" = false;
+          "widget.content.gtk-theme-override" = "Adwaita:light";
+          "accessibility.typeaheadfind.enablesound" = false;
+        };
+      };
+    };
   };
 
   programs.fish = {
@@ -95,4 +164,5 @@ in rec {
     defaultCacheTtl = 1800;
     enableSshSupport = true;
   };
+
 }
