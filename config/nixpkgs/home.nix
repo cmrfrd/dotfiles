@@ -41,6 +41,8 @@ in rec {
     pkgs.shutter
     pkgs.plantuml
     pkgs.imagemagick
+    pkgs.exa
+    pkgs.autojump
 
     ## containers
     pkgs.docker
@@ -78,19 +80,6 @@ in rec {
       name = "Adapta-Nokto-Eta";
       package = pkgs.adapta-gtk-theme;
     };
-  };
-
-
-
-  services.picom = {
-    enable = true;
-    extraOptions = ''
-      unredir-if-possible = true;
-      backend = "xrender";
-      dbe = false;
-      paint-on-overlay = true;
-      vsync = "opengl-swc";
-    '';
   };
 
   programs.emacs = {
