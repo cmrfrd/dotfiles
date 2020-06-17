@@ -1,3 +1,5 @@
+alias dotfiles="cd ~/.dotfiles"
+
 alias a="alsamixer"
 alias c="clear"
 alias e="set -l IN_EMACS 1; emacs-26.3;"
@@ -5,12 +7,24 @@ alias ec="set -l IN_EMACS 1; emacsclient -c -a emacs-26.3;"
 alias g='git'
 alias m="make"
 alias k="kubectl"
-alias t="tree"
+alias r="dotreload"
 
-alias l='ls -lFh'
-alias la='ls -lAFh'
-alias lr='ls -tRFh'
+if command -v exa > /dev/null
+	abbr -a ls 'exa'
+	abbr -a l 'exa -lah --git'
+	abbr -a ll 'exa -l'
+	abbr -a lll 'exa -la'
+else
+	abbr -a l 'ls -lFh'
+	abbr -a ll 'ls -l'
+	abbr -a lll 'ls -la'
+  alias la='ls -lAFh'
+  alias lr='ls -tRFh'
+end
 
+if test -f ~/.nix-profile/share/autojump/autojump.fish;
+    source ~/.nix-profile/share/autojump/autojump.fish
+end
 
 alias gc='git commit'
 alias gca='git commit -a'
@@ -70,5 +84,3 @@ alias gdcw='git diff --cached --word-diff'
 alias gds='git diff --staged'
 alias gdt='git diff-tree --no-commit-id --name-only -r'
 alias gdw='git diff --word-diff'
-
-alias dotfiles='cd ~/.dotfiles'
