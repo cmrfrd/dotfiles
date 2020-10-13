@@ -31,5 +31,9 @@ set -U LC_MEASUREMENT "en_US.UTF-8"
 set -U LC_IDENTIFICATION "en_US.UTF-8"
 set -U LC_ALL
 
+set -x LC_ALL C
+set -x LC_CTYPE C
+set -x LANG en_US.UTF-8
+
 set -U FONTCONFIG_PATH /etc/fonts
 set -gx BROWSER firefox
