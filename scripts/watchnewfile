@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+if test -f "${1}"
+then
+   echo "${1}"
+elif test -d "${1}"
+then
+   echo "${1} needs to be a file"
+else
+  echo "Listening for file ${1}"
+  while read i; do if [ "$i" = "$1" ]; then echo $i; break; fi; done \
+    < <(inotifywait  -e create,open --format '%w%f' --quiet --monitor $(dirname $1))
+fi
