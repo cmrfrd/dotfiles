@@ -1,0 +1,4 @@
+#!/bin/sh
+echo $1
+while read i; do echo $i; break; done \
+  < "${1:-/dev/stdin}"
