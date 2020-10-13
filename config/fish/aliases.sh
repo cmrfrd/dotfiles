@@ -10,6 +10,10 @@ alias k="kubectl"
 alias r="dotreload"
 alias n="notify-desktop"
 
+## Colloquial names
+alias file_manager="jo"
+alias screenshot="shutter -f -e"
+
 alias rmpy='find . | grep -E "(__pycache__|\.pyc)" | xargs rm -rf'
 
 alias gc='git commit'
