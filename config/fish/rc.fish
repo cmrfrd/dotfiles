@@ -15,9 +15,6 @@ dotreload
 # mkdir -p $LOG_DIR
 # touch $LOG_FILE
 
-set LANG en_US.utf8
-set LC_ALL
-
 ## Run screen if fish in emacs
 if test (echo $TERMINFO | grep emacs | wc -l) -gt 0
     if not test -n "$STY"
