@@ -6,7 +6,12 @@ let user = builtins.getEnv "USER";
     };
 in rec {
 
+  nixpkgs.config.allowUnfree = true;
+
   home.packages = [
+
+    ## Locales
+    pkgs.glibcLocales
 
     ## Browser
     pkgs.brave
@@ -29,8 +34,11 @@ in rec {
 
     ## cli/tools
     pkgs.jq
+    pkgs.jo
     pkgs.tree
     pkgs.git
+    pkgs.tig
+    pkgs.highlight
     pkgs.gnumake
     pkgs.parallel
     pkgs.openssl
@@ -43,6 +51,13 @@ in rec {
     pkgs.imagemagick
     pkgs.exa
     pkgs.autojump
+    pkgs.pandoc
+    pkgs.notify-desktop
+    pkgs.fd
+    pkgs.inotify-tools
+    pkgs.light
+
+    pkgs.deluge
 
     ## containers
     pkgs.docker
@@ -50,6 +65,7 @@ in rec {
 
     ## pl
     pkgs.nodejs
+    pkgs.yarn
 
     ## extra...
     pkgs.terminator
@@ -63,7 +79,6 @@ in rec {
     pkgs.nodePackages.vscode-css-languageserver-bin
     pkgs.nodePackages.node2nix
     pkgs.haskellPackages.hledger
-
   ];
 
   gtk = {
@@ -134,7 +149,8 @@ in rec {
     enable = true;
     enableAutosuggestions = true;
     initExtra = ''
-    source ~/.config/fish/aliases.fish
+    export PATH=~/.dotfiles/scripts:$PATH
+    source ~/.config/fish/aliases.sh
     '';
     oh-my-zsh.enable = true;
     oh-my-zsh.theme = "daveverwer";
