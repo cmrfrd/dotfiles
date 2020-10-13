@@ -1,0 +1,2 @@
+#!/bin/sh
+openssl dgst -sha384 -binary | openssl base64 -A | awk '$0="sha384-"$0'
