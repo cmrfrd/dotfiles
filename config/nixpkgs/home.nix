@@ -56,7 +56,6 @@ in rec {
     pkgs.fd
     pkgs.inotify-tools
     pkgs.light
-
     pkgs.deluge
 
     ## containers
