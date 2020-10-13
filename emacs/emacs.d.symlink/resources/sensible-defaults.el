@@ -50,11 +50,14 @@ directory."
   "Allow 20MB of memory (instead of 0.76MB) before calling
 garbage collection. This means GC runs less often, which speeds
 up some operations."
-  (setq gc-cons-threshold 1000000))
+  (setq gc-cons-threshold 100000))
 
 (defun sensible-defaults/delete-trailing-whitespace ()
   "Call DELETE-TRAILING-WHITESPACE every time a buffer is saved."
-  (add-hook 'before-save-hook 'delete-trailing-whitespace))
+  (interactive)
+  (if (not (member 'delete-trailing-whitespace before-save-hook))
+      (add-hook 'before-save-hook 'delete-trailing-whitespace)
+    (remove-hook 'before-save-hook 'delete-trailing-whitespace)))
 
 (defun sensible-defaults/treat-camelcase-as-separate-words ()
   "Treat CamelCaseSubWords as separate words in every programming
@@ -218,6 +221,7 @@ WARNING: on most Unix-like systems /tmp is volatile, in-memory
 storage, so your backups won't survive if your computer crashes!
 If you're not willing to take this risk, you shouldn't enable
 this setting."
+  (setq create-lockfiles nil)
   (setq backup-directory-alist
         `((".*" . ,temporary-file-directory)))
   (setq auto-save-file-name-transforms
