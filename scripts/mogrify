@@ -1,0 +1,16 @@
+#!/bin/bash
+
+NAME=mogrify
+
+cat << EOF > /tmp/Dockerfile.${NAME}
+FROM alpine:latest
+MAINTAINER tree-tips <treetips555@gmail.com>
+
+RUN apk update && \
+    apk --no-cache add \
+        imagemagick \
+        parallel
+EOF
+
+docker build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles > /dev/null
+docker run --rm -v $(pwd):/mnt -w /mnt -i ${NAME} $@
