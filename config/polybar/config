@@ -245,7 +245,7 @@ height = 25
 offset-y = -4
 clickareas = 35
 ;
-background = #00000000
+background = #212529
 foreground = #ccffffff
 linecolor = ${bar/bottom.background}
 ;
@@ -493,7 +493,7 @@ icon-default = 
 label-active = %icon% %name%
 label-active-background = #3f3f3f
 label-active-padding = 1
-label-active-underline = #f66
+label-active-underline = #fff
 
 label-occupied = %icon% %name%
 label-occupied-padding = 1
@@ -504,7 +504,7 @@ label-urgent-background = #bd2c40
 label-urgent-padding = 1
 
 label-empty = %icon% %name%
-label-empty-foreground = #444
+label-empty-foreground = #fff
 label-empty-padding = 1
 
 ; label-dimmed-background = ${xrdb:color14}
