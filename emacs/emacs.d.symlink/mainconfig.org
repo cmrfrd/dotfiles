@@ -538,7 +538,7 @@ Note that this overrides the default font-related keybindings from
 =sensible-defaults=.
 
 #+BEGIN_SRC emacs-lisp
-  (setq ajc/default-font "Inconsolata")
+  (setq ajc/default-font "SourceCodePro")
   (setq ajc/default-font-size 8)
   (setq ajc/current-font-size ajc/default-font-size)
 
@@ -611,6 +611,26 @@ programming.
     (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
     (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
 #+END_SRC
+
+** Dashboard
+
+   I reall like having a `dashboard` like home screen
+
+   #+begin_src emacs-lisp
+     (use-package dashboard
+       :ensure t
+       :config
+       (setq dashboard-banner-logo-title "Welcome to Alex's Emacs!")
+       (setq dashboard-image-banner-max-height 1)
+       (setq dashboard-image-banner-max-width 1)
+       (setq dashboard-center-content t)
+       (setq dashboard-startup-banner "~/.emacs.d/resources/penrose.png")
+       (dashboard-setup-startup-hook)
+       )
+   #+end_src
+
+   #+RESULTS:
+   : t
 
 * Project management
 
@@ -1489,8 +1509,7 @@ have. It would be nice to make them easily viewable
    #+RESULTS:
    | (lambda nil (require (quote lsp-python-ms))) | doom-modeline-env-setup-python | jedi:setup | elpy-mode | #[0  |
 
-* DONE Terminal
-  CLOSED: [2020-07-11 Sat 23:05]
+* Terminal
 
 For a while I used =shell-pop= for shell sessions but I'm now transitioning
 to using =multi-term= and =vterm= to manage my shell sessions. It's bound to =C-c t=.
