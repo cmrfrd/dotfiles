@@ -21,6 +21,11 @@ in rec {
 
     ## font
     pkgs.font-awesome-ttf
+    pkgs.fontconfig
+    pkgs.dejavu_fonts
+    pkgs.source-code-pro
+    pkgs.source-sans-pro
+    pkgs.source-serif-pro
 
     ## windowing
     pkgs.xsel
@@ -57,18 +62,19 @@ in rec {
     pkgs.inotify-tools
     pkgs.light
     pkgs.deluge
+    pkgs.imagemagick
 
     ## containers
-    pkgs.docker
     pkgs.docker_compose
 
-    ## pl
+    ## js
     pkgs.nodejs
     pkgs.yarn
 
     ## extra...
     pkgs.terminator
     pkgs.glib-networking
+    pkgs.electron_10
     pkgs.nodePackages.eslint
     pkgs.nodePackages.jsonlint
     pkgs.nodePackages.prettier
@@ -79,6 +85,12 @@ in rec {
     pkgs.nodePackages.node2nix
     pkgs.haskellPackages.hledger
   ];
+
+  ## Not sure why but I need this
+  ## github.com/nix-community/home-manager/issues/254
+  manual.manpages.enable = false;
+
+  fonts.fontconfig.enable = true;
 
   gtk = {
     enable = true;
