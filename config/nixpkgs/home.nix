@@ -1,19 +1,29 @@
 { config, pkgs, lib, ... }:
 
-let user = builtins.getEnv "USER";
-    nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
-      inherit pkgs;
-    };
+let
+
+  user = builtins.getEnv "USER";
+
+  nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+    inherit pkgs;
+  };
+
 in rec {
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowBroken = true;
+
+  home.sessionVariables = {
+    EDITOR = "emacs";
+    XLIB_SKIP_ARGB_VISUALS = 1;
+  };
 
   home.packages = [
 
     ## Locales
     pkgs.glibcLocales
 
-    ## Browser
+    ## Apps
     pkgs.brave
 
     ## Bars
@@ -63,6 +73,18 @@ in rec {
     pkgs.light
     pkgs.deluge
     pkgs.imagemagick
+    pkgs.cmake
+    pkgs.glibc
+    pkgs.libtool
+    pkgs.libvterm-neovim
+    pkgs.gcc
+    pkgs.neofetch
+    pkgs.wireshark
+
+    ## libs
+    pkgs.vte
+    pkgs.gtk3
+    pkgs.libgee
 
     ## containers
     pkgs.docker_compose
@@ -74,7 +96,6 @@ in rec {
     ## extra...
     pkgs.terminator
     pkgs.glib-networking
-    pkgs.electron_10
     pkgs.nodePackages.eslint
     pkgs.nodePackages.jsonlint
     pkgs.nodePackages.prettier
@@ -89,8 +110,6 @@ in rec {
   ## Not sure why but I need this
   ## github.com/nix-community/home-manager/issues/254
   manual.manpages.enable = false;
-
-  fonts.fontconfig.enable = true;
 
   gtk = {
     enable = true;
@@ -110,16 +129,17 @@ in rec {
 
   programs.emacs = {
     enable = true;
-    package = (pkgs.emacs.override {
+    package = (pkgs.emacs27.override {
       withX = true;
       withGTK3 = true;
       withGTK2 = false;
       withXwidgets = true;
     });
-  };
-
-  services.emacs = {
-    enable = true;
+    extraPackages = epkgs: [
+      epkgs.exwm
+      epkgs.vterm
+      epkgs.dictionary
+    ];
   };
 
   programs.firefox = {
