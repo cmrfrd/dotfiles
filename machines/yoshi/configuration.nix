@@ -1,14 +1,18 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
     [
       ./hardware-configuration.nix
+
+      ../../home-manager/nixos
     ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  powerManagement.enable = true;
 
   networking.hostName = "yoshi";
   networking.networkmanager.enable = true;
@@ -25,47 +29,75 @@
   # Set your time zone.
   time.timeZone = "America/New_York";
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    wget vim firefox
-  ];
-
   programs.mtr.enable = true;
 
   networking.firewall.enable = false;
 
   # Enable sound.
   sound.enable = true;
-  hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.package = pkgs.pulseaudioFull;
-
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-  services.xserver.layout = "us";
+  hardware.pulseaudio = {
+    enable = true;
+    extraModules = [ pkgs.pulseaudio-modules-bt ];
+    package = pkgs.pulseaudioFull;
+    extraConfig = ''
+      load-module module-bluetooth-policy auto_switch=2
+    '';
+  };
 
   # Base desktop manager, not default
   services.xserver = {
+    # Enable the X11 windowing system.
+    enable = true;
+    layout = "us";
     libinput.enable = true;
     desktopManager = {
-	xterm.enable = false;
-        xfce.enable = true;
+      xterm.enable = true;
+      pantheon.enable = true;
+    };
+    windowManager = {
+      exwm = {
+        enable = true;
+        enableDefaultConfig = false;
+        extraPackages = epkgs: [
+          epkgs.vterm
+        ];
+      };
+    };
+    displayManager = {
+      sessionCommands = "${pkgs.xorg.xhost}/bin/xhost +SI:localuser:$USER";
     };
   };
 
   # Default user for machines
   users.users.cmrfrd = {
     isNormalUser = true;
-    extraGroups = [ 
-	"wheel" 
-	"networkmanager" 
-	"audio" 
-	"tty" 
-	"dialout" 
+    extraGroups = [
+	    "wheel"
+	    "networkmanager"
+	    "audio"
+	    "tty"
+	    "dialout"
     ];
+    shell = pkgs.fish;
+  };
+  home-manager.users.cmrfrd = { pkgs, ... }: {
+    imports = [ ../../config/nixpkgs/home.nix ];
   };
 
-  system.stateVersion = "20.03"; # Did you read the comment?
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+    };
+  };
+
+  environment.systemPackages = with pkgs; [
+    ((emacsPackagesNgGen emacs27).emacsWithPackages (epkgs: [
+      epkgs.vterm
+      epkgs.helm
+    ]))
+  ];
+
+  system.stateVersion = "19.03"; # Did you read the comment?
 
 }
-
