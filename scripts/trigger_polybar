@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+set -e
+
+if [ -e "/tmp/polybartrig.pid" ]
+then
+  if ps -p `cat /tmp/polybartrig.pid` > /dev/null
+  then
+    kill `cat /tmp/polybartrig.pid`
+  fi
+fi
+
 echo $$ > /tmp/polybartrig.pid  # Save the pid
 
 function run_polybar {
@@ -23,7 +33,7 @@ function run_polybar {
 
   if type "xrandr" > /dev/null; then
     for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-	    if [ $m == 'eDP1' ]
+	    if [ $m == 'eDP-1' ]
 	    then
 		    MONITOR=$m polybar --reload top -c ~/.dotfiles/config/polybar/config &
 	    elif [ $m == 'HDMI1' ]
@@ -39,7 +49,6 @@ function run_polybar {
    sleep infinity;
 }
 
-killall -q polybar
 while pgrep -u $UID -x polybar > /dev/null; do sleep 1; done
 
 while `true`
