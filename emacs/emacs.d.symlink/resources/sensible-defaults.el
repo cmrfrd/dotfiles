@@ -227,4 +227,10 @@ this setting."
   (setq auto-save-file-name-transforms
         `((".*" ,temporary-file-directory t))))
 
+
+(defun insert-shell-command-output (command)
+  "Get shell COMMAND output and insert it at point in current
+  buffer."
+  (insert (shell-command-to-string command)))
+
 ;;; sensible-defaults.el ends here
