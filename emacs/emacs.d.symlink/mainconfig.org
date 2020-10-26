@@ -42,10 +42,11 @@ to install/configure more packages.
 #+BEGIN_SRC emacs-lisp
   (require 'use-package-ensure)
   (setq use-package-always-ensure t)
+  (setq byte-compile-warnings '(cl-functions))
 #+END_SRC
 
 #+RESULTS:
-: t
+| cl-functions |
 
 Always compile packages, and use the newest version available.
 
@@ -152,19 +153,6 @@ available.
 #+RESULTS:
 : New York, NY
 
-* Add =resources= to =load-path=
-
-Just write elisp to resources to have it auto eval'd
-
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/resources/")
-  (mapc 'load (file-expand-wildcards "~/.emacs.d/resources/*.el"))
-#+END_SRC
-
-#+RESULTS:
-| /home/thehumpo/.emacs.d/straight/build/xelb | /home/thehumpo/.emacs.d/straight/build/exwm | ~/.emacs.d/resources/ | /home/thehumpo/.emacs.d/straight/build/enwc | /home/thehumpo/.emacs.d/straight/build/straight | /home/thehumpo/.emacs.d/elpa/ag-20190726.9 | /home/thehumpo/.emacs.d/elpa/auto-compile-20191020.1040 | /home/thehumpo/.emacs.d/elpa/buffer-move-20160615.1803 | /home/thehumpo/.emacs.d/elpa/centaur-tabs-20200325.1236 | /home/thehumpo/.emacs.d/elpa/coffee-mode-20200315.1133 | /home/thehumpo/.emacs.d/elpa/company-anaconda-20200404.1859 | /home/thehumpo/.emacs.d/elpa/anaconda-mode-20200129.1718 | /home/thehumpo/.emacs.d/elpa/company-go-20190203.19 | /home/thehumpo/.emacs.d/elpa/company-jedi-20200324.25 | /home/thehumpo/.emacs.d/elpa/company-lsp-20190612.1553 | /home/thehumpo/.emacs.d/elpa/default-text-scale-20191226.2234 | /home/thehumpo/.emacs.d/elpa/diff-hl-20200406.37 | /home/thehumpo/.emacs.d/elpa/dired-hide-dotfiles-20170314.2039 | /home/thehumpo/.emacs.d/elpa/dired-open-20180922.1113 | /home/thehumpo/.emacs.d/elpa/dired-sidebar-20200409.801 | /home/thehumpo/.emacs.d/elpa/dired-subtree-20180922.1615 | /home/thehumpo/.emacs.d/elpa/dired-hacks-utils-20190522.950 | /home/thehumpo/.emacs.d/elpa/dired-toggle-20190616.303 | /home/thehumpo/.emacs.d/elpa/dmenu-20190908.44 | /home/thehumpo/.emacs.d/elpa/docker-20200420.1156 | /home/thehumpo/.emacs.d/elpa/docker-compose-mode-20180324.1752 | /home/thehumpo/.emacs.d/elpa/docker-tramp-20170207.325 | /home/thehumpo/.emacs.d/elpa/dockerfile-mode-20200106.2126 | /home/thehumpo/.emacs.d/elpa/doom-modeline-20200418.724 | /home/thehumpo/.emacs.d/elpa/all-the-icons-20200411.520 | /home/thehumpo/.emacs.d/elpa/doom-themes-20200331.1901 | /home/thehumpo/.emacs.d/elpa/dumb-jump-20200406.1956 | /home/thehumpo/.emacs.d/elpa/ein-20200415.238 | /home/thehumpo/.emacs.d/elpa/elpy-20200329.1830 | /home/thehumpo/.emacs.d/elpa/company-20200324.2145 | /home/thehumpo/.emacs.d/elpa/elscreen-fr-20160920.953 | /home/thehumpo/.emacs.d/elpa/elscreen-tab-20190203.1619 | /home/thehumpo/.emacs.d/elpa/emojify-20200309.553 | /home/thehumpo/.emacs.d/elpa/engine-mode-20191105.750 | /home/thehumpo/.emacs.d/elpa/evil-magit-20200409.1909 | /home/thehumpo/.emacs.d/elpa/evil-org-20200101.2017 | /home/thehumpo/.emacs.d/elpa/evil-surround-20191217.1131 | /home/thehumpo/.emacs.d/elpa/evil-20200417.1238 | /home/thehumpo/.emacs.d/elpa/exwm-x-20190224.1152 | /home/thehumpo/.emacs.d/elpa/counsel-20200319.1329 | /home/thehumpo/.emacs.d/elpa/eyebrowse-20190928.1458 | /home/thehumpo/.emacs.d/elpa/fish-mode-20200213.2137 | /home/thehumpo/.emacs.d/elpa/flx-20191115.659 | /home/thehumpo/.emacs.d/elpa/flycheck-package-20200304.2151 | /home/thehumpo/.emacs.d/elpa/ghub-20200309.936 | /home/thehumpo/.emacs.d/elpa/gnuplot-20200322.53 | /home/thehumpo/.emacs.d/elpa/go-errcheck-20160723.43 | /home/thehumpo/.emacs.d/elpa/go-mode-20200412.1909 | /home/thehumpo/.emacs.d/elpa/goto-chg-20190110.2114 | /home/thehumpo/.emacs.d/elpa/graphviz-dot-mode-20200304.432 | /home/thehumpo/.emacs.d/elpa/haskell-mode-20200408.247 | /home/thehumpo/.emacs.d/elpa/helm-elscreen-20170709.914 | /home/thehumpo/.emacs.d/elpa/elscreen-20181009.451 | /home/thehumpo/.emacs.d/elpa/helm-exwm-20200325.1022 | /home/thehumpo/.emacs.d/elpa/exwm-0.23 | /home/thehumpo/.emacs.d/elpa/helm-lsp-20200420.1546 | /home/thehumpo/.emacs.d/elpa/helm-projectile-20190731.1538 | /home/thehumpo/.emacs.d/elpa/helm-tramp-20190616.125 | /home/thehumpo/.emacs.d/elpa/helm-20200419.757 | /home/thehumpo/.emacs.d/elpa/helm-core-20200413.823 | /home/thehumpo/.emacs.d/elpa/helpful-20200111.2324 | /home/thehumpo/.emacs.d/elpa/elisp-refs-20190323.1331 | /home/thehumpo/.emacs.d/elpa/highlight-indentation-20181204.839 | /home/thehumpo/.emacs.d/elpa/jedi-core-20191011.1750 | /home/thehumpo/.emacs.d/elpa/epc-20140610.534 | /home/thehumpo/.emacs.d/elpa/ctable-20171006.11 | /home/thehumpo/.emacs.d/elpa/concurrent-20161229.330 | /home/thehumpo/.emacs.d/elpa/json-mode-20190123.422 | /home/thehumpo/.emacs.d/elpa/json-reformat-20160212.853 | /home/thehumpo/.emacs.d/elpa/json-snatcher-20150512.347 | /home/thehumpo/.emacs.d/elpa/kaolin-themes-20200324.1349 | /home/thehumpo/.emacs.d/elpa/autothemer-20180920.923 | /home/thehumpo/.emacs.d/elpa/less-css-mode-20161001.453 | /home/thehumpo/.emacs.d/elpa/loop-20160813.1407 | /home/thehumpo/.emacs.d/elpa/lsp-origami-20190331.1723 | /home/thehumpo/.emacs.d/elpa/lsp-python-ms-20200223.2136 | /home/thehumpo/.emacs.d/elpa/lsp-ui-20200402.839 | /home/thehumpo/.emacs.d/elpa/lsp-mode-20200420.814 | /home/thehumpo/.emacs.d/elpa/dash-functional-20191109.1327 | /home/thehumpo/.emacs.d/elpa/magit-20200420.310 | /home/thehumpo/.emacs.d/elpa/git-commit-20200207.1819 | /home/thehumpo/.emacs.d/elpa/mark-multiple-20121118.1554 | /home/thehumpo/.emacs.d/elpa/markdown-preview-mode-20181213.1339 | /home/thehumpo/.emacs.d/elpa/markdown-mode-20200416.116 | /home/thehumpo/.emacs.d/elpa/memoize-20200103.2036 | /home/thehumpo/.emacs.d/elpa/minions-20200204.1950 | /home/thehumpo/.emacs.d/elpa/multi-term-20200112.533 | /home/thehumpo/.emacs.d/elpa/neotree-20200324.1946 | /home/thehumpo/.emacs.d/elpa/nix-mode-20190904.1440 | /home/thehumpo/.emacs.d/elpa/ob-go-20190201.2040 | /home/thehumpo/.emacs.d/elpa/org-bullets-20200317.1740 | /home/thehumpo/.emacs.d/elpa/org-kanban-20200329.543 | /home/thehumpo/.emacs.d/elpa/org-plus-contrib-20200420 | /home/thehumpo/.emacs.d/elpa/origami-20200331.1019 | /home/thehumpo/.emacs.d/elpa/ox-gfm-20170628.2102 | /home/thehumpo/.emacs.d/elpa/ox-reveal-20200327.1636 | /home/thehumpo/.emacs.d/elpa/package-lint-20200419.406 | /home/thehumpo/.emacs.d/elpa/packed-20180318.1729 | /home/thehumpo/.emacs.d/elpa/pandoc-20161128.1157 | /home/thehumpo/.emacs.d/elpa/paredit-20191121.2328 | /home/thehumpo/.emacs.d/elpa/perspective-20200418.1815 | /home/thehumpo/.emacs.d/elpa/polymode-20200411.915 | /home/thehumpo/.emacs.d/elpa/popup-20160709.1429 | /home/thehumpo/.emacs.d/elpa/prettier-js-20180109.726 | /home/thehumpo/.emacs.d/elpa/projectile-speedbar-20190807.2010 | /home/thehumpo/.emacs.d/elpa/py-autopep8-20160925.1052 | /home/thehumpo/.emacs.d/elpa/python-environment-20150310.853 | /home/thehumpo/.emacs.d/elpa/deferred-20170901.1330 | /home/thehumpo/.emacs.d/elpa/python-mode-20200417.648 | /home/thehumpo/.emacs.d/elpa/pythonic-20200304.1901 | /home/thehumpo/.emacs.d/elpa/pyvenv-20191202.1039 | /home/thehumpo/.emacs.d/elpa/quickrun-20200315.1029 | /home/thehumpo/.emacs.d/elpa/rainbow-delimiters-20191018.1233 | /home/thehumpo/.emacs.d/elpa/ranger-20200218.203 | /home/thehumpo/.emacs.d/elpa/request-20200219.2257 | /home/thehumpo/.emacs.d/elpa/rjsx-mode-20200120.1446 | /home/thehumpo/.emacs.d/elpa/js2-mode-20200211.2057 | /home/thehumpo/.emacs.d/elpa/sbt-mode-20200106.753 | /home/thehumpo/.emacs.d/elpa/scala-mode-20190929.1522 | /home/thehumpo/.emacs.d/elpa/scss-mode-20180123.1708 | /home/thehumpo/.emacs.d/elpa/shrink-path-20190208.1335 | /home/thehumpo/.emacs.d/elpa/smartparens-20200324.2147 | /home/thehumpo/.emacs.d/elpa/smex-20151212.2209 | /home/thehumpo/.emacs.d/elpa/solarized-theme-20200411.1026 | /home/thehumpo/.emacs.d/elpa/spinner-1.7.3 | /home/thehumpo/.emacs.d/elpa/sr-speedbar-20161025.831 | /home/thehumpo/.emacs.d/elpa/string-inflection-20200517.115 | /home/thehumpo/.emacs.d/elpa/sudo-edit-20180731.1908 | /home/thehumpo/.emacs.d/elpa/swiper-20200319.1334 | /home/thehumpo/.emacs.d/elpa/ivy-20200319.1247 | /home/thehumpo/.emacs.d/elpa/switch-window-20181104.340 | /home/thehumpo/.emacs.d/elpa/symon-lingr-20150719.1342 | /home/thehumpo/.emacs.d/elpa/symon-20170224.833 | /home/thehumpo/.emacs.d/elpa/synosaurus-20191125.552 | /home/thehumpo/.emacs.d/elpa/tabbar-ruler-20160802.307 | /home/thehumpo/.emacs.d/elpa/mode-icons-20190627.2121 | /home/thehumpo/.emacs.d/elpa/powerline-20200105.2053 | /home/thehumpo/.emacs.d/elpa/tabbar-20180726.1735 | /home/thehumpo/.emacs.d/elpa/tablist-20200227.1918 | /home/thehumpo/.emacs.d/elpa/tide-20200327.1218 | /home/thehumpo/.emacs.d/elpa/flycheck-20200405.2310 | /home/thehumpo/.emacs.d/elpa/let-alist-1.0.6 | /home/thehumpo/.emacs.d/elpa/transient-20200226.1612 | /home/thehumpo/.emacs.d/elpa/treemacs-projectile-20200114.1715 | /home/thehumpo/.emacs.d/elpa/treemacs-20200420.1418 | /home/thehumpo/.emacs.d/elpa/ht-20200217.2331 | /home/thehumpo/.emacs.d/elpa/hydra-20200306.913 | /home/thehumpo/.emacs.d/elpa/lv-20200227.1301 | /home/thehumpo/.emacs.d/elpa/pfuture-20200113.620 | /home/thehumpo/.emacs.d/elpa/ace-window-20200311.1025 | /home/thehumpo/.emacs.d/elpa/avy-20200311.1106 | /home/thehumpo/.emacs.d/elpa/projectile-20200329.1908 | /home/thehumpo/.emacs.d/elpa/pkg-info-20150517.1143 | /home/thehumpo/.emacs.d/elpa/epl-20180205.2049 | /home/thehumpo/.emacs.d/elpa/treepy-20191108.2217 | /home/thehumpo/.emacs.d/elpa/typescript-mode-20200312.2235 | /home/thehumpo/.emacs.d/elpa/undo-tree-0.7.4 | /home/thehumpo/.emacs.d/elpa/use-package-20200322.2110 | /home/thehumpo/.emacs.d/elpa/bind-key-20191110.416 | /home/thehumpo/.emacs.d/elpa/vagrant-tramp-20200118.2324 | /home/thehumpo/.emacs.d/elpa/volume-20200523.1246 | /home/thehumpo/.emacs.d/elpa/vterm-toggle-20200402.1516 | /home/thehumpo/.emacs.d/elpa/vterm-20200418.1610 | /home/thehumpo/.emacs.d/elpa/web-mode-20200501.1939 | /home/thehumpo/.emacs.d/elpa/web-server-20200330.1407 | /home/thehumpo/.emacs.d/elpa/websocket-20200419.2124 | /home/thehumpo/.emacs.d/elpa/wgrep-20200217.1030 | /home/thehumpo/.emacs.d/elpa/which-key-20200216.1350 | /home/thehumpo/.emacs.d/elpa/with-editor-20200217.1015 | /home/thehumpo/.emacs.d/elpa/async-20200113.1745 | /home/thehumpo/.emacs.d/elpa/workgroups2-20141102.1922 | /home/thehumpo/.emacs.d/elpa/f-20191110.1357 | /home/thehumpo/.emacs.d/elpa/s-20180406.808 | /home/thehumpo/.emacs.d/elpa/anaphora-20180618.2200 | /home/thehumpo/.emacs.d/elpa/dash-20200119.2310 | /home/thehumpo/.emacs.d/elpa/xelb-0.18 | /home/thehumpo/.emacs.d/elpa/yaml-mode-20191127.2314 | /home/thehumpo/.emacs.d/elpa/yasnippet-20200413.2221 | /nix/store/39dj5iqbp5khf8z1cpm23gfdfw49q9hd-emacs-packages-deps/share/emacs/site-lisp | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/site-lisp | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/site-lisp | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/vc | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/url | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/textmodes | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/progmodes | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/play | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/org | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/nxml | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/net | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/mh-e | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/mail | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/leim | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/language | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/international | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/image | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/gnus | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/eshell | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/erc | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/emulation | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/emacs-lisp | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/cedet | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/calendar | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/calc | /nix/store/cjkgq113wvwq7ili65vbdrglsbv8xwrd-emacs-26.3/share/emacs/26.3/lisp/obsolete |
-
-* =evil-mode=
 
 Evil mode is frustrating at first but allows the
 emacs programmer to be much more fluid in development
@@ -173,10 +161,10 @@ taking the best of these two disparate worlds.
 Use =evil=.
 
 #+BEGIN_SRC emacs-lisp
-(use-package evil
-    :config
-    (evil-mode 1)
-(setq evil-default-state 'emacs))
+  (use-package evil
+      :config
+      (evil-mode 1)
+      (setq evil-default-state 'emacs))
 #+END_SRC
 
 #+RESULTS:
@@ -351,6 +339,9 @@ that:
   (set-window-scroll-bars (minibuffer-window) nil nil)
 #+END_SRC
 
+#+RESULTS:
+: t
+
 The default frame title isn't useful. This binds it to the name of the current
 project:
 
@@ -410,7 +401,7 @@ Themes are a nice switch of pace from the numdane black and white
   (defun ajc/apply-theme ()
     "Apply the `tsdh-dark' theme and make frames just slightly transparent."
     (interactive)
-    (transparency 10))
+    (transparency 100))
 #+END_SRC
 
 #+RESULTS:
@@ -427,31 +418,34 @@ frame is themed appropriately.
     (ajc/apply-theme))
 #+END_SRC
 
-** Use =doom-modeline= for pretty modeline
+#+RESULTS:
+
 
    This modeline looks informative and pretty at the same time!
 
    #+BEGIN_SRC emacs-lisp
      (use-package doom-modeline
-           :ensure t
-           :hook (after-init . doom-modeline-mode)
-           :config
-           (setq doom-modeline-icon (display-graphic-p))
-           (setq doom-modeline-buffer-file-name-style 'truncate-all)
-           (setq doom-modeline-buffer-state-icon t)
-           (setq doom-modeline-percentage-info nil)
-           (setq doom-modeline-indent-info t)
-           (setq doom-modeline-major-modees-icon t)
-           (setq doom-modeline-major-mode-color-icon t)
-           (setq doom-modeline-minor-modes nil)
-           (setq doom-modeline-github nil)
-           (set-face-attribute 'mode-line nil :height 80)
-           (set-face-attribute 'mode-line-inactive nil :height 80)
-           (safe-wrap (all-the-icons-install-fonts t) (message "no update icons")))
+       :ensure t
+       :config
+       ;; install fonts
+       (all-the-icons-install-fonts t)
+
+       (doom-modeline-mode 1)
+       (setq doom-modeline-icon (display-graphic-p))
+       (setq doom-modeline-buffer-file-name-style 'truncate-all)
+       (setq doom-modeline-buffer-state-icon t)
+       (setq doom-modeline-percentage-info nil)
+       ;; (setq doom-modeline-indent-info t)
+       (setq doom-modeline-major-modees-icon t)
+       (setq doom-modeline-major-mode-color-icon t)
+       (setq doom-modeline-minor-modes nil)
+       (setq doom-modeline-github nil)
+       (set-face-attribute 'mode-line nil :height 80)
+       (set-face-attribute 'mode-line-inactive nil :height 80))
    #+END_SRC
 
    #+RESULTS:
-   | global-company-mode | #[0 \302\300\301"\207 [custom-safe-themes (2cdc13ef8c76a22daa0f46370011f54e79bae00d5736340a5ddfe656a767fddf) customize-push-and-save] 3] | doom-modeline-mode | x-wm-set-size-hint | table--make-cell-map | emojify-download-emoji-maybe |
+   : t
 
    Also don't forget about doom themes!!!
 
@@ -483,7 +477,8 @@ frame is themed appropriately.
 ** Emojis!
 
    #+begin_src emacs-lisp
-     ; (use-package emojify)
+     (use-package emojify
+       :ensure t)
    #+end_src
 
    #+RESULTS:
@@ -611,26 +606,6 @@ programming.
     (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
     (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
 #+END_SRC
-
-** Dashboard
-
-   I reall like having a `dashboard` like home screen
-
-   #+begin_src emacs-lisp
-     (use-package dashboard
-       :ensure t
-       :config
-       (setq dashboard-banner-logo-title "Welcome to Alex's Emacs!")
-       (setq dashboard-image-banner-max-height 1)
-       (setq dashboard-image-banner-max-width 1)
-       (setq dashboard-center-content t)
-       (setq dashboard-startup-banner "~/.emacs.d/resources/penrose.png")
-       (dashboard-setup-startup-hook)
-       )
-   #+end_src
-
-   #+RESULTS:
-   : t
 
 * Project management
 
@@ -960,7 +935,17 @@ Install Less.
   (use-package less-css-mode)
 #+END_SRC
 
-** Golang
+
+Great for jupyter notebook things
+
+#+BEGIN_SRC emacs-lisp
+(use-package ein
+  :ensure t)
+#+END_SRC
+
+#+RESULTS:
+
+**  Golang
 
 Install =go-mode= and related packages:
 
@@ -1118,12 +1103,15 @@ Format code according to PEP8 on save:
 Configure Jedi along with the associated =company= mode:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package company-jedi)
-  (add-to-list 'company-backends 'company-jedi)
+  ;(use-package company-jedi)
+  ;(add-to-list 'company-backends 'company-jedi)
 
   ;(add-hook 'python-mode-hook 'jedi:setup)
   (setq jedi:complete-on-dot t)
 #+END_SRC
+
+#+RESULTS:
+: t
 
 Add anaconda mode
 
@@ -1494,8 +1482,8 @@ have. It would be nice to make them easily viewable
 
 
    #+begin_src emacs-lisp
-     (use-package helm-lsp
-       :commands helm-lsp-workspace-symbol)
+     ;(use-package helm-lsp
+     ;  :commands helm-lsp-workspace-symbol)
    #+end_src
 
    #+RESULTS:
@@ -1515,14 +1503,17 @@ For a while I used =shell-pop= for shell sessions but I'm now transitioning
 to using =multi-term= and =vterm= to manage my shell sessions. It's bound to =C-c t=.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package multi-term)
+  (print "Loading terminal configs")
+  (use-package multi-term
+    :straight t)
+
   (use-package vterm
-    :ensure t)
-  (load-file "~/.emacs.d/resources/multi-libvterm.el")
+   :straight (vterm :type git :host github :repo "akermu/emacs-libvterm" :branch "master"))
+  (load-file "~/.emacs.d/resources/multi-libvterm.d/multi-libvterm.el")
 
   (global-set-key (kbd "C-c t") 'multi-libvterm)
 
-  ; if nix is installed use fish as shell
+                                          ; if nix is installed use fish as shell
   (if (file-directory-p "~/.nix-profile/")
       (setq multi-libvterm-program "~/.nix-profile/bin/fish"))
 #+END_SRC
@@ -1671,6 +1662,16 @@ so here I can switch from one to another
 #+RESULTS:
 : term-char-mode
 
+
+Just write elisp to resources to have it auto eval'd
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/resources/")
+  (mapc 'load (file-expand-wildcards "~/.emacs.d/resources/*.el"))
+#+END_SRC
+
+#+RESULTS:
+
 * Publishing and task management with Org-mode
 
 #+BEGIN_SRC emacs-lisp
@@ -1760,16 +1761,16 @@ the location of an index file (my main todo list), and archive finished tasks in
 =~/documents/org/archive.org=.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-directory "~/documents/org")
+  ;(setq org-directory "~/documents/org")
 
-  (defun org-file-path (filename)
-    "Return the absolute address of an org file, given its relative name."
-    (concat (file-name-as-directory org-directory) filename))
+  ;(defun org-file-path (filename)
+  ;  "Return the absolute address of an org file, given its relative name."
+  ;  (concat (file-name-as-directory org-directory) filename))
 
-  (setq org-inbox-file "~/Dropbox/inbox.org")
-  (setq org-index-file (org-file-path "index.org"))
-  (setq org-archive-location
-        (concat (org-file-path "archive.org") "::* From %s"))
+  ;(setq org-inbox-file "~/Dropbox/inbox.org")
+  ;(setq org-index-file (org-file-path "index.org"))
+  ;(setq org-archive-location
+  ;      (concat (org-file-path "archive.org") "::* From %s"))
 #+END_SRC
 
 I use [[http://agiletortoise.com/drafts/][Drafts]] to create new tasks, format them according to a template, and
@@ -1777,20 +1778,20 @@ append them to an "inbox.org" file in my Dropbox. This function lets me import
 them easily from that inbox file to my index.
 
 #+BEGIN_SRC emacs-lisp
-  (defun ajc/copy-tasks-from-inbox ()
-    (when (file-exists-p org-inbox-file)
-      (save-excursion
-        (find-file org-index-file)
-        (goto-char (point-max))
-        (insert-file-contents org-inbox-file)
-        (delete-file org-inbox-file))))
+	;; (defun ajc/copy-tasks-from-inbox ()
+	;;   (when (file-exists-p org-inbox-file)
+	;;     (save-excursion
+	;;       (find-file org-index-file)
+	;;       (goto-char (point-max))
+	;;       (insert-file-contents org-inbox-file)
+	;;       (delete-file org-inbox-file))))
 #+END_SRC
 
 I store all my todos in =~/documents/org/index.org=, so I'd like to derive my
 agenda from there.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files (list org-index-file))
+	;; (setq org-agenda-files (list org-index-file))
 #+END_SRC
 
 Hitting =C-c C-x C-s= will mark a todo as done and move it to an appropriate
@@ -1821,33 +1822,33 @@ Define a few common tasks as capture templates. Specifically, I frequently:
 - Convert emails into todos to maintain an empty inbox.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-capture-templates
-        '(("b" "Blog idea"
-           entry
-           (file "~/documents/notes/blog-ideas.org")
-           "* %?\n")
+	;; (setq org-capture-templates
+	;;       '(("b" "Blog idea"
+	;;          entry
+	;;          (file "~/documents/notes/blog-ideas.org")
+	;;          "* %?\n")
 
-          ("e" "Email" entry
-           (file+headline org-index-file "Inbox")
-           "* TODO %?\n\n%a\n\n")
+	;;         ("e" "Email" entry
+	;;          (file+headline org-index-file "Inbox")
+	;;          "* TODO %?\n\n%a\n\n")
 
-          ("f" "Finished book"
-           table-line (file "~/documents/notes/books-read.org")
-           "| %^{Title} | %^{Author} | %u |")
+	;;         ("f" "Finished book"
+	;;          table-line (file "~/documents/notes/books-read.org")
+	;;          "| %^{Title} | %^{Author} | %u |")
 
-          ("r" "Reading"
-           checkitem
-           (file (org-file-path "to-read.org")))
+	;;         ("r" "Reading"
+	;;          checkitem
+	;;          (file (org-file-path "to-read.org")))
 
-          ("s" "Subscribe to an RSS feed"
-           plain
-           (file "~/documents/rss/urls")
-           "%^{Feed URL} \"~%^{Feed name}\"")
+	;;         ("s" "Subscribe to an RSS feed"
+	;;          plain
+	;;          (file "~/documents/rss/urls")
+	;;          "%^{Feed URL} \"~%^{Feed name}\"")
 
-          ("t" "Todo"
-           entry
-           (file+headline org-index-file "Inbox")
-           "* TODO %?\n")))
+	;;         ("t" "Todo"
+	;;          entry
+	;;          (file+headline org-index-file "Inbox")
+	;;          "* TODO %?\n")))
 #+END_SRC
 
 When I'm starting an Org capture template I'd like to begin in insert mode. I'm
@@ -1856,6 +1857,9 @@ opening it up in order to start typing something, so this skips a step.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-capture-mode-hook 'evil-insert-state)
 #+END_SRC
+
+#+RESULTS:
+| evil-insert-state |
 
 Refiling according to the document's hierarchy.
 
@@ -2283,7 +2287,7 @@ I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippe
 enabled.
 
 #+BEGIN_SRC emacs-lisp
-  (setq yas-snippet-dirs '("~/.emacs.d/snippets/text-mode"))
+  ; (setq yas-snippet-dirs '("~/.emacs.d/snippets/text-mode"))
   (yas-global-mode 1)
 #+END_SRC
 
@@ -2310,6 +2314,7 @@ This configuration:
 
 #+BEGIN_SRC emacs-lisp
   (use-package counsel
+    :straight t
     :bind
     ("M-X" . 'counsel-M-x)
     ("C-s" . 'swiper)
@@ -2317,15 +2322,17 @@ This configuration:
     :config
     (use-package flx)
     (use-package smex)
-
     (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t)
-    (setq ivy-count-format "(%d/%d) ")
-    (setq ivy-initial-inputs-alist nil)
-    (setq ivy-re-builders-alist
-          '((swiper . ivy--regex-plus)
-            (t . ivy--regex-fuzzy))))
+     (setq ivy-use-virtual-buffers t)
+     (setq ivy-count-format "(%d/%d) ")
+     (setq ivy-initial-inputs-alist nil)
+     (setq ivy-re-builders-alist
+           '((swiper . ivy--regex-plus)
+             (t . ivy--regex-fuzzy))))
 #+END_SRC
+
+#+RESULTS:
+: swiper
 
 ** Switch and rebalance windows when splitting
 
@@ -2458,12 +2465,14 @@ applications ontop of the Helm framework for standard utilities.
 It's extremely handy for autocompleting without tab completion!
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm
-  :ensure t
-  :bind (("M-x" . helm-M-x)
-         ("C-x b" . helm-buffers-list)
-         ("C-x f" . helm-find-files)
-         ("C-x r b" . helm-bookmarks)))
+  (print "Loading helm configs")
+  ;  :straight (helm :type git :host github :branch "master" :repo "emacs-helm/helm")
+  (use-package helm
+    :ensure t
+    :bind (("M-x" . helm-M-x)
+           ("C-x b" . helm-buffers-list)
+           ("C-x C-f" . helm-find-files)
+           ("C-x r b" . helm-bookmarks)))
 #+END_SRC
 
 #+RESULTS:
@@ -2493,24 +2502,6 @@ It's extremely handy for autocompleting without tab completion!
 (with-eval-after-load 'helm-files
   (define-key helm-find-files-map (kbd "<return>") 'helm-execute-persistent-action))
 
-;; Don't show "." and ".." directories when finding files.
-;; https://github.com/hatschipuh/better-helm
-(with-eval-after-load 'helm-files
-  (advice-add 'helm-ff-filter-candidate-one-by-one
-              :before-while 'no-dots-display-file-p))
-(defvar no-dots-whitelist nil
-  "List of helm buffers in which to show dots.")
-
-(defun no-dots-in-white-listed-helm-buffer-p ()
-  (member helm-buffer no-dots-whitelist))
-
-(defun no-dots-display-file-p (file)
-  ;; in a whitelisted buffer display the file regardless of its name
-  (or (no-dots-in-white-listed-helm-buffer-p)
-      ;; not in a whitelisted buffer display all files
-      ;; which does not end with /. /..
-      (not (string-match "\\(?:/\\|\\`\\)\\.\\{1,2\\}\\'" file))))
-
 ;; major key
 (global-set-key [remap execute-extended-command] #'helm-smex)
 #+END_SRC
@@ -2524,32 +2515,33 @@ It's extremely handy for autocompleting without tab completion!
 ;; Disable Helm in the following functions.
 ;; See: https://github.com/emacs-helm/helm/wiki#customize-helm-mode
 (setq helm-completing-read-handlers-alist
-      '((find-file-read-only . ido)
-        (magit-gitignore . nil)
+      '((magit-gitignore . nil)
         (rename-file . ido)))
 #+END_SRC
 
+#+RESULTS:
+: ((magit-gitignore) (rename-file . ido))
+
 ** auxilary helm
 
-This section is mainly for emacs...helm...packages...
+ This section is mainly for emacs...helm...packages...
 
 #+BEGIN_SRC emacs-lisp
-;; Install accompanying helm packages
-(use-package helm-projectile
-  :ensure t
-  :init
-  (setq projectile-completion-system 'helm)
-  (helm-projectile-on))
-(use-package helm-tramp
-  :ensure t
-  :bind ("C-c s" . helm-tramp))
-(setq tramp-default-method "docker")
+  ;; Install accompanying helm packages
+  (use-package helm-projectile
+    :ensure t
+    :init
+    (setq projectile-completion-system 'helm)
+    (helm-projectile-on))
+  (use-package helm-tramp
+    :ensure t
+    :bind ("C-c s" . helm-tramp))
+  (setq tramp-default-method "docker")
 #+END_SRC
 
 #+RESULTS:
 : docker
 
-* Set custom keybindings
 
 Just a few handy functions.
 
@@ -2596,6 +2588,28 @@ Nice sliding window scrolling
 (global-set-key (kbd "C-p") 'previous-line-and-recenter)
 #+END_SRC
 
+Run polybar in the background
+
+#+begin_src emacs-lisp
+  (defun kill_polybar ()
+    (let ((auto-answer t))
+      (when (get-buffer "*trigger_polybar*")
+      (kill-buffer "*trigger_polybar*"))))
+
+
+  (defun trigger_polybar (&optional default-monitor)
+    (unless default-monitor (setq default-monitor ""))
+    (kill_polybar)
+    (let ((display-buffer-alist
+           (cons (cons "\\*trigger_polybar\\*.*"
+                       (cons #'display-buffer-no-window nil))
+                 display-buffer-alist))) ;; suppress async shell command window
+      (async-shell-command
+       (concat "trigger_polybar " default-monitor) "*trigger_polybar*")))
+#+end_src
+
+#+RESULTS:
+
 * EXWM
 
 An attempt to switch from i3 to a better X window manager is EXWM.
@@ -2603,27 +2617,25 @@ An attempt to switch from i3 to a better X window manager is EXWM.
 In my opinion it is a pretty amazing blend of X and emacs
 
 #+BEGIN_SRC emacs-lisp
+  (print "Loading exwm configs")
 
   (eval-and-compile
     (straight-use-package 'exwm)
     (require 'exwm-core))
 
   (use-package exwm
-    :ensure t
+    :straight t
     :config
     (require 'exwm-config)
     (exwm-enable)
 
-                                          ; (require 'exwm-systemtray)
-                                          ; (exwm-systemtray-enable)
-
     ;; Make a bunch of workspaces
-    (setq exwm-workspace-number 8)
-    (dotimes (i 8)
+    (setq exwm-workspace-number 4)
+    (dotimes (i 4)
       (exwm-input-set-key (kbd (format "s-%d" i))
                           `(lambda ()
                              (interactive)
-                             (exwm-workspace-switch-create ,i))))
+                             (exwm-workspace-add ,i))))
 
     ;; config vars
     (setq exwm-manage-codnfigurations '((t line-mode t)))
@@ -2687,14 +2699,16 @@ In my opinion it is a pretty amazing blend of X and emacs
                           (string= "gimp" exwm-instance-name))
                   (exwm-workspace-rename-buffer exwm-title))))
 
+
     (setq window-divider-default-right-width 1)
-    (window-divider-mode)
-    )
+    (window-divider-mode))
+
+  (ignore-errors
+    (trigger_polybar))
+
   (use-package helm-exwm
     :ensure t
-    :bind (("s-x" . helm-exwm))
-    )
-
+    :bind (("s-x" . helm-exwm)))
 #+END_SRC
 
 #+RESULTS:
@@ -2738,30 +2752,6 @@ In my opinion it is a pretty amazing blend of X and emacs
 #+RESULTS:
 | exwm-systemtray--exit | exwm-randr--exit |
 
-Run polybar in the background
-#+begin_src emacs-lisp
-    (defun kill_polybar ()
-      (let ((auto-answer t))
-        (when (get-buffer "*trigger_polybar*")
-        (kill-buffer "*trigger_polybar*"))))
-
-
-    (defun trigger_polybar (&optional default-monitor)
-      (unless default-monitor (setq default-monitor ""))
-      (kill_polybar)
-      (let ((display-buffer-alist
-             (cons (cons "\\*trigger_polybar\\*.*"
-                         (cons #'display-buffer-no-window nil))
-                   display-buffer-alist))) ;; suppress async shell command window
-        (async-shell-command
-         (concat "trigger_polybar " default-monitor) "*trigger_polybar*")))
-
-    (trigger_polybar)
-#+end_src
-
-#+RESULTS:
-
-
 #+begin_src emacs-lisp
   (defun my/exwm-randr-auto-get-monitor ()
     (let* ((result)
@@ -2774,14 +2764,14 @@ Run polybar in the background
   (defun monitor-home-setup ()
     (interactive)
     (kill_polybar)
-    (setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "HDMI1"))
+    (setq exwm-randr-workspace-output-plist '(0 "eDP-1" 1 "HDMI1"))
     (shell-command "xrandr --output HDMI1 --mode 1280x768 --above eDP1")
     (trigger_polybar "eDP1"))
 
   (defun monitor-home-teardown ()
     (interactive)
     (kill_polybar)
-    (setq exwm-randr-workspace-output-plist '(0 "eDP1"))
+    (setq exwm-randr-workspace-output-plist '(0 "eDP-1"))
     (shell-command "xrandr --output eDP1 --auto --output HDMI1 --off")
     (trigger_polybar "eDP1"))
 #+end_src
@@ -2792,35 +2782,23 @@ Run polybar in the background
 #+RESULTS:
 : #<window 10 on *Async Shell Command*>
 
-* extra
 
-I don't know where to put this... it's really handy when re-arranging
-buffers for any what reason
+  I really like having a `dashboard` like home screen
 
+  #+begin_src emacs-lisp
+     (use-package dashboard
+       :ensure t
+       :init
+       (add-hook 'after-init-hook 'dashboard-refresh-buffer)
+       :config
+       (setq dashboard-banner-logo-title "Welcome to Alex's Emacs!")
+       (setq dashboard-image-banner-max-height 1)
+       (setq dashboard-image-banner-max-width 1)
+       (setq dashboard-center-content t)
+       (setq dashboard-startup-banner "~/.emacs.d/resources/penrose.png")
+       (dashboard-setup-startup-hook)
+       )
+  #+end_src
 
-#+BEGIN_SRC emacs-lisp
-(use-package buffer-move
-  :ensure t)
-#+END_SRC
-
-#+RESULTS:
-
-Great for jupyter notebook things
-
-#+BEGIN_SRC emacs-lisp
-(use-package ein
-  :ensure t)
-#+END_SRC
-
-#+RESULTS:
-
-
-#+begin_src emacs-lisp
-(defun insert-shell-command-output (command)
-  "Get shell COMMAND output and insert it at point in current
-  buffer."
-  (insert (shell-command-to-string command)))
-#+end_src
-
-#+RESULTS:
-: insert-shell-command-output
+  #+RESULTS:
+  : t
