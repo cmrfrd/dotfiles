@@ -479,8 +479,8 @@ type = internal/xworkspaces
 format = <label-monitor> <label-state>
 label-monitor = %name%
 
-;override-redirect = true
-; pin-workspaces = true
+override-redirect = true
+pin-workspaces = true
 enable-click = true
 enable-scroll = false
 
