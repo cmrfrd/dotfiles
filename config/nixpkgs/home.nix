@@ -195,6 +195,16 @@ in rec {
     enable = true;
   };
 
+  programs.ssh = {
+    enable = true;
+    matchBlocks = {
+      "github.com" = {
+        hostname = "github.com";
+        user = "git";
+      };
+    };
+  };
+
   services.gpg-agent = {
     enable = true;
     defaultCacheTtl = 1800;
