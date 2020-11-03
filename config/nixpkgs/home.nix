@@ -25,6 +25,10 @@ in rec {
 
     ## Apps
     pkgs.brave
+    pkgs.bitwarden
+    pkgs.protonmail-bridge
+    pkgs.thunderbird
+    pkgs.pinentry
 
     ## Bars
     pkgs.polybar
@@ -49,12 +53,15 @@ in rec {
 
     ## cli/tools
     pkgs.jq
-    pkgs.jo
+    pkgs.ack
     pkgs.tree
     pkgs.git
     pkgs.tig
+    pkgs.gitAndTools.gh
+    pkgs.git-crypt
     pkgs.highlight
     pkgs.gnumake
+    pkgs.gnupg
     pkgs.parallel
     pkgs.openssl
     pkgs.openssh
@@ -80,11 +87,9 @@ in rec {
     pkgs.gcc
     pkgs.neofetch
     pkgs.wireshark
-
-    ## libs
-    pkgs.vte
-    pkgs.gtk3
-    pkgs.libgee
+    pkgs.licensor
+    pkgs.ispell
+    pkgs.rclone
 
     ## containers
     pkgs.docker_compose
@@ -104,6 +109,7 @@ in rec {
     pkgs.nodePackages.vscode-html-languageserver-bin
     pkgs.nodePackages.vscode-css-languageserver-bin
     pkgs.nodePackages.node2nix
+    pkgs.nodePackages.bitwarden-cli
     pkgs.haskellPackages.hledger
   ];
 
@@ -139,6 +145,16 @@ in rec {
       epkgs.exwm
       epkgs.vterm
       epkgs.dictionary
+    ];
+  };
+
+  programs.chromium = {
+    enable = true;
+    extensions = [
+      "gcbommkclmclpchllfjekcdonpmejbdp" # https everywhere
+      "mbniclmhobmnbdlbpiphghaielnnpgdp" # lightshot
+      "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock origin
+      "nngceckbapebfimnlniiiahkandclblb" # bitwarden
     ];
   };
 
@@ -209,6 +225,12 @@ in rec {
     enable = true;
     defaultCacheTtl = 1800;
     enableSshSupport = true;
+    enableExtraSocket = true;
+    pinentryFlavor = "emacs";
+    extraConfig = ''
+    allow-emacs-pinentry
+    allow-loopback-pinentry
+    '';
   };
 
 }
