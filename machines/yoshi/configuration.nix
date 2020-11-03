@@ -31,7 +31,7 @@
 
   programs.mtr.enable = true;
 
-  networking.firewall.enable = false;
+  networking.firewall.enable = true;
 
   # Enable sound.
   sound.enable = true;
@@ -44,6 +44,14 @@
     '';
   };
 
+  # ddclient ooooweeee dynamic dns is awesome
+  # services.ddclient = {
+  #   enable = true;
+  # };
+
+  # cron is pretty useful
+  services.cron.enable = true;
+
   # Base desktop manager, not default
   services.xserver = {
     # Enable the X11 windowing system.
@@ -51,7 +59,12 @@
     layout = "us";
     libinput.enable = true;
     desktopManager = {
-      xterm.enable = true;
+      xfce = {
+        enable = true;
+        noDesktop = true;
+        enableXfwm = false;
+        thunarPlugins = [ pkgs.xfce.thunar-archive-plugin ];
+      };
       pantheon.enable = true;
     };
     windowManager = {
@@ -65,6 +78,7 @@
     };
     displayManager = {
       sessionCommands = "${pkgs.xorg.xhost}/bin/xhost +SI:localuser:$USER";
+      defaultSession = "xfce+exwm";
     };
   };
 
@@ -98,6 +112,6 @@
     ]))
   ];
 
-  system.stateVersion = "19.03"; # Did you read the comment?
+  system.stateVersion = "20.09"; # Did you read the comment?
 
 }
