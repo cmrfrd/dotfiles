@@ -1496,6 +1496,22 @@ have. It would be nice to make them easily viewable
 
    #+RESULTS:
    | (lambda nil (require (quote lsp-python-ms))) | doom-modeline-env-setup-python | jedi:setup | elpy-mode | #[0  |
+** GPG
+
+   #+begin_src emacs-lisp
+     ;; gpg stuff
+     (defun pinentry-emacs (desc prompt ok error)
+       (let ((str (read-passwd (concat (replace-regexp-in-string "%22" "\"" (replace-regexp-in-string "%0A" "\n" desc)) prompt ": "))))
+         str))
+                                             ; (setq epa-pinentry-mode 'emacs)
+     (setf epa-pinentry-mode 'loopback)
+     (setq epg-gpg-program "gpg2")
+     (setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
+     (pinentry-start)
+   #+end_src
+
+   #+RESULTS:
+   : Pinentry service is already running
 
 * Terminal
 
@@ -1671,6 +1687,7 @@ Just write elisp to resources to have it auto eval'd
 #+END_SRC
 
 #+RESULTS:
+| ~/.emacs.d/resources/brightness.el | ~/.emacs.d/resources/crontab.el | ~/.emacs.d/resources/eslint.el | ~/.emacs.d/resources/org-inline-image.el | ~/.emacs.d/resources/sensible-defaults.el |
 
 * Publishing and task management with Org-mode
 
@@ -1678,11 +1695,14 @@ Just write elisp to resources to have it auto eval'd
   (use-package org
     :ensure org-plus-contrib)
 
+  (with-eval-after-load 'org
+    (setq org-directory "~/.dotfiles/mnt/cmrfrd_dropbox/org/"))
+
   (add-to-list 'org-modules 'org-tempo)
 
   (add-hook 'org-mode-hook
-          (lambda ()
-            (require 'org-tempo)))
+            (lambda ()
+              (require 'org-tempo)))
 
   (use-package ox-gfm
     :config
@@ -1756,42 +1776,47 @@ Quickly insert a block of elisp:
 
 ** Task and org-capture management
 
-Store my org files in =~/documents/org=, maintain an inbox in Dropbox, define
+Store my org files in =notes/org=, maintain an inbox in Dropbox, define
 the location of an index file (my main todo list), and archive finished tasks in
-=~/documents/org/archive.org=.
+=notes/org/archive.org=.
 
 #+BEGIN_SRC emacs-lisp
-  ;(setq org-directory "~/documents/org")
 
-  ;(defun org-file-path (filename)
-  ;  "Return the absolute address of an org file, given its relative name."
-  ;  (concat (file-name-as-directory org-directory) filename))
+  (defun org-file-path (filename)
+    "Return the absolute address of an org file, given its relative name."
+    (concat (file-name-as-directory org-directory) filename))
 
-  ;(setq org-inbox-file "~/Dropbox/inbox.org")
-  ;(setq org-index-file (org-file-path "index.org"))
-  ;(setq org-archive-location
-  ;      (concat (org-file-path "archive.org") "::* From %s"))
+  (setq org-inbox-file (org-file-path "inbox.org"))
+  (setq org-index-file (org-file-path "index.org"))
+  (setq org-archive-location
+        (concat (org-file-path "archive.org") "::* From %s"))
 #+END_SRC
+
+#+RESULTS:
+: ~/.dotfiles/mnt/cmrfrd_dropbox/org/archive.org::* From %s
 
 I use [[http://agiletortoise.com/drafts/][Drafts]] to create new tasks, format them according to a template, and
 append them to an "inbox.org" file in my Dropbox. This function lets me import
 them easily from that inbox file to my index.
 
 #+BEGIN_SRC emacs-lisp
-	;; (defun ajc/copy-tasks-from-inbox ()
-	;;   (when (file-exists-p org-inbox-file)
-	;;     (save-excursion
-	;;       (find-file org-index-file)
-	;;       (goto-char (point-max))
-	;;       (insert-file-contents org-inbox-file)
-	;;       (delete-file org-inbox-file))))
+	(defun ajc/copy-tasks-from-inbox ()
+	  (when (file-exists-p org-inbox-file)
+	    (save-excursion
+	      (find-file org-index-file)
+	      (goto-char (point-max))
+	      (insert-file-contents org-inbox-file)
+	      (delete-file org-inbox-file))))
 #+END_SRC
 
-I store all my todos in =~/documents/org/index.org=, so I'd like to derive my
+#+RESULTS:
+: ajc/copy-tasks-from-inbox
+
+I store all my todos in =index.org=, so I'd like to derive my
 agenda from there.
 
 #+BEGIN_SRC emacs-lisp
-	;; (setq org-agenda-files (list org-index-file))
+	(setq org-agenda-files (list org-index-file))
 #+END_SRC
 
 Hitting =C-c C-x C-s= will mark a todo as done and move it to an appropriate
@@ -1807,6 +1832,9 @@ place in the archive.
   (define-key org-mode-map (kbd "C-c C-x C-s") 'ajc/mark-done-and-archive)
 #+END_SRC
 
+#+RESULTS:
+: ajc/mark-done-and-archive
+
 Record the time that a todo was archived.
 
 #+BEGIN_SRC emacs-lisp
@@ -1817,16 +1845,16 @@ Record the time that a todo was archived.
 
 Define a few common tasks as capture templates. Specifically, I frequently:
 
-- Record ideas for future blog posts in =~/documents/notes/blog-ideas.org=,
-- Maintain a todo list in =~/documents/org/index.org=.
+- Record ideas for future blog posts in =notes/blog-ideas.org=,
+- Maintain a todo list in =notes/index.org=.
 - Convert emails into todos to maintain an empty inbox.
 
 #+BEGIN_SRC emacs-lisp
-	;; (setq org-capture-templates
-	;;       '(("b" "Blog idea"
-	;;          entry
-	;;          (file "~/documents/notes/blog-ideas.org")
-	;;          "* %?\n")
+	(setq org-capture-templates
+	      '(("b" "Blog idea"
+	         entry
+	         (file (org-file-path "/notes/blog-ideas.org"))
+	         "* %?\n")
 
 	;;         ("e" "Email" entry
 	;;          (file+headline org-index-file "Inbox")
@@ -1845,11 +1873,15 @@ Define a few common tasks as capture templates. Specifically, I frequently:
 	;;          (file "~/documents/rss/urls")
 	;;          "%^{Feed URL} \"~%^{Feed name}\"")
 
-	;;         ("t" "Todo"
-	;;          entry
-	;;          (file+headline org-index-file "Inbox")
-	;;          "* TODO %?\n")))
+	        ("t" "Todo"
+	         entry
+	         (file+headline org-index-file "Inbox")
+	         "* TODO %?\n")))
 #+END_SRC
+
+#+RESULTS:
+| b | Blog idea | entry | (file (org-file-path /notes/blog-ideas.org)) | * %?      |
+| t | Todo      | entry | (file+headline org-index-file Inbox)         | * TODO %? |
 
 When I'm starting an Org capture template I'd like to begin in insert mode. I'm
 opening it up in order to start typing something, so this skips a step.
@@ -1892,19 +1924,23 @@ Hit =C-c i= to quickly open up my todo list.
   (global-set-key (kbd "C-c i") 'ajc/open-index-file)
 #+END_SRC
 
-Hit =M-n= to quickly open up a capture template for a new todo.
+Hit =C-c n= to quickly open up a capture template for a new todo.
 
 #+BEGIN_SRC emacs-lisp
   (defun org-capture-todo ()
     (interactive)
     (org-capture :keys "t"))
 
-  ;; (global-set-key (kbd "M-n") 'org-capture-todo)
+  (global-set-key (kbd "C-c n") 'org-capture-todo)
+
   ;; (add-hook 'gfm-mode-hook
   ;;           (lambda () (local-set-key (kbd "M-n") 'org-capture-todo)))
   ;; (add-hook 'haskell-mode-hook
   ;;           (lambda () (local-set-key (kbd "M-n") 'org-capture-todo)))
 #+END_SRC
+
+#+RESULTS:
+: org-capture-todo
 
 ** Exporting
 
@@ -2043,7 +2079,7 @@ I'm usually actually in an org document.
    : t
 
 * =dired=
-
+  
 Hide dotfiles by default, but toggle their visibility with =.=.
 
 #+BEGIN_SRC emacs-lisp
@@ -2457,6 +2493,8 @@ Enable [[https://github.com/ajc/engine-mode][engine-mode]] and define a few usef
        :ensure t)
    #+end_src
 
+   #+RESULTS:
+
 * Helm
 
 Man the ship! Helm is a sub community of emacs users who build
@@ -2481,29 +2519,29 @@ It's extremely handy for autocompleting without tab completion!
 ** High level helm setup modes and things
 
 #+BEGIN_SRC emacs-lisp
-(require 'helm-config)
-(helm-mode 1)
+  (require 'helm-config)
+  (helm-mode 1)
 
-;; Globally enable fuzzy matching for helm-mode.
-(setq helm-mode-fuzzy-match t)
-(setq helm-completion-in-region-fuzzy-match t)
-(setq helm-M-x-fuzzy-match t)
-(setq helm-buffers-fuzzy-matching t)
-(setq helm-recentf-fuzzy-match t)
-(customize-set-variable 'helm-ff-lynx-style-map t)
+  ;; Globally enable fuzzy matching for helm-mode.
+  (setq helm-mode-fuzzy-match t)
+  (setq helm-completion-in-region-fuzzy-match t)
+  (setq helm-M-x-fuzzy-match t)
+  (setq helm-buffers-fuzzy-matching t)
+  (setq helm-recentf-fuzzy-match t)
+  (customize-set-variable 'helm-ff-lynx-style-map t)
 
-;; Enter directories with RET, same as ido
-;; http://emacs.stackexchange.com/questions/3798/how-do-i-make-pressing-ret-in-helm-find-files-open-the-directory/7896#7896
-(defun helm-find-files-navigate-forward (orig-fun &rest args)
-  (if (file-directory-p (helm-get-selection))
-      (apply orig-fun args)
-    (helm-maybe-exit-minibuffer)))
-(advice-add 'helm-execute-persistent-action :around #'helm-find-files-navigate-forward)
-(with-eval-after-load 'helm-files
-  (define-key helm-find-files-map (kbd "<return>") 'helm-execute-persistent-action))
+  ;; Enter directories with RET, same as ido
+  ;; http://emacs.stackexchange.com/questions/3798/how-do-i-make-pressing-ret-in-helm-find-files-open-the-directory/7896#7896
+  (defun helm-find-files-navigate-forward (orig-fun &rest args)
+    (if (file-directory-p (helm-get-selection))
+        (apply orig-fun args)
+      (helm-maybe-exit-minibuffer)))
+  (advice-add 'helm-execute-persistent-action :around #'helm-find-files-navigate-forward)
+  (with-eval-after-load 'helm-files
+    (define-key helm-find-files-map (kbd "<return>") 'helm-execute-persistent-action))
 
-;; major key
-(global-set-key [remap execute-extended-command] #'helm-smex)
+  ;; major key
+  (global-set-key [remap execute-extended-command] #'helm-smex)
 #+END_SRC
 
 #+RESULTS:
@@ -2635,7 +2673,7 @@ In my opinion it is a pretty amazing blend of X and emacs
       (exwm-input-set-key (kbd (format "s-%d" i))
                           `(lambda ()
                              (interactive)
-                             (exwm-workspace-add ,i))))
+                             (exwm-workspace-switch-create ,i))))
 
     ;; config vars
     (setq exwm-manage-codnfigurations '((t line-mode t)))
