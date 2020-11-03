@@ -65,10 +65,10 @@ function vterm_printf;
 end
 
 ## Add user to docker group
-if echo (groups $USER) | grep -v -w -q "docker";
-    echo 'Adding current user $USER to docker group ... ';
-    sudo usermod -aG docker $USER;
-end
+# if echo (groups $USER) | grep -v -w -q "docker";
+#     echo 'Adding current user $USER to docker group ... ';
+#     sudo usermod -aG docker $USER;
+# end
 
 ## Chmod brave exec
 if test -e "~/.nix-profile/opt/brave.com/brave/chrome-sandbox";
