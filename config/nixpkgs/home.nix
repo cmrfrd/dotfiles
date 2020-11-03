@@ -74,6 +74,7 @@ in rec {
     pkgs.exa
     pkgs.autojump
     pkgs.pandoc
+    pkgs.libnotify
     pkgs.notify-desktop
     pkgs.fd
     pkgs.inotify-tools

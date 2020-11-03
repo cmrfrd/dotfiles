@@ -45,9 +45,10 @@
   };
 
   # ddclient ooooweeee dynamic dns is awesome
-  # services.ddclient = {
-  #   enable = true;
-  # };
+  services.ddclient = {
+    enable = true;
+    extraConfig = (builtins.readFile ~/.dotfiles/creds/ddclient.conf);
+  };
 
   # cron is pretty useful
   services.cron.enable = true;
