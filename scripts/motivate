@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+NAME=motivate
+
+cat << EOF > /tmp/Dockerfile.${NAME}
+FROM python:rc-alpine3.12
+RUN \
+  apk -U upgrade -a && \
+  apk update && \
+  apk add git bash
+RUN \
+    git clone https://github.com/mubaris/motivate.git 2>&1 > /dev/null; \
+    cd motivate/motivate && ./install.sh
+ENTRYPOINT [ "motivate" ]
+EOF
+
+docker build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles > /dev/null
+docker run --rm -it ${NAME} $@

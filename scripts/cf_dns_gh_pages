@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+cf -a -t A add @ 185.199.108.153
+cf -a -t A add @ 185.199.109.153
+cf -a -t A add @ 185.199.110.153
+cf -a -t A add @ 185.199.111.153
+cf -a -t CNAME add www cmrfrd.github.io
