@@ -2,10 +2,13 @@
 
 NAME=gen_gitignore
 
+
 cat << EOF > /tmp/Dockerfile.${NAME}
-FROM node:14-alpine
-RUN npm install --global generate generate-gitignore
-CMD [ "sh", "-ic", "gen gitignore" ]
+FROM alpine:3.12
+RUN apk --no-cache --update add curl git bash util-linux
+RUN curl -L https://raw.github.com/simonwhitaker/gibo/master/gibo -so /gibo \
+    && chmod +x /gibo && /gibo update
+ENTRYPOINT [ "/gibo" ]
 EOF
 
 docker build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles > /dev/null
