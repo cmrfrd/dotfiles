@@ -13,6 +13,7 @@ alias n="notify-desktop"
 ## Colloquial names
 alias file_manager="jo"
 alias screenshot="shutter -f -e"
+alias icons="find ~/.nix-profile/share/icons/"
 
 alias rmpy='find . | grep -E "(__pycache__|\.pyc)" | xargs rm -rf'
 

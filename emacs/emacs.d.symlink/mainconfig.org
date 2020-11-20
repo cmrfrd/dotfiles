@@ -244,6 +244,12 @@ Define a big ol' bunch of handy utility functions.
     (interactive)
     (switch-to-buffer (make-temp-name "scratch-")))
 
+  (defun ajc/generate-scratch-file ()
+    "Create and switch to a temporary scratch buffer with a random
+         name."
+    (interactive)
+      (switch-to-buffer (find-file (make-temp-file "scratch-"))))
+
   (defun ajc/kill-current-buffer ()
     "Kill the current buffer without prompting."
     (interactive)
@@ -327,6 +333,7 @@ I don't usually use the menu or scroll bar, and they take up useful space.
   (menu-bar-mode 0)
   (scroll-bar-mode 0)
   (global-linum-mode t)
+  (global-auto-revert-mode t)
 #+END_SRC
 
 #+RESULTS:
@@ -1529,7 +1536,7 @@ to using =multi-term= and =vterm= to manage my shell sessions. It's bound to =C-
 
   (global-set-key (kbd "C-c t") 'multi-libvterm)
 
-                                          ; if nix is installed use fish as shell
+  ;; if nix is installed use fish as shell
   (if (file-directory-p "~/.nix-profile/")
       (setq multi-libvterm-program "~/.nix-profile/bin/fish"))
 #+END_SRC
@@ -1696,7 +1703,9 @@ Just write elisp to resources to have it auto eval'd
     :ensure org-plus-contrib)
 
   (with-eval-after-load 'org
-    (setq org-directory "~/.dotfiles/mnt/cmrfrd_dropbox/org/"))
+    (setq org-directory "~/.dotfiles/mnt/org/")
+    (setcar (nthcdr 4 org-emphasis-regexp-components) 10)
+    (org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components))
 
   (add-to-list 'org-modules 'org-tempo)
 
@@ -1793,7 +1802,7 @@ the location of an index file (my main todo list), and archive finished tasks in
 #+END_SRC
 
 #+RESULTS:
-: ~/.dotfiles/mnt/cmrfrd_dropbox/org/archive.org::* From %s
+: ~/.dotfiles/mnt/org/archive.org::* From %s
 
 I use [[http://agiletortoise.com/drafts/][Drafts]] to create new tasks, format them according to a template, and
 append them to an "inbox.org" file in my Dropbox. This function lets me import
@@ -1923,6 +1932,9 @@ Hit =C-c i= to quickly open up my todo list.
 
   (global-set-key (kbd "C-c i") 'ajc/open-index-file)
 #+END_SRC
+
+#+RESULTS:
+: ajc/open-index-file
 
 Hit =C-c n= to quickly open up a capture template for a new todo.
 
@@ -2079,7 +2091,7 @@ I'm usually actually in an org document.
    : t
 
 * =dired=
-  
+
 Hide dotfiles by default, but toggle their visibility with =.=.
 
 #+BEGIN_SRC emacs-lisp
@@ -2829,7 +2841,7 @@ In my opinion it is a pretty amazing blend of X and emacs
        :init
        (add-hook 'after-init-hook 'dashboard-refresh-buffer)
        :config
-       (setq dashboard-banner-logo-title "Welcome to Alex's Emacs!")
+       (setq dashboard-banner-logo-title "Welcome to Amacs!")
        (setq dashboard-image-banner-max-height 1)
        (setq dashboard-image-banner-max-width 1)
        (setq dashboard-center-content t)

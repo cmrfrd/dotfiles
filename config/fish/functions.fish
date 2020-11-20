@@ -7,11 +7,6 @@ function log
   script -q $LOG_FILE -c $argv[1];
 end
 
-# Run `dig` and display the most useful info
-function digga
-	dig +nocmd "$1" any +multiline +noall +answer;
-end
-
 function rand
   head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13
 end
@@ -50,6 +45,11 @@ end
 # 	printf "gzip: %d bytes (%2.2f%%)\n" "$gzipsize" "$ratio";
 # }
 
+function bw_get_note;
+    set search "$argv[1]"
+    test -z "$search"; and set search "\$\$\$"
+    bw list items --session $BW_SESSION --search "$search" | jq -r ".[] | .notes"
+end
 
 function vterm_printf;
     if [ -n "$TMUX" ]

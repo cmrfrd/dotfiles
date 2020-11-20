@@ -30,8 +30,7 @@ nix-install:
 nix-update:
 	bash -c "\
 		NIX_PATH=$$HOME/.nix-defexpr/channels \
-		&& source ~/.nix-profile/etc/profile.d/nix.sh \
-		&& nix-channel --add https://github.com/rycee/home-manager/archive/release-20.03.tar.gz home-manager \
+		&& nix-channel --add https://github.com/rycee/home-manager/archive/release-20.09.tar.gz home-manager \
 		&& nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs \
 		&& nix-channel --update \
 		&& nix-shell '<home-manager>' -A install \

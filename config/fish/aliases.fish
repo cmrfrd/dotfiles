@@ -13,6 +13,10 @@ else
   alias lr='ls -tRFh'
 end
 
+if command -v bw > /dev/null
+  abbr -a bw_sess 'set BW_SESSION (bw unlock --raw)'
+end
+
 if command -v docker-compose > /dev/null
 	abbr -a dc 'docker-compose'
 end

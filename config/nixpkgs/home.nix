@@ -20,9 +20,6 @@ in rec {
 
   home.packages = [
 
-    ## Locales
-    pkgs.glibcLocales
-
     ## Apps
     pkgs.brave
     pkgs.bitwarden
@@ -33,13 +30,14 @@ in rec {
     ## Bars
     pkgs.polybar
 
-    ## font
+    ## Fonts / Locales
     pkgs.font-awesome-ttf
     pkgs.fontconfig
     pkgs.dejavu_fonts
     pkgs.source-code-pro
     pkgs.source-sans-pro
     pkgs.source-serif-pro
+    pkgs.glibcLocales
 
     ## windowing
     pkgs.xsel
@@ -52,48 +50,66 @@ in rec {
     pkgs.bash
 
     ## cli/tools
-    pkgs.jq
-    pkgs.ack
-    pkgs.tree
+    ## Git
     pkgs.git
     pkgs.tig
     pkgs.gitAndTools.gh
     pkgs.git-crypt
-    pkgs.highlight
-    pkgs.gnumake
-    pkgs.gnupg
-    pkgs.parallel
-    pkgs.openssl
-    pkgs.openssh
-    pkgs.curl
-    pkgs.feh
-    pkgs.wordnet
-    pkgs.shutter
-    pkgs.plantuml
-    pkgs.imagemagick
+    ## JSON
+    pkgs.jq
+    ## FS
     pkgs.exa
-    pkgs.autojump
-    pkgs.pandoc
-    pkgs.libnotify
-    pkgs.notify-desktop
+    pkgs.ack
     pkgs.fd
     pkgs.inotify-tools
-    pkgs.light
-    pkgs.deluge
-    pkgs.imagemagick
-    pkgs.cmake
+    pkgs.tree
+    pkgs.autojump
+    pkgs.pandoc
+    pkgs.rclone
+    pkgs.archivemount
+    ## Color
+    pkgs.highlight
+    ## Build
+    pkgs.gcc
     pkgs.glibc
+    pkgs.cmake
+    pkgs.gnumake
+    pkgs.parallel
+    ## Sec
+    pkgs.gnupg
+    pkgs.openssl
+    ## Net
+    pkgs.openssh
+    pkgs.curl
+    pkgs.bind
+    pkgs.wireshark
+    pkgs.ddclient
+    ## Img
+    pkgs.feh
+    pkgs.shutter
+    pkgs.imagemagick
+    ## Lang
+    pkgs.ispell
+    pkgs.wordnet
+    ## Desktop
+    pkgs.libnotify
+    pkgs.notify-desktop
+    pkgs.dunst
+    pkgs.light
+    ## Torrent
+    pkgs.deluge
+    ## Misc
+    pkgs.plantuml
     pkgs.libtool
     pkgs.libvterm-neovim
-    pkgs.gcc
     pkgs.neofetch
-    pkgs.wireshark
     pkgs.licensor
-    pkgs.ispell
-    pkgs.rclone
+    pkgs.at
+    pkgs.fcron
 
     ## containers
     pkgs.docker_compose
+    pkgs.kubectl
 
     ## js
     pkgs.nodejs
@@ -136,7 +152,7 @@ in rec {
 
   programs.emacs = {
     enable = true;
-    package = (pkgs.emacs27.override {
+    package = (pkgs.emacs.override {
       withX = true;
       withGTK3 = true;
       withGTK2 = false;
@@ -159,34 +175,34 @@ in rec {
     ];
   };
 
-  programs.firefox = {
-    enable = true;
-    extensions = with nur.repos.rycee.firefox-addons; [
-      https-everywhere
-      ghostery
-      react-devtools
-      refined-github
-      umatrix
-    ];
-    profiles = {
-      default = {
-        isDefault = true;
-        settings = {
-          "browser.display.background_color" = "#bdbdbd";
-          "devtools.theme" = "dark";
-          "experiments.activeExperiment" = false;
-          "experiments.enabled" = false;
-          "experiments.supported" = false;
-          "general.smoothScroll" = false;
-          "layout.css.devPixelsPerPx" = "1";
-          "network.IDN_show_punycode" = true;
-          "network.allow-experiments" = false;
-          "widget.content.gtk-theme-override" = "Adwaita:light";
-          "accessibility.typeaheadfind.enablesound" = false;
-        };
-      };
-    };
-  };
+  # programs.firefox = {
+  #   enable = true;
+  #   extensions = with nur.repos.rycee.firefox-addons; [
+  #     https-everywhere
+  #     ghostery
+  #     react-devtools
+  #     refined-github
+  #     umatrix
+  #   ];
+  #   profiles = {
+  #     default = {
+  #       isDefault = true;
+  #       settings = {
+  #         "browser.display.background_color" = "#bdbdbd";
+  #         "devtools.theme" = "dark";
+  #         "experiments.activeExperiment" = false;
+  #         "experiments.enabled" = false;
+  #         "experiments.supported" = false;
+  #         "general.smoothScroll" = false;
+  #         "layout.css.devPixelsPerPx" = "1";
+  #         "network.IDN_show_punycode" = true;
+  #         "network.allow-experiments" = false;
+  #         "widget.content.gtk-theme-override" = "Adwaita:light";
+  #         "accessibility.typeaheadfind.enablesound" = false;
+  #       };
+  #     };
+  #   };
+  # };
 
   programs.fish = {
     enable = true;
@@ -232,6 +248,10 @@ in rec {
     allow-emacs-pinentry
     allow-loopback-pinentry
     '';
+  };
+
+  services.dunst = {
+    enable = true;
   };
 
 }

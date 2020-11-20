@@ -44,14 +44,22 @@
     '';
   };
 
-  # ddclient ooooweeee dynamic dns is awesome
-  services.ddclient = {
+  # ooooweeee dynamic dns is awesome
+  # services.ddclient = {
+  #   enable = true;
+  #   extraConfig = (builtins.readFile ~/.dotfiles/creds/ddclient.conf);
+  # };
+
+  services.atd = {
     enable = true;
-    extraConfig = (builtins.readFile ~/.dotfiles/creds/ddclient.conf);
+    allowEveryone = true;
   };
 
-  # cron is pretty useful
-  services.cron.enable = true;
+  # fcron is pretty useful
+  services.fcron = {
+    enable = true;
+    maxSerialJobs = 3;
+  };
 
   # Base desktop manager, not default
   services.xserver = {
@@ -64,7 +72,6 @@
         enable = true;
         noDesktop = true;
         enableXfwm = false;
-        thunarPlugins = [ pkgs.xfce.thunar-archive-plugin ];
       };
       pantheon.enable = true;
     };
@@ -83,6 +90,20 @@
     };
   };
 
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+    };
+  };
+
+  environment.systemPackages = with pkgs; [
+    ((emacsPackagesNgGen emacs).emacsWithPackages (epkgs: [
+      epkgs.vterm
+      epkgs.helm
+    ]))
+  ];
+
   # Default user for machines
   users.users.cmrfrd = {
     isNormalUser = true;
@@ -92,6 +113,8 @@
 	    "audio"
 	    "tty"
 	    "dialout"
+      "fcron"
+      "atd"
     ];
     shell = pkgs.fish;
   };
@@ -99,20 +122,7 @@
     imports = [ ../../config/nixpkgs/home.nix ];
   };
 
-  virtualisation = {
-    podman = {
-      enable = true;
-      dockerCompat = true;
-    };
-  };
-
-  environment.systemPackages = with pkgs; [
-    ((emacsPackagesNgGen emacs27).emacsWithPackages (epkgs: [
-      epkgs.vterm
-      epkgs.helm
-    ]))
-  ];
-
-  system.stateVersion = "20.09"; # Did you read the comment?
+  system.stateVersion = "21.03"; # Did you read the comment?
+  system.autoUpgrade.enable = true;
 
 }
