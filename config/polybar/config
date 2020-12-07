@@ -476,12 +476,12 @@ ramp-volume-3 = 
 
 [module/xworkspaces]
 type = internal/xworkspaces
-format = <label-monitor> <label-state>
+format = <label-state>
 label-monitor = %name%
 
-override-redirect = true
-pin-workspaces = true
-enable-click = true
+override-redirect = false
+pin-workspaces = false
+enable-click = false
 enable-scroll = false
 
 icon-0 = 0;
@@ -491,20 +491,20 @@ icon-3 = 3;
 ws-icon-default = 
 icon-default = 
 
-label-active = %icon% %name%
+label-active = %icon%
 label-active-background = #3f3f3f
 label-active-padding = 1
 label-active-underline = #fff
 
-label-occupied = %icon% %name%
+label-occupied = %icon%
 label-occupied-padding = 1
 label-occupied-background = #ffffff
 
-label-urgent = %icon% %name%
+label-urgent = %icon%
 label-urgent-background = #bd2c40
 label-urgent-padding = 1
 
-label-empty = %icon% %name%
+label-empty = %icon%
 label-empty-foreground = #DEE2E6
 label-empty-padding = 1
 
