@@ -11,14 +11,16 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelModules = [ "fuse" "coretemp" ];
 
   powerManagement.enable = true;
 
-  networking.hostName = "yoshi";
+  networking.hostName = "queen";
   networking.networkmanager.enable = true;
   networking.useDHCP = false;
   networking.interfaces.wlo1.useDHCP = true;
-  networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+  networking.proxy.noProxy = "127.0.0.1,localhost";
+  networking.firewall.enable = true;
 
   i18n.defaultLocale = "en_US.UTF-8";
   console = {
@@ -30,8 +32,6 @@
   time.timeZone = "America/New_York";
 
   programs.mtr.enable = true;
-
-  networking.firewall.enable = true;
 
   # Enable sound.
   sound.enable = true;
@@ -50,16 +50,9 @@
   #   extraConfig = (builtins.readFile ~/.dotfiles/creds/ddclient.conf);
   # };
 
-  services.atd = {
-    enable = true;
-    allowEveryone = true;
-  };
-
-  # fcron is pretty useful
-  services.fcron = {
-    enable = true;
-    maxSerialJobs = 3;
-  };
+  # Logind don't close on lid switch
+  # services.logind.lidSwitch = "ignore";
+  services.logind.lidSwitch = "suspend";
 
   # Base desktop manager, not default
   services.xserver = {
@@ -102,6 +95,7 @@
       epkgs.vterm
       epkgs.helm
     ]))
+    pkgs.fuse3
   ];
 
   # Default user for machines
