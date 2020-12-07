@@ -66,7 +66,6 @@ in rec {
     pkgs.autojump
     pkgs.pandoc
     pkgs.rclone
-    pkgs.archivemount
     ## Color
     pkgs.highlight
     ## Build
@@ -252,6 +251,20 @@ in rec {
 
   services.dunst = {
     enable = true;
+
+    settings = {
+      global = {
+        geometry = "500x5-30+50";
+        transparency = 10;
+        padding = 15;
+        horizontal_padding = 17;
+        word_wrap = true;
+        follow = "keyboard";
+      };
+      shortcuts = {
+        close = "ctrl+space";
+      };
+    };
   };
 
 }
