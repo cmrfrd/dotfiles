@@ -11,6 +11,9 @@ fi
 
 echo $$ > /tmp/polybartrig.pid  # Save the pid
 
+# Ensure the names of the desktops are numbered
+xprop -root -f _NET_DESKTOP_NAMES 8u -set _NET_DESKTOP_NAMES '1, 2, 3, 4, 5, 6, 7, 8, 9'
+
 function run_polybar {
   echo "Running polybar"
 
