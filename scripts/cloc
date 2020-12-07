@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+NAME=cloc
+
+cat << EOF > /tmp/Dockerfile.${NAME}
+FROM alpine:3.12
+RUN apk add --update git perl unzip make && \
+    rm -rf /var/cache/apk/*
+
+#Install all dependencies
+RUN perl -MCPAN -e 'install Algorithm::Diff'
+RUN perl -MCPAN -e 'install Regexp::Common'
+RUN perl -MCPAN -e 'install Digest::MD5'
+RUN perl -MCPAN -e 'install Parallel::ForkManager'
+
+#Copy source code
+RUN git clone https://github.com/AlDanial/cloc.git /usr/src/
+WORKDIR /usr/src/Unix
+
+#Checkout of cloc_submodule_test for t/02_git.t tests
+RUN git clone https://github.com/AlDanial/cloc_submodule_test.git
+
+ENTRYPOINT ["/usr/src/cloc"]
+EOF
+
+docker build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles > /dev/null
+docker run -v $(pwd):/mnt -w /mnt --rm -it ${NAME} $@

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+NAME=ratarmount
+
+cat << EOF > /tmp/Dockerfile.${NAME}
+FROM ubuntu:20.04
+RUN apt-get update \
+    && apt-get -y install python3 python3-pip git libfuse-dev fuse zip \
+    && rm -rf /var/lib/apt/lists/* \
+    && git clone https://github.com/mxmlnkn/ratarmount.git \
+    && cd ratarmount \
+    && python3 -m pip install fusepy indexed_gzip indexed_bzip2 \
+    && python3 -m pip install --user .
+RUN cp /ratarmount/ratarmount.py /usr/local/bin/
+EOF
+
+docker build -t ${NAME} -f /tmp/Dockerfile.${NAME} -q ~/.dotfiles > /dev/null
+docker run \
+       -v $(pwd):/home/$(whoami) \
+       -w /home/$(whoami) \
+       --rm \
+       --device /dev/fuse \
+       --cap-add SYS_ADMIN \
+       -it ${NAME}
