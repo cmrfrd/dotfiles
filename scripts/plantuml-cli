@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+NAME=plantuml
+PLANTUML_VERSION=1.2018.5
+
+cat << EOF > /tmp/Dockerfile.${NAME}
+FROM rainee/docker-alpine-oraclejdk8
+RUN \
+  apk add --no-cache graphviz wget ca-certificates && \
+  wget "https://sourceforge.net/projects/plantuml/files/${PLANTUML_VERSION}/plantuml.${PLANTUML_VERSION}.jar/download" -O plantuml.jar && \
+  apk del wget ca-certificates
+ENV LANG en_US.UTF-8
+ENTRYPOINT ["java", "-jar", "plantuml.jar"]
+EOF
+
+docker build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles > /dev/null
+cat - | docker run --rm -i ${NAME} $@
