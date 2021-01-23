@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 let
 
@@ -8,125 +8,160 @@ let
     inherit pkgs;
   };
 
+  moz_overlay = import (builtins.fetchTarball https://github.com/mozilla/nixpkgs-mozilla/archive/master.tar.gz);
+  moz = import <nixpkgs> { overlays = [ moz_overlay ]; };
+
 in rec {
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowBroken = true;
+  # nixpkgs.overlays = [
+  #   (import (builtins.fetchTarball {
+  #     url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+  #   }))
+  # ];
 
   home.sessionVariables = {
     EDITOR = "emacs";
     XLIB_SKIP_ARGB_VISUALS = 1;
   };
 
-  home.packages = [
+  home.packages = with pkgs; [
 
     ## Apps
-    pkgs.brave
-    pkgs.bitwarden
-    pkgs.protonmail-bridge
-    pkgs.thunderbird
-    pkgs.pinentry
+    brave
+    bitwarden
+    protonmail-bridge
+    thunderbird
+    pinentry
+    sqlite
 
     ## Bars
-    pkgs.polybar
+    polybar
 
     ## Fonts / Locales
-    pkgs.font-awesome-ttf
-    pkgs.fontconfig
-    pkgs.dejavu_fonts
-    pkgs.source-code-pro
-    pkgs.source-sans-pro
-    pkgs.source-serif-pro
-    pkgs.glibcLocales
+    font-awesome-ttf
+    fontconfig
+    dejavu_fonts
+    source-code-pro
+    source-sans-pro
+    source-serif-pro
+    glibcLocales
 
     ## windowing
-    pkgs.xsel
-    pkgs.wmctrl
-    pkgs.screen
-    pkgs.xdotool
+    xsel
+    wmctrl
+    screen
+    xdotool
 
     ## shells
-    pkgs.fish
-    pkgs.bash
+    fish
+    bash
 
     ## cli/tools
     ## Git
-    pkgs.git
-    pkgs.tig
-    pkgs.gitAndTools.gh
-    pkgs.git-crypt
+    git
+    tig
+    gitAndTools.gh
+    gitAndTools.git-sync
+    git-crypt
+    keychain
     ## JSON
-    pkgs.jq
+    jq
+
+    arandr
     ## FS
-    pkgs.exa
-    pkgs.ack
-    pkgs.fd
-    pkgs.inotify-tools
-    pkgs.tree
-    pkgs.autojump
-    pkgs.pandoc
-    pkgs.rclone
+    exa
+    ack
+    fd
+    inotify-tools
+    entr
+    tree
+    autojump
+    pandoc
+    rclone
     ## Color
-    pkgs.highlight
+    highlight
     ## Build
-    pkgs.gcc
-    pkgs.glibc
-    pkgs.cmake
-    pkgs.gnumake
-    pkgs.parallel
+    gcc
+    glibc
+    cmake
+    gnumake
+    parallel
     ## Sec
-    pkgs.gnupg
-    pkgs.openssl
+    gnupg
+    openssl
     ## Net
-    pkgs.openssh
-    pkgs.curl
-    pkgs.bind
-    pkgs.wireshark
-    pkgs.ddclient
+    openssh
+    curl
+    bind
+    wireshark
+    ddclient
     ## Img
-    pkgs.feh
-    pkgs.shutter
-    pkgs.imagemagick
+    feh
+    shutter
+    imagemagick
     ## Lang
-    pkgs.ispell
-    pkgs.wordnet
+    ispell
+    wordnet
     ## Desktop
-    pkgs.libnotify
-    pkgs.notify-desktop
-    pkgs.dunst
-    pkgs.light
+    libnotify
+    notify-desktop
+    dunst
+    light
     ## Torrent
-    pkgs.deluge
+    deluge
     ## Misc
-    pkgs.plantuml
-    pkgs.libtool
-    pkgs.libvterm-neovim
-    pkgs.neofetch
-    pkgs.licensor
-    pkgs.at
-    pkgs.fcron
+    plantuml
+    graphviz
+    libtool
+    libvterm-neovim
+    neofetch
+    licensor
+    at
+    direnv
+    graph-easy
 
     ## containers
-    pkgs.docker_compose
-    pkgs.kubectl
+    docker_compose
+    kubectl
 
     ## js
-    pkgs.nodejs
-    pkgs.yarn
+    nodejs
+    yarn
+
+    ## java
+    openjdk
+
+    ## rust
+    wasm-pack
+    cargo-web
+    (moz.latest.rustChannels.nightly.rust.override {
+      targets = ["wasm32-unknown-unknown"];
+    })
 
     ## extra...
-    pkgs.terminator
-    pkgs.glib-networking
-    pkgs.nodePackages.eslint
-    pkgs.nodePackages.jsonlint
-    pkgs.nodePackages.prettier
-    pkgs.nodePackages.typescript-language-server
-    pkgs.nodePackages.typescript
-    pkgs.nodePackages.vscode-html-languageserver-bin
-    pkgs.nodePackages.vscode-css-languageserver-bin
-    pkgs.nodePackages.node2nix
-    pkgs.nodePackages.bitwarden-cli
-    pkgs.haskellPackages.hledger
+    terminator
+    glib-networking
+    nodePackages.eslint
+    nodePackages.jsonlint
+    nodePackages.prettier
+    nodePackages.typescript-language-server
+    nodePackages.typescript
+    nodePackages.vscode-html-languageserver-bin
+    nodePackages.vscode-css-languageserver-bin
+    nodePackages.node2nix
+    nodePackages.bitwarden-cli
+    haskellPackages.hledger
+
+    (makeDesktopItem {
+      name = "org-protocol";
+      exec = "emacsclient %u";
+      comment = "Org Protocol";
+      desktopName = "org-protocol";
+      type = "Application";
+      mimeType = "x-scheme-handler/org-protocol";
+    })
   ];
 
   ## Not sure why but I need this
@@ -148,6 +183,18 @@ in rec {
       package = pkgs.adapta-gtk-theme;
     };
   };
+
+  # # https://tecosaur.github.io/emacs-config/config.html
+  # home.file.".local/share/applications/org-protocol.desktop".source = ../xorg/org-protocol.desktop ;
+  # xdg = {
+  #   enable = true;
+  #   mimeApps = {
+  #     enable = true;
+  #     defaultApplications = {
+  #       "x-scheme-handler/org-protocol" = [ "org-protocol.desktop" ];
+  #     };
+  #   };
+  # };
 
   programs.emacs = {
     enable = true;
@@ -171,6 +218,7 @@ in rec {
       "mbniclmhobmnbdlbpiphghaielnnpgdp" # lightshot
       "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock origin
       "nngceckbapebfimnlniiiahkandclblb" # bitwarden
+      "kkkjlfejijcjgjllecmnejhogpbcigdc" # org capture
     ];
   };
 
