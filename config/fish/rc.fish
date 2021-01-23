@@ -12,6 +12,7 @@ function dotreload
     source ~/.config/fish/exports.fish
     source ~/.config/fish/functions.fish
     source ~/.config/fish/aliases.fish
+    source ~/.config/fish/completions.fish
 end
 dotreload
 
@@ -27,3 +28,5 @@ if test (echo $TERMINFO | grep emacs | wc -l) -gt 0
         end
    end
 end
+
+eval (direnv hook fish)
