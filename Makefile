@@ -44,3 +44,7 @@ nix: nix-setup nix-install nix-update nix-update-shell
 
 nix-clean:
 	sudo rm -rf /etc/nix /nix /root/.nix-profile /root/.nix-defexpr /root/.nix-channels ~/.nix-profile ~/.nix-defexpr ~/.nix-channels
+
+
+# link machine
+# sudo ln -s ~/.dotfiles/machines/<name>/* /etc/nixos/
