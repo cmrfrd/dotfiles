@@ -79,7 +79,6 @@
     };
     displayManager = {
       sessionCommands = "${pkgs.xorg.xhost}/bin/xhost +SI:localuser:$USER";
-      defaultSession = "xfce+exwm";
     };
   };
 
