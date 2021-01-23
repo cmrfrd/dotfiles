@@ -265,7 +265,7 @@ font-2 = Termsynu:size=8;-1
 font-3 = FontAwesome:size=10;0
 
 modules-left = xworkspaces
-modules-right = volume filesystem memory wireless-network wired-network battery date
+modules-right = filesystem memory wireless-network battery date
 
 [bar/top-secondary]
 monitor = ${env:MONITOR:}
@@ -293,7 +293,7 @@ font-2 = Termsynu:size=8;-1
 font-3 = FontAwesome:size=10;0
 ;
 ; modules-left = xworkspaces
-modules-right = volume filesystem memory wireless-network wired-network battery date
+modules-right = filesystem memory wireless-network battery date
 
 
 [module/backlight]
@@ -410,29 +410,6 @@ animation-packetloss-0-foreground = #ffa64c
 animation-packetloss-1 = 
 animation-packetloss-1-foreground = ${bar/top.foreground}
 animation-packetloss-framerate-ms = 500
-
-[module/wired-network]
-type = internal/network
-interface = net0
-interval = 3.0
-;
-label-connected =    %{T3}%local_ip%%{T-}
-label-disconnected-foreground = #66
-
-[module/volume]
-type = internal/volume
-speaker-mixer = Speaker
-headphone-mixer = Headphone
-headphone-id = 9
-;
-format-volume = <label-volume>
-label-muted =   muted
-label-muted-foreground = #66
-;
-ramp-volume-0 = 
-ramp-volume-1 = 
-ramp-volume-2 = 
-ramp-volume-3 = 
 
 [module/powermenu]
 ; type = custom/menu
