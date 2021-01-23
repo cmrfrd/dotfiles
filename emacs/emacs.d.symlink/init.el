@@ -16,6 +16,7 @@
   (package-install 'use-package))
 
 (org-babel-load-file "~/.emacs.d/mainconfig.org")
+(server-start)
 (elscreen-start)
 (elscreen-tab-mode)
 (elscreen-tab-set-position 'top)
