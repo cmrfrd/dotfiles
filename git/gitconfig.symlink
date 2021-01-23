@@ -3,3 +3,5 @@
 	email = alexanderjcomerford@gmail.com
 [core]
 	askpass = git-gui--askpass
+[github]
+	user = cmrfrd
