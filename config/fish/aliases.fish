@@ -21,6 +21,10 @@ if command -v docker-compose > /dev/null
 	abbr -a dc 'docker-compose'
 end
 
+if command -v exodus > /dev/null
+    abbr -a exodus 'LD_LIBRARY_PATH=(nix-store --query --requisites /run/current-system/ | grep mesa | head -n 1)/lib exodus'
+end
+
 if test -f ~/.nix-profile/share/autojump/autojump.fish;
     source ~/.nix-profile/share/autojump/autojump.fish
 end
