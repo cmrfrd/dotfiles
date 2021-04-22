@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#
+# Cloud flare cli tool.
+#
+# Ensure env vars prefixed with "CF" get passed in
 
 NAME=cf
 
