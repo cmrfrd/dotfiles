@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#
+# Count Lines Of Code
+#
+# Great way to summarize the languages accross a repo
 
 NAME=cloc
 
