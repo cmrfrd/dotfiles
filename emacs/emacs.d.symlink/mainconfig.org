@@ -46,11 +46,11 @@ provide me some nice garuntees
   #+BEGIN_SRC emacs-lisp
     (require 'use-package-ensure)
     (setq use-package-always-ensure t)
-    ;(setq byte-compile-warnings '(cl-functions))
+    (setq byte-compile-warnings '(cl-functions))
   #+END_SRC
 
   #+RESULTS:
-  : t
+  | cl-functions |
 
   Always compile packages, and use the newest version available.
 
