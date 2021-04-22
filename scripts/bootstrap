@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 #
 # bootstrap installs things.
+#
+# Mainly this script is to create symlinks between
+# dot files in this repo and those in $HOME
 
 cd "$(dirname "$0")/.."
 DOTFILES_ROOT=$(pwd -P)
