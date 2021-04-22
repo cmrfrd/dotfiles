@@ -45,10 +45,16 @@ end
 # 	printf "gzip: %d bytes (%2.2f%%)\n" "$gzipsize" "$ratio";
 # }
 
+function bw_session;
+    if not test -n "$BW_SESSION"
+        set -g -x BW_SESSION (bw unlock --raw)
+    end
+end
+
 function bw_get_note;
     set search "$argv[1]"
     test -z "$search"; and set search "\$\$\$"
-    bw list items --session $BW_SESSION --search "$search" | jq -r ".[] | .notes"
+    bw list items --session $BW_SESSION --search "$search" | jq -r ".[] | .notes | select (.!=null)"
 end
 
 function vterm_printf;

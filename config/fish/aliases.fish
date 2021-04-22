@@ -2,19 +2,13 @@ source ~/.dotfiles/config/fish/aliases.sh
 
 if command -v exa > /dev/null
 	abbr -a ls 'exa'
-	abbr -a l 'exa -lah --git'
-	abbr -a ll 'exa -l'
-	abbr -a lll 'exa -la'
+	abbr -a l 'exa -lgah --git'
 else
 	abbr -a l 'ls -lFh'
 	abbr -a ll 'ls -l'
 	abbr -a lll 'ls -la'
   alias la='ls -lAFh'
   alias lr='ls -tRFh'
-end
-
-if command -v bw > /dev/null
-  abbr -a bw_sess 'set BW_SESSION (bw unlock --raw)'
 end
 
 if command -v docker-compose > /dev/null

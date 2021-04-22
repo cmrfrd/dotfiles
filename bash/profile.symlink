@@ -1,3 +1,0 @@
-export PATH=~/.nix-profile/bin:$PATH
-
-export PATH="$HOME/.cargo/bin:$PATH"
