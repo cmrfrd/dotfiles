@@ -3750,3 +3750,15 @@ provide me some nice garuntees
 
   #+RESULTS:
   : t
+
+
+* Finish
+
+  Just a simple end log to let me know the config finished
+
+  #+begin_src emacs-lisp
+    (message "Finished evaluating config!")
+  #+end_src
+
+  #+RESULTS:
+  : Finished evaluating config!
