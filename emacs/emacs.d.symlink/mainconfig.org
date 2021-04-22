@@ -46,11 +46,11 @@ provide me some nice garuntees
   #+BEGIN_SRC emacs-lisp
     (require 'use-package-ensure)
     (setq use-package-always-ensure t)
-    (setq byte-compile-warnings '(cl-functions))
+    ;(setq byte-compile-warnings '(cl-functions))
   #+END_SRC
 
   #+RESULTS:
-  | cl-functions |
+  : t
 
   Always compile packages, and use the newest version available.
 
@@ -70,6 +70,7 @@ provide me some nice garuntees
   :END:
 
   #+begin_src emacs-lisp
+    (setq straight-repository-branch "master")
     (defvar bootstrap-version)
     (let ((bootstrap-file
            (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -151,13 +152,23 @@ provide me some nice garuntees
 
   Just write elisp to resources to have it auto eval'd
 
+  Dependencies for resources
+
   #+BEGIN_SRC emacs-lisp
-    (add-to-list 'load-path "~/.emacs.d/resources/")
-    (mapc 'load (file-expand-wildcards "~/.emacs.d/resources/*.el"))
+     (use-package f
+       :straight (f :type git :host github :repo "rejeep/f.el" :branch "master"))
+     (use-package dash
+       :ensure t)
+     (use-package request
+       :ensure t)
   #+END_SRC
 
   #+RESULTS:
-  | ~/.emacs.d/resources/bitwarden.el | ~/.emacs.d/resources/brightness.el | ~/.emacs.d/resources/crontab.el | ~/.emacs.d/resources/eslint.el | ~/.emacs.d/resources/kv.el | ~/.emacs.d/resources/org-inline-image.el | ~/.emacs.d/resources/org-protocol-capture-html.el | ~/.emacs.d/resources/org-utils.el | ~/.emacs.d/resources/pocket-lib.el | ~/.emacs.d/resources/sensible-defaults.el |
+
+  #+BEGIN_SRC emacs-lisp :results output silent
+    (add-to-list 'load-path "~/.emacs.d/resources/")
+    (mapc 'load (file-expand-wildcards "~/.emacs.d/resources/*.el"))
+  #+END_SRC
 
 * Personal information
 ** Who am I? Where am I?
@@ -167,14 +178,15 @@ provide me some nice garuntees
 
    #+BEGIN_SRC emacs-lisp
      (setq user-full-name "Alexander J. Comerford"
-           user-mail-address "alexanderjcomerford@gmail.com"
+           user-mail-address "alex@taoa.io"
+           user-alternate-mail-address "alexanderjcomerford@gmail.com"
            calendar-latitude 40.6501
            calendar-longitude -73.94958
            calendar-location-name "New York, NY")
    #+END_SRC
 
    #+RESULTS:
-   : New York, NY
+	 : New York, NY
 
 
    Evil mode is frustrating at first but allows the
@@ -191,7 +203,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : t
+	 : t
 
    #+BEGIN_SRC emacs-lisp
      (setq evil-want-abbrev-expand-on-insert-exit nil)
@@ -199,7 +211,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : C-q C-z
+	 : C-q C-z
 
    Enable =surround= everywhere.
 
@@ -210,7 +222,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : t
+	 : t
 
    Use =evil= with Org agendas.
 
@@ -227,20 +239,20 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : t
+	 : t
+
 ** Keychain
    :PROPERTIES:
    :ID:       0966d9e0-b6b0-448d-8aeb-85c21e8b07be
    :END:
 
    #+begin_src emacs-lisp
-     (use-package keychain-environment
-       :straight (keychain-environment :type git :host github :repo "tarsius/keychain-environment" :branch "master"))
-     (keychain-refresh-environment)
+     ;(use-package keychain-environment
+     ;  :straight (keychain-environment :type git :host github :repo "tarsius/keychain-environment" :branch "master"))
+     ;(keychain-refresh-environment)
    #+end_src
 
    #+RESULTS:
-   | /run/user/1000/gnupg/S.gpg-agent.ssh | 1757 | /run/user/1000/gnupg/S.gpg-agent:4857:1 |
 
 * Utility functions
   :PROPERTIES:
@@ -248,6 +260,9 @@ provide me some nice garuntees
   :END:
 
 ** Big ol' bunch of handy utility functions.
+   :PROPERTIES:
+   :ID:       0e0328f5-05a7-4c0d-bc93-6becbbdee5b1
+   :END:
 
    #+BEGIN_SRC emacs-lisp
 
@@ -281,7 +296,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : assoc-recursive
+	 : assoc-recursive
 
    #+BEGIN_SRC emacs-lisp
      (defvar auto-answer 'ask
@@ -347,7 +362,7 @@ provide me some nice garuntees
        (switch-to-buffer (make-temp-name "scratch-")))
 
      (defun ajc/generate-scratch-file ()
-       "Create and switch to a temporary scratch buffer with a random
+       "Create and switch to a temporary scratch file with a random
             name."
        (interactive)
        (switch-to-buffer (find-file (make-temp-file "scratch-"))))
@@ -356,18 +371,67 @@ provide me some nice garuntees
        "Kill the current buffer without prompting."
        (interactive)
        (kill-buffer (current-buffer)))
-   #+end_src
+       #+end_src
 
-   There is a fantatic package elegantly named 'f' that does this all so i don't have to
+			 #+RESULTS:
+			 : ajc/kill-current-buffer
+
+   This function is handy for pgp fingerprints
 
    #+begin_src emacs-lisp
-     (use-package f
-       :straight (f :type git :host github :repo "rejeep/f.el" :branch "master"))
+     (defun split-string-every (string chars)
+       "Split STRING into substrings of length CHARS characters.
+
+     This returns a list of strings."
+       (cond ((string-empty-p string)
+              nil)
+             ((< (length string)
+                 chars)
+              (list string))
+             (t (cons (substring string 0 chars)
+                      (split-string-every (substring string chars)
+                                          chars)))))
    #+end_src
 
    #+RESULTS:
+	 : split-string-every
+
+   :PROPERTIES:
+   :ID:       bb0b0290-6147-45dd-a263-a056426bc2a7
+   :END:
+
+   A useful utility when opening links
+
+   #+begin_src emacs-lisp
+     (defun org-force-open-current-window ()
+       (interactive)
+       (let ((org-link-frame-setup (quote
+                                    ((vm . vm-visit-folder)
+                                     (vm-imap . vm-visit-imap-folder)
+                                     (gnus . gnus)
+                                     (file . find-file)
+                                     (wl . wl)))
+                                   ))
+         (org-open-at-point)))
+     ;; Depending on universal argument try opening link
+     (defun org-open-maybe (&optional arg)
+       (interactive "P")
+       (if arg
+           (org-open-at-point)
+         (org-force-open-current-window)
+         )
+       )
+     ;; Redefine file opening without clobbering universal argumnet
+     (define-key org-mode-map "\C-c\C-o" 'org-open-maybe)
+   #+end_src
+
+   #+RESULTS:
+	 : org-open-maybe
 
 ** Async emacs
+   :PROPERTIES:
+   :ID:       968a1083-a32a-4ba9-a5e8-0bea51f884d5
+   :END:
 
    #+begin_src emacs-lisp
      (use-package ob-async
@@ -377,12 +441,15 @@ provide me some nice garuntees
    #+end_src
 
 ** Bitwarden Secrets
+   :PROPERTIES:
+   :ID:       5523a4df-c7b4-4da1-a8af-d5295e3a7777
+   :END:
 
    I use bitwarden to manage any secrets and stuff. Here are some very handy
    utilities.
 
    #+begin_src emacs-lisp
-     (setq bitwarden-user user-mail-address)
+     (setq bitwarden-user user-alternate-mail-address)
 
      (defun bitwarden-unlock-sync ()
        (message "Unlocking bitwarden ...") ;; ....
@@ -452,7 +519,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : t
+	 : t
 
    There's a tiny scroll bar that appears in the minibuffer window. This disables
    that:
@@ -462,7 +529,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : t
+	 : t
 
    The default frame title isn't useful. This binds it to the name of the current
    project:
@@ -551,15 +618,25 @@ provide me some nice garuntees
 
    #+RESULTS:
 
-
    This modeline looks informative and pretty at the same time!
+
+   #+begin_src emacs-lisp
+     (use-package all-the-icons
+       :straight (all-the-icons :type git :host github :repo "domtronn/all-the-icons.el" :branch "master"))
+  #+end_src
+
+  #+RESULTS:
 
    #+BEGIN_SRC emacs-lisp
      (use-package doom-modeline
        :ensure t
        :config
        ;; install fonts
-       (all-the-icons-install-fonts t)
+       (let ((path
+              (concat (or (getenv "XDG_DATA_HOME")
+                          (concat (getenv "HOME") "/.local/share"))
+                      "/fonts/")))
+         (cond ((not (f-exists? path)) (all-the-icons-install-fonts t))))
 
        (doom-modeline-mode 1)
        (setq doom-modeline-icon (display-graphic-p))
@@ -576,7 +653,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : t
+	 : t
 
    Also don't forget about doom themes!!!
 
@@ -594,16 +671,15 @@ provide me some nice garuntees
        ;; Enable custom neotree theme (all-the-icons must be installed!)
        ;; (doom-themes-neotree-config)
        ;; or for treemacs users
-       ;; (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+       (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
        ;; (doom-themes-treemacs-config)
 
        ;; Corrects (and improves) org-mode's native fontification.
-       (doom-themes-org-config)
-       (load-theme 'doom-opera t))
+       (doom-themes-org-config))
    #+end_src
 
    #+RESULTS:
-   : t
+	 : t
 
 ** Emojis!
    :PROPERTIES:
@@ -784,23 +860,22 @@ provide me some nice garuntees
    Use =company-mode= everywhere.
 
    #+BEGIN_SRC emacs-lisp
-     (use-package company
-       :hook (prog-mode . company-mode)
-       :custom
-       (company-begin-commands '(self-insert-command))
-       (company-idle-delay .1)
-       (company-minimum-prefix-length 2)
-       (company-show-numbers t)
-       (company-tooltip-align-annotations 't)
-       (global-company-mode t)
-       :config
-       (setq company-tooltip-align-annotations t)
-       (setq company-minimum-prefix-length 1))
-     (add-hook 'after-init-hook 'global-company-mode)
+     ;; (use-package company
+     ;;   :hook (prog-mode . company-mode)
+     ;;   :custom
+     ;;   (company-begin-commands '(self-insert-command))
+     ;;   (company-idle-delay .1)
+     ;;   (company-minimum-prefix-length 2)
+     ;;   (company-show-numbers t)
+     ;;   (company-tooltip-align-annotations 't)
+     ;;   (global-company-mode t)
+     ;;   :config
+     ;;   (setq company-tooltip-align-annotations t)
+     ;;   (setq company-minimum-prefix-length 1))
+     ;; (add-hook 'after-init-hook 'global-company-mode)
    #+END_SRC
 
    #+RESULTS:
-   | dashboard-refresh-buffer | org-roam-mode | global-company-mode | x-wm-set-size-hint | tramp-register-archive-file-name-handler | table--make-cell-map |
 
    Use =M-/= for completion.
 
@@ -810,18 +885,17 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : company-complete
+	 : company-complete
 
    Add nice completion box
 
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :results output silent
      (use-package company-box
        :ensure t
        :hook (company-mode . company-box-mode))
    #+end_src
 
    #+RESULTS:
-   | company-box-mode | company-mode-set-explicitly |
 
 ** =dumb-jump=
    :PROPERTIES:
@@ -840,7 +914,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : t
+	 : t
 
 ** =flycheck=
    :PROPERTIES:
@@ -848,7 +922,7 @@ provide me some nice garuntees
    :END:
 
    #+BEGIN_SRC emacs-lisp
-     (use-package flycheck)
+     (use-package flycheck :ensure t)
    #+END_SRC
 
 ** =magit=
@@ -894,7 +968,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : magit-status
+	 : magit-status
 
    I've been playing around with the newly-released =forge= for managing GitHub PRs
    and issues. Seems slick so far.
@@ -940,9 +1014,14 @@ provide me some nice garuntees
        ;; (evil-define-key 'motion rspec-mode-map (kbd "C-p") 'projectile-find-file)
 
        (projectile-mode +1)
+       (projectile-global-mode)
 
-       (setq projectile-completion-system 'ivy)
+       (setq projectile-completion-system 'helm)
+       (helm-projectile-on)
+
+       (setq projectile-completion-system 'helm)
        (setq projectile-switch-project-action 'projectile-dired)
+       (setq projectile-indexing-method 'alien)
        (setq projectile-require-project-root nil))
    #+END_SRC
 
@@ -1017,7 +1096,7 @@ provide me some nice garuntees
        :config
        (progn
          (setq projectile-switch-project-action 'neotree-projectile-action)
-         (setq neo-theme 'nerd) ; 'classic, 'nerd, 'ascii, 'arrow
+         (setq neo-theme 'icons) ; 'classic, 'nerd, 'ascii, 'arrow
          (setq neo-vc-integration '(face char))
 
          ;; Patch to fix vc integration
@@ -1112,6 +1191,9 @@ provide me some nice garuntees
     (setq-default tab-width 2)
   #+END_SRC
 
+	#+RESULTS:
+	: 2
+
   Auto closing parenthesis and brackets is really sweet and extra mental offloading
 
   Treating terms in CamelCase symbols as separate words makes editing a little
@@ -1121,6 +1203,9 @@ provide me some nice garuntees
     (use-package subword
       :config (global-subword-mode 1))
   #+END_SRC
+
+	#+RESULTS:
+	: t
 
   Compilation output goes to the =*compilation*= buffer. I rarely have that window
   selected, so the compilation output disappears past the bottom of the window.
@@ -1144,6 +1229,9 @@ provide me some nice garuntees
        (setq css-indent-offset 2))
    #+END_SRC
 
+	 #+RESULTS:
+	 : t
+
    Don't compile the current SCSS file every time I save.
 
    #+BEGIN_SRC emacs-lisp
@@ -1152,11 +1240,16 @@ provide me some nice garuntees
        (setq scss-compile-at-save nil))
    #+END_SRC
 
+	 #+RESULTS:
+	 : t
+
    Install Less.
 
    #+BEGIN_SRC emacs-lisp
      (use-package less-css-mode)
    #+END_SRC
+
+	 #+RESULTS:
 
 
    Great for jupyter notebook things
@@ -1181,21 +1274,26 @@ provide me some nice garuntees
      (use-package company-go)
    #+END_SRC
 
+	 #+RESULTS:
+
    Define my =$GOPATH= and tell Emacs where to find the Go binaries.
 
-   #+BEGIN_SRC emacs-lisp
-     (setenv "GOPATH" "/home/ajc/code/go")
+   #+BEGIN_SRC emacs-lisp :results output silent
      (ajc/append-to-path (concat (getenv "GOPATH") "/bin"))
    #+END_SRC
+
+	 #+RESULTS:
 
    Run =goimports= on every file when saving, which formats the file and
    automatically updates the list of imports. This requires that the =goimports=
    binary be installed.
 
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :results output silent
      (setq gofmt-command "goimports")
      (add-hook 'before-save-hook 'gofmt-before-save)
    #+END_SRC
+
+	 #+RESULTS:
 
    When I open a Go file,
 
@@ -1204,7 +1302,7 @@ provide me some nice garuntees
    - Redefine the default =compile= command to something Go-specific, and
    - Enable =flycheck=.
 
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :results output silent
      (add-hook 'go-mode-hook
                (lambda ()
                  (set (make-local-variable 'company-backends)
@@ -1228,7 +1326,7 @@ provide me some nice garuntees
    Enable =haskell-doc-mode=, which displays the type signature of a function, and
    use smart indentation.
 
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :results output silent
      (add-hook 'haskell-mode-hook
                (lambda ()
                  (haskell-doc-mode)
@@ -1313,6 +1411,9 @@ provide me some nice garuntees
      (ajc/append-to-path "~/.local/bin")
    #+END_SRC
 
+	 #+RESULTS:
+   | ~/.local/bin | ~/.cabal/bin | /home/ajc/code/go/bin | /nix/store/ww1d2wkk2hd5zca6l0ilxn98f86hx3yk-emacs-packages-deps/bin | /home/cmrfrd/bin | /usr/local/bin | /home/cmrfrd/Public/scripts | /home/cmrfrd/.local/bin | /home/cmrfrd/.dotfiles/scripts | /home/cmrfrd/.nix-profile/bin/ | /run/wrappers/bin | /home/cmrfrd/.nix-profile/bin | /etc/profiles/per-user/cmrfrd/bin | /nix/var/nix/profiles/default/bin | /run/current-system/sw/bin | /nix/store/vmmnym8nhyp3abql5sjy2lz1w8nv8f2g-emacs-26.3/libexec/emacs/26.3/x86_64-pc-linux-gnu |
+
    Enable =elpy=. This provides automatic indentation, auto-completion, syntax
    checking, etc.
 
@@ -1321,11 +1422,16 @@ provide me some nice garuntees
      ;;(elpy-enable)
    #+END_SRC
 
+	 #+RESULTS:
+
    Use =flycheck= for syntax checking:
 
    #+BEGIN_SRC emacs-lisp
      (add-hook 'elpy-mode-hook 'flycheck-mode)
    #+END_SRC
+
+	 #+RESULTS:
+   | py-autopep8-enable-on-save | flycheck-mode |
 
    Format code according to PEP8 on save:
 
@@ -1334,6 +1440,9 @@ provide me some nice garuntees
      (require 'py-autopep8)
      (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
    #+END_SRC
+
+	 #+RESULTS:
+   | py-autopep8-enable-on-save | flycheck-mode |
 
    Configure Jedi along with the associated =company= mode:
 
@@ -1407,11 +1516,15 @@ provide me some nice garuntees
      (use-package sbt-mode)
    #+END_SRC
 
+	 #+RESULTS:
+
    Don't show the startup message with launching ENSIME:
 
    #+BEGIN_SRC emacs-lisp
      (setq ensime-startup-notification nil)
    #+END_SRC
+
+	 #+RESULTS:
 
    Bind a few keys to common operations:
 
@@ -1428,6 +1541,8 @@ provide me some nice garuntees
    #+BEGIN_SRC emacs-lisp
      (use-package web-mode)
    #+END_SRC
+
+	 #+RESULTS:
 
    If I'm in =web-mode=, I'd like to:
 
@@ -1530,7 +1645,6 @@ provide me some nice garuntees
     #+END_SRC
 
     #+RESULTS:
-    | setup-tide-mode | tide-hl-identifier-mode | tide-setup |
 
     #+BEGIN_SRC emacs-lisp
       (require 'web-mode)
@@ -1576,6 +1690,8 @@ provide me some nice garuntees
    #+BEGIN_SRC emacs-lisp
      (use-package yaml-mode)
    #+END_SRC
+
+	 #+RESULTS:
 
    If I'm editing YAML I'm usually in a Rails project. I'd like to be able to run
    the tests from any buffer.
@@ -1642,7 +1758,23 @@ provide me some nice garuntees
 
    #+RESULTS:
 
-** Markdown
+** plantuml
+   Plantuml is a handy way to write flow diagrams / uml and other documentation
+   like stuff
+
+   #+begin_src emacs-lisp
+     (use-package plantuml-mode
+       :ensure t
+       :config
+       (setq plantuml-executable-path (locate-file "plantuml" exec-path exec-suffixes 1))
+       (setq org-plantuml-exec-mode 'plantuml)
+       (setq plantuml-default-exec-mode 'executable))
+   #+end_src
+
+   #+RESULTS:
+   : t
+
+** markdown
    :PROPERTIES:
    :ID:       2af45911-497a-49b0-9730-97e2f6b41ddb
    :END:
@@ -1757,47 +1889,45 @@ provide me some nice garuntees
    Now completion for company
 
    #+begin_src emacs-lisp
-     (use-package company-lsp
-       :init (setq company-lsp-cache-candidates 'auto)
-       :config
-       (with-no-warnings
-         ;; WORKAROUND: Fix tons of unrelated completion candidates shown
-         ;; when a candidate is fulfilled
-         ;; @see https://github.com/emacs-lsp/lsp-python-ms/issues/79
-         (add-to-list 'company-lsp-filter-candidates '(mspyls))
+     ;;(use-package company-lsp
+     ;;  :init (setq company-lsp-cache-candidates 'auto)
+     ;;  :config
+       ;;   (with-no-warnings
+       ;;     ;; WORKAROUND: Fix tons of unrelated completion candidates shown
+       ;;     ;; when a candidate is fulfilled
+       ;;     ;; @see https://github.com/emacs-lsp/lsp-python-ms/issues/79
+       ;;     (add-to-list 'company-lsp-filter-candidates '(mspyls))
 
-         (defun my-company-lsp--on-completion (response prefix)
-           "Handle completion RESPONSE.
-     PREFIX is a string of the prefix when the completion is requested.
-     Return a list of strings as the completion candidates."
-           (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
-                  (items (cond ((hash-table-p response) (gethash "items" response))
-                               ((sequencep response) response)))
-                  (candidates (mapcar (lambda (item)
-                                        (company-lsp--make-candidate item prefix))
-                                      (lsp--sort-completions items)))
-                  (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
-                  (should-filter (or (eq company-lsp-cache-candidates 'auto)
-                                     (and (null company-lsp-cache-candidates)
-                                          (company-lsp--get-config company-lsp-filter-candidates server-id)))))
-             (when (null company-lsp--completion-cache)
-               (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
-               (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
-             (when (eq company-lsp-cache-candidates 'auto)
-               ;; Only cache candidates on auto mode. If it's t company caches the
-               ;; candidates for us.
-               (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
-             (if should-filter
-                 (company-lsp--filter-candidates candidates prefix)
-               candidates)))
-         (advice-add #'company-lsp--on-completion :override #'my-company-lsp--on-completion)))
+       ;;     (defun my-company-lsp--on-completion (response prefix)
+       ;;       "Handle completion RESPONSE.
+       ;; PREFIX is a string of the prefix when the completion is requested.
+       ;; Return a list of strings as the completion candidates."
+       ;;       (let* ((incomplete (and (hash-table-p response) (gethash "isIncomplete" response)))
+       ;;              (items (cond ((hash-table-p response) (gethash "items" response))
+       ;;                           ((sequencep response) response)))
+       ;;              (candidates (mapcar (lambda (item)
+       ;;                                    (company-lsp--make-candidate item prefix))
+       ;;                                  (lsp--sort-completions items)))
+       ;;              (server-id (lsp--client-server-id (lsp--workspace-client lsp--cur-workspace)))
+       ;;              (should-filter (or (eq company-lsp-cache-candidates 'auto)
+       ;;                                 (and (null company-lsp-cache-candidates)
+       ;;                                      (company-lsp--get-config company-lsp-filter-candidates server-id)))))
+       ;;         (when (null company-lsp--completion-cache)
+       ;;           (add-hook 'company-completion-cancelled-hook #'company-lsp--cleanup-cache nil t)
+       ;;           (add-hook 'company-completion-finished-hook #'company-lsp--cleanup-cache nil t))
+       ;;         (when (eq company-lsp-cache-candidates 'auto)
+       ;;           ;; Only cache candidates on auto mode. If it's t company caches the
+       ;;           ;; candidates for us.
+       ;;           (company-lsp--cache-put prefix (company-lsp--cache-item-new candidates incomplete)))
+       ;;         (if should-filter
+       ;;             (company-lsp--filter-candidates candidates prefix)
+       ;;           candidates)))
+       ;;     (advice-add #'company-lsp--on-completion :override #'my-company-lsp--on-completion)))
    #+end_src
 
    #+RESULTS:
-   : t
 
    I am a helm user so HELM ALL THE WAY!
-
 
    #+begin_src emacs-lisp
                                              ;(use-package helm-lsp
@@ -1819,20 +1949,65 @@ provide me some nice garuntees
    :ID:       75716e27-6e77-4949-8a91-381046adfff2
    :END:
 
+   Its obvious that encryption is an important and miracle invention.
+
+   I want to have a way to encrypt, store keys, and be pragmatic about using it
+
+   The most generally used solution for this that is extremely function is gpg
+
    #+begin_src emacs-lisp
+     ;(defun gpg-get-pub-id (email)
+     ;  (let* ((key-pair (nth 0 (epg-list-keys (epg-make-context nil t t) email)))
+     ;	      (keys (epg-key-sub-key-list key-pair))
+     ;	      (pub-key (--first (equal (list 'sign 'certify) (epg-sub-key-capability it)) keys)))
+     ;	 (epg-sub-key-id pub-key)))
+
      ;; gpg stuff
-     (defun pinentry-emacs (desc prompt ok error)
-       (let ((str (read-passwd (concat (replace-regexp-in-string "%22" "\"" (replace-regexp-in-string "%0A" "\n" desc)) prompt ": "))))
-         str))
-                                             ; (setq epa-pinentry-mode 'emacs)
-     (setf epa-pinentry-mode 'loopback)
-     (setq epg-gpg-program "gpg2")
-     (setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
-     (pinentry-start)
+     ;(defun pinentry-emacs (desc prompt ok error)
+     ;  (let ((str (read-passwd
+     ;		   (concat
+     ;		    (replace-regexp-in-string "%22" "\""
+     ;					      (replace-regexp-in-string "%0A" "\n" desc))
+     ;		    prompt ": "))))
+     ;	 str))
+					     ;(setq epa-pinentry-mode 'emacs)
+     ;(setf epa-pinentry-mode 'loopback)
+     ;(setq epg-gpg-program "gpg2")
+     ;(setq epa-file-encrypt-to user-mail-address)
+     ;(setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
+     ; (pinentry-start)
+     ;(epa-file-enable)
+     ;(setq epa-file-select-keys (gpg-get-pub-id user-mail-address))
+     '()
    #+end_src
 
    #+RESULTS:
-   : Pinentry service is already running
+
+   #+begin_src emacs-lisp
+     ;(org-crypt-use-before-save-magic)
+     ;(setq org-tags-exclude-from-inheritance (quote ("crypt")))
+     ;(setq org-crypt-key (gpg-get-pub-id user-mail-address))
+     '()
+   #+end_src
+
+   #+RESULTS:
+
+   #+begin_src emacs-lisp
+     ;(defun org-gpg-encrypt-entry () (interactive) (org-encrypt-entry))
+     ;(defun org-gpg-encrypt-entries () (interactive) (org-encrypt-entries))
+
+     ;(defun org-gpg-decrypt-entries ()
+     ;  (interactive)
+     ;  (let ((pw (bitwarden-get-note (format "%s_gpg_key_pw" user-mail-address))))
+     ;    (with-simulated-input (list pw "RET") (org-decrypt-entries))))
+
+     ;(defun org-gpg-decrypt-entry ()
+     ;  (interactive)
+     ;  (let ((pw (bitwarden-get-note (format "%s_gpg_key_pw" user-mail-address))))
+     ;    (with-simulated-input (list pw "RET") (org-decrypt-entry))))
+   #+end_src
+
+   #+RESULTS:
 
 * Terminal
   :PROPERTIES:
@@ -1879,7 +2054,6 @@ provide me some nice garuntees
   #+END_SRC
 
   #+RESULTS:
-  | term-mode | 5x5-mode | archive-mode | bbdb-mode | biblio-selection-mode | blackbox-mode | bookmark-bmenu-mode | bookmark-edit-annotation-mode | browse-kill-ring-mode | bubbles-mode | bzr-annotate-mode | calc-mode | cfw:calendar-mode | completion-list-mode | Custom-mode | custom-theme-choose-mode | debugger-mode | delicious-search-mode | desktop-menu-blist-mode | desktop-menu-mode | doc-view-mode | dun-mode | dvc-bookmarks-mode | dvc-diff-mode | dvc-info-buffer-mode | dvc-log-buffer-mode | dvc-revlist-mode | dvc-revlog-mode | dvc-status-mode | dvc-tips-mode | ediff-mode | ediff-meta-mode | efs-mode | Electric-buffer-menu-mode | emms-browser-mode | emms-mark-mode | emms-metaplaylist-mode | emms-playlist-mode | ess-help-mode | etags-select-mode | fj-mode | gc-issues-mode | gdb-breakpoints-mode | gdb-disassembly-mode | gdb-frames-mode | gdb-locals-mode | gdb-memory-mode | gdb-registers-mode | gdb-threads-mode | gist-list-mode | git-rebase-mode | gnus-article-mode | gnus-browse-mode | gnus-group-mode | gnus-server-mode | gnus-summary-mode | gomoku-mode | google-maps-static-mode | ibuffer-mode | jde-javadoc-checker-report-mode | magit-cherry-mode | magit-diff-mode | magit-log-mode | magit-log-select-mode | magit-popup-mode | magit-popup-sequence-mode | magit-process-mode | magit-reflog-mode | magit-refs-mode | magit-revision-mode | magit-stash-mode | magit-stashes-mode | magit-status-mode | mh-folder-mode | monky-mode | mpuz-mode | mu4e-main-mode | mu4e-headers-mode | mu4e-view-mode | notmuch-hello-mode | notmuch-search-mode | notmuch-show-mode | notmuch-tree-mode | occur-mode | org-agenda-mode | package-menu-mode | pdf-outline-buffer-mode | pdf-view-mode | proced-mode | rcirc-mode | rebase-mode | recentf-dialog-mode | reftex-select-bib-mode | reftex-select-label-mode | reftex-toc-mode | sldb-mode | slime-inspector-mode | slime-thread-control-mode | slime-xref-mode | snake-mode | solitaire-mode | sr-buttons-mode | sr-mode | sr-tree-mode | sr-virtual-mode | tar-mode | tetris-mode | tla-annotate-mode | tla-archive-list-mode | tla-bconfig-mode | tla-bookmarks-mode | tla-branch-list-mode | tla-browse-mode | tla-category-list-mode | tla-changelog-mode | tla-follow-symlinks-mode | tla-inventory-file-mode | tla-inventory-mode | tla-lint-mode | tla-logs-mode | tla-revision-list-mode | tla-revlog-mode | tla-tree-lint-mode | tla-version-list-mode | twittering-mode | urlview-mode | vc-annotate-mode | vc-dir-mode | vc-git-log-view-mode | vc-hg-log-view-mode | vc-svn-log-view-mode | vm-mode | vm-summary-mode | w3m-mode | wab-compilation-mode | xgit-annotate-mode | xgit-changelog-mode | xgit-diff-mode | xgit-revlog-mode | xhg-annotate-mode | xhg-log-mode | xhg-mode | xhg-mq-mode | xhg-mq-sub-mode | xhg-status-extra-mode |
 
   I add a bunch of hooks to =term-mode=:
 
@@ -1924,8 +2098,8 @@ provide me some nice garuntees
   #+end_src
 
   #+RESULTS:
-  | lambda | nil | (linum-mode 0)                                             | (goto-address-mode)                                        | (setq comint-process-echoes t)                                                                | (define-key vterm-mode-map (kbd M-n) 'multi-libvterm-next)                                  | (define-key vterm-mode-map (kbd M-p) 'multi-libvterm-prev)     | (defun vterm-send-Cright nil (interactive) (vterm-send-key <right> nil nil t)) | (defun vterm-send-Cleft nil (interactive) (vterm-send-key <left> nil nil t)) | (define-key vterm-mode-map (kbd C-<right>) 'vterm-send-Cright) | (define-key vterm-mode-map (kbd C-<left>) 'vterm-send-Cleft) | (define-key vterm-mode-map (kbd C-y) 'ajc/term-paste) | (define-key vterm-mode-map (kbd C-q) nil) |
-  | lambda | nil | (define-key vterm-mode-map (kbd M-n) 'multi-libvterm-next) | (define-key vterm-mode-map (kbd M-p) 'multi-libvterm-prev) | (defalias 'vterm-send-Cright #'(lambda nil (interactive) (vterm-send-key <right> nil nil t))) | (defalias 'vterm-send-Cleft #'(lambda nil (interactive) (vterm-send-key <left> nil nil t))) | (define-key vterm-mode-map (kbd C-<right>) 'vterm-send-Cright) | (define-key vterm-mode-map (kbd C-<left>) 'vterm-send-Cleft)                   | (define-key vterm-mode-map (kbd C-y) 'ajc/term-paste)                        | (define-key vterm-mode-map (kbd C-q) nil)                      |                                                              |                                                       |                                           |
+  | lambda | nil | (linum-mode 0) | (goto-address-mode) | (setq comint-process-echoes t) | (define-key vterm-mode-map (kbd M-n) (quote multi-libvterm-next)) | (define-key vterm-mode-map (kbd M-p) (quote multi-libvterm-prev)) | (defun vterm-send-Cright nil (interactive) (vterm-send-key <right> nil nil t))                                | (defun vterm-send-Cleft nil (interactive) (vterm-send-key <left> nil nil t))                                | (define-key vterm-mode-map (kbd C-<right>) (quote vterm-send-Cright)) | (define-key vterm-mode-map (kbd C-<left>) (quote vterm-send-Cleft)) | (define-key vterm-mode-map (kbd C-y) (quote ajc/term-paste)) | (define-key vterm-mode-map (kbd C-q) nil) |
+  | lambda | nil | (linum-mode 0) | (goto-address-mode) | (setq comint-process-echoes t) | (define-key vterm-mode-map (kbd M-n) (quote multi-libvterm-next)) | (define-key vterm-mode-map (kbd M-p) (quote multi-libvterm-prev)) | (defalias (quote vterm-send-Cright) (function (lambda nil (interactive) (vterm-send-key <right> nil nil t)))) | (defalias (quote vterm-send-Cleft) (function (lambda nil (interactive) (vterm-send-key <left> nil nil t)))) | (define-key vterm-mode-map (kbd C-<right>) (quote vterm-send-Cright)) | (define-key vterm-mode-map (kbd C-<left>) (quote vterm-send-Cleft)) | (define-key vterm-mode-map (kbd C-y) (quote ajc/term-paste)) | (define-key vterm-mode-map (kbd C-q) nil) |
 
   #+BEGIN_SRC emacs-lisp
     (add-hook 'term-mode-hook
@@ -1960,8 +2134,8 @@ provide me some nice garuntees
   #+END_SRC
 
   #+RESULTS:
-  | lambda | nil | (linum-mode 0) | (goto-address-mode) | (setq comint-process-echoes t) | (define-key term-raw-map (kbd C-y) 'ajc/term-paste) | (define-key term-raw-map (kbd <mouse-2>) 'ajc/term-paste) | (define-key term-raw-map (kbd M-o) 'other-window) | (define-key term-raw-map (kbd M-n) 'multi-term-next) | (define-key term-raw-map (kbd M-p) 'multi-term-prev) | (defun term-send-Cr nil (interactive) (term-send-raw-string ))                | (define-key term-raw-map (kbd C-r) 'term-send-Cr) | (defun term-send-tab nil (interactive) (term-send-raw-string 	))                | (define-key term-raw-map (kbd TAB) 'term-send-tab) | (define-key term-raw-map (kbd <tab>) 'term-send-tab) | (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0)))                | (define-key term-raw-map (kbd M-SPC) 'term-send-Cspc) | (define-key term-raw-map (kbd C-t) 'term-send-Cspc) | (setq indent-tabs-mode nil) | (setq tab-width 0) | (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C))                | (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D))                | (define-key term-raw-map (kbd C-<right>) 'term-send-Cright) | (define-key term-raw-map (kbd C-<left>) 'term-send-Cleft) | (yas-minor-mode -1) | (setq global-hl-line-mode nil) | (setq bidi-paragraph-direction 'left-to-right) |
-  | lambda | nil | (linum-mode 0) | (goto-address-mode) | (setq comint-process-echoes t) | (define-key term-raw-map (kbd C-y) 'ajc/term-paste) | (define-key term-raw-map (kbd <mouse-2>) 'ajc/term-paste) | (define-key term-raw-map (kbd M-o) 'other-window) | (define-key term-raw-map (kbd M-n) 'multi-term-next) | (define-key term-raw-map (kbd M-p) 'multi-term-prev) | (defalias 'term-send-Cr #'(lambda nil (interactive) (term-send-raw-string ))) | (define-key term-raw-map (kbd C-r) 'term-send-Cr) | (defalias 'term-send-tab #'(lambda nil (interactive) (term-send-raw-string 	))) | (define-key term-raw-map (kbd TAB) 'term-send-tab) | (define-key term-raw-map (kbd <tab>) 'term-send-tab) | (defalias 'term-send-Cspc #'(lambda nil (interactive) (term-send-raw-string (string 0)))) | (define-key term-raw-map (kbd M-SPC) 'term-send-Cspc) | (define-key term-raw-map (kbd C-t) 'term-send-Cspc) | (setq indent-tabs-mode nil) | (setq tab-width 0) | (defalias 'term-send-Cright #'(lambda nil (interactive) (term-send-raw-string [1;5C))) | (defalias 'term-send-Cleft #'(lambda nil (interactive) (term-send-raw-string [1;5D))) | (define-key term-raw-map (kbd C-<right>) 'term-send-Cright) | (define-key term-raw-map (kbd C-<left>) 'term-send-Cleft) | (yas-minor-mode -1) | (setq global-hl-line-mode nil) | (setq bidi-paragraph-direction 'left-to-right) |
+  | lambda | nil | (linum-mode 0) | (goto-address-mode) | (setq comint-process-echoes t) | (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) | (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) | (define-key term-raw-map (kbd M-o) (quote other-window)) | (define-key term-raw-map (kbd M-n) (quote multi-term-next)) | (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) | (defun term-send-Cr nil (interactive) (term-send-raw-string ))                                | (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) | (defun term-send-tab nil (interactive) (term-send-raw-string 	))                                | (define-key term-raw-map (kbd TAB) (quote term-send-tab)) | (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) | (defun term-send-Cspc nil (interactive) (term-send-raw-string (string 0)))                                | (define-key term-raw-map (kbd M-SPC) (quote term-send-Cspc)) | (define-key term-raw-map (kbd C-t) (quote term-send-Cspc)) | (setq indent-tabs-mode nil) | (setq tab-width 0) | (defun term-send-Cright nil (interactive) (term-send-raw-string [1;5C))                                | (defun term-send-Cleft nil (interactive) (term-send-raw-string [1;5D))                                | (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) | (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) | (yas-minor-mode -1) | (setq global-hl-line-mode nil) | (setq bidi-paragraph-direction (quote left-to-right)) |
+  | lambda | nil | (linum-mode 0) | (goto-address-mode) | (setq comint-process-echoes t) | (define-key term-raw-map (kbd C-y) (quote ajc/term-paste)) | (define-key term-raw-map (kbd <mouse-2>) (quote ajc/term-paste)) | (define-key term-raw-map (kbd M-o) (quote other-window)) | (define-key term-raw-map (kbd M-n) (quote multi-term-next)) | (define-key term-raw-map (kbd M-p) (quote multi-term-prev)) | (defalias (quote term-send-Cr) (function (lambda nil (interactive) (term-send-raw-string )))) | (define-key term-raw-map (kbd C-r) (quote term-send-Cr)) | (defalias (quote term-send-tab) (function (lambda nil (interactive) (term-send-raw-string 	)))) | (define-key term-raw-map (kbd TAB) (quote term-send-tab)) | (define-key term-raw-map (kbd <tab>) (quote term-send-tab)) | (defalias (quote term-send-Cspc) (function (lambda nil (interactive) (term-send-raw-string (string 0))))) | (define-key term-raw-map (kbd M-SPC) (quote term-send-Cspc)) | (define-key term-raw-map (kbd C-t) (quote term-send-Cspc)) | (setq indent-tabs-mode nil) | (setq tab-width 0) | (defalias (quote term-send-Cright) (function (lambda nil (interactive) (term-send-raw-string [1;5C)))) | (defalias (quote term-send-Cleft) (function (lambda nil (interactive) (term-send-raw-string [1;5D)))) | (define-key term-raw-map (kbd C-<right>) (quote term-send-Cright)) | (define-key term-raw-map (kbd C-<left>) (quote term-send-Cleft)) | (yas-minor-mode -1) | (setq global-hl-line-mode nil) | (setq bidi-paragraph-direction (quote left-to-right)) |
 
   I have this really cool function so I can send regions to a terminal. Really
   andy when you want to execute selections without copying and pasting
@@ -1993,6 +2167,9 @@ provide me some nice garuntees
                                             ;(process-send-region tws-process-target beg end))
       (process-send-string tws-process-target (buffer-substring beg end)))
   #+END_SRC
+
+	#+RESULTS:
+  : tws-region-to-process
 
   Sometimes I want to cut things from the terminal into another buffer,
   so here I can switch from one to another
@@ -2095,7 +2272,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   | org-tempo-setup | (lambda nil (delete '(\.pdf\' . default) org-file-apps) (add-to-list 'org-file-apps '(\.pdf\' . zathura %s))) | org-ref-org-menu | org-bullets-mode | (lambda nil (require 'org-tempo)) | add-pcomplete-to-capf | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-eldoc-load | org-ref-setup-label-finders |
+   | org-tempo-setup | (lambda nil (delete (quote (\.pdf\' . default)) org-file-apps) (add-to-list (quote org-file-apps) (quote (\.pdf\' . zathura %s)))) | org-ref-org-menu | org-bullets-mode | (lambda nil (require (quote org-tempo))) | add-pcomplete-to-capf | (closure (org-agenda-skip-regexp org-table1-hline-regexp org-table-tab-recognizes-table.el org-table-dataline-regexp org-table-any-border-regexp org-agenda-restriction-lock-overlay org-agenda-overriding-restriction org-agenda-diary-file org-complex-heading-regexp t) nil (setq imenu-create-index-function (quote org-imenu-get-tree))) | evil-org-mode | (closure (org--rds reftex-docstruct-symbol org-element-greater-elements org-clock-history org-agenda-current-date org-with-time org-defdecode org-def org-read-date-inactive org-ans2 org-ans1 org-columns-current-fmt-compiled org-clock-current-task org-clock-effort org-agenda-skip-function org-agenda-skip-comment-trees org-agenda-archives-mode org-end-time-was-given org-time-was-given org-log-note-extra org-log-note-purpose org-log-post-message org-last-inserted-timestamp org-last-changed-timestamp org-entry-property-inherited-from org-blocked-by-checkboxes org-state org-agenda-headline-snapshot-before-repeat org-agenda-start-on-weekday org-agenda-buffer-tmp-name org-priority-regexp org-mode-abbrev-table org-mode-syntax-table buffer-face-mode-face org-tbl-menu org-org-menu org-struct-menu org-entities org-last-state org-id-track-globally org-clock-start-time texmathp-why remember-data-file org-agenda-tags-todo-honor-ignore-options iswitchb-temp-buflist calc-embedded-open-mode calc-embedded-open-formula calc-embedded-close-formula align-mode-rules-list org-emphasis-alist org-emphasis-regexp-components org-export-registered-backends org-modules org-babel-load-languages org-id-overriding-file-name org-indent-indentation-per-level org-element-paragraph-separate ffap-url-regexp org-inlinetask-min-level t) nil (add-hook (quote change-major-mode-hook) (quote org-show-all) (quote append) (quote local))) | (closure (org-src-window-setup *this* org-babel-confirm-evaluate-answer-no org-babel-tangle-uncomment-comments org-src-preserve-indentation org-src-lang-modes org-edit-src-content-indentation org-babel-library-of-babel t) nil (add-hook (quote change-major-mode-hook) (quote org-babel-show-result-all) (quote append) (quote local))) | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-eldoc-load | org-ref-setup-label-finders |
 
    Now we will add some hooks
 
@@ -2112,7 +2289,7 @@ provide me some nice garuntees
    #+end_src
 
    #+RESULTS:
-   | org-tempo-setup | (lambda nil (delete '(\.pdf\' . default) org-file-apps) (add-to-list 'org-file-apps '(\.pdf\' . zathura %s))) | org-ref-org-menu | org-bullets-mode | (lambda nil (require 'org-tempo)) | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-eldoc-load | org-ref-setup-label-finders |
+   | org-tempo-setup | (lambda nil (delete (quote (\.pdf\' . default)) org-file-apps) (add-to-list (quote org-file-apps) (quote (\.pdf\' . zathura %s)))) | org-ref-org-menu | org-bullets-mode | (lambda nil (require (quote org-tempo))) | add-pcomplete-to-capf | (closure (org-agenda-skip-regexp org-table1-hline-regexp org-table-tab-recognizes-table.el org-table-dataline-regexp org-table-any-border-regexp org-agenda-restriction-lock-overlay org-agenda-overriding-restriction org-agenda-diary-file org-complex-heading-regexp t) nil (setq imenu-create-index-function (quote org-imenu-get-tree))) | evil-org-mode | (closure (org--rds reftex-docstruct-symbol org-element-greater-elements org-clock-history org-agenda-current-date org-with-time org-defdecode org-def org-read-date-inactive org-ans2 org-ans1 org-columns-current-fmt-compiled org-clock-current-task org-clock-effort org-agenda-skip-function org-agenda-skip-comment-trees org-agenda-archives-mode org-end-time-was-given org-time-was-given org-log-note-extra org-log-note-purpose org-log-post-message org-last-inserted-timestamp org-last-changed-timestamp org-entry-property-inherited-from org-blocked-by-checkboxes org-state org-agenda-headline-snapshot-before-repeat org-agenda-start-on-weekday org-agenda-buffer-tmp-name org-priority-regexp org-mode-abbrev-table org-mode-syntax-table buffer-face-mode-face org-tbl-menu org-org-menu org-struct-menu org-entities org-last-state org-id-track-globally org-clock-start-time texmathp-why remember-data-file org-agenda-tags-todo-honor-ignore-options iswitchb-temp-buflist calc-embedded-open-mode calc-embedded-open-formula calc-embedded-close-formula align-mode-rules-list org-emphasis-alist org-emphasis-regexp-components org-export-registered-backends org-modules org-babel-load-languages org-id-overriding-file-name org-indent-indentation-per-level org-element-paragraph-separate ffap-url-regexp org-inlinetask-min-level t) nil (add-hook (quote change-major-mode-hook) (quote org-show-all) (quote append) (quote local))) | (closure (org-src-window-setup *this* org-babel-confirm-evaluate-answer-no org-babel-tangle-uncomment-comments org-src-preserve-indentation org-src-lang-modes org-edit-src-content-indentation org-babel-library-of-babel t) nil (add-hook (quote change-major-mode-hook) (quote org-babel-show-result-all) (quote append) (quote local))) | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-eldoc-load | org-ref-setup-label-finders |
 
    Now we will install all the frivolous org package
 
@@ -2192,9 +2369,17 @@ provide me some nice garuntees
                     ("C-c r g" . org-roam-graph))
                    :map org-mode-map
                    (("C-c r i" . org-roam-insert)
-                    ("C-c r I" . org-roam-insert-immediate)))
+                    ("C-c r I" . org-roam-insert-immediate)
+                    ("C-c r l" . org-roam)
+                    ("C-c r r" . org-roam-buffer-toggle-display)
+                    ("C-c r c" . org-roam-capture)
+                    ("C-c r f" . org-roam-find-file)
+                    ("C-c r d" . org-roam-find-directory)
+                    ("C-c r b" . org-roam-switch-to-buffer)
+                    ("C-c r g" . org-roam-graph)))
        :config
        (setq org-roam-buffer "Org-roam Sidebar")
+       (setq org-roam-encrypt-files t)
 
        ;; use company as org roam backend
        ;; (use-package company-org-roam
@@ -2202,8 +2387,7 @@ provide me some nice garuntees
        ;;   :config
        ;;   (push 'company-org-roam company-backends))
 
-       ;; ;; use org protoc
-       ol so we can use bookmarklets
+       ;; ;; use org protocol so we can use bookmarklets
        (require 'org-roam-protocol)
 
        ;; Set the initial variables and hooks for configuration
@@ -2348,6 +2532,8 @@ provide me some nice garuntees
    #+BEGIN_SRC emacs-lisp
                                              ; (setq org-agenda-files (list org-index-file))
    #+END_SRC
+
+	 #+RESULTS:
 
    Hitting =C-c C-x C-s= will mark a todo as done and move it to an appropriate
    place in the archive.
@@ -2515,6 +2701,7 @@ provide me some nice garuntees
       'org-babel-load-languages
       '((emacs-lisp . t)
         (ruby . t)
+        (shell . t)
         (plantuml . t)
         (dot . t)
         (docker-build . t)
@@ -2539,7 +2726,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   : ((dot . graphviz-dot) (arduino . arduino) (redis . redis) (php . php) (C . c) (C++ . c++) (asymptote . asy) (bash . sh) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (dot . fundamental) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (shell . sh) (sqlite . sql))
+   : ((dot . graphviz-dot) (redis . redis) (php . php) (arduino . arduino) (C . c) (C++ . c++) (asymptote . asy) (bash . sh) (beamer . latex) (calc . fundamental) (cpp . c++) (ditaa . artist) (dot . fundamental) (elisp . emacs-lisp) (ocaml . tuareg) (screen . shell-script) (shell . sh) (sqlite . sql))
 
    Translate regular ol' straight quotes to typographically-correct curly quotes
    when exporting.
@@ -2620,12 +2807,18 @@ provide me some nice garuntees
      (setq TeX-parse-self t)
    #+END_SRC
 
+	 #+RESULTS:
+   : t
+
    Always use =pdflatex= when compiling LaTeX documents. I don't really have any
    use for DVIs.
 
    #+BEGIN_SRC emacs-lisp
      (setq TeX-PDF-mode t)
    #+END_SRC
+
+	 #+RESULTS:
+   : t
 
    Open compiled PDFs in =zathura= instead of in the editor.
 
@@ -2635,6 +2828,9 @@ provide me some nice garuntees
                   (delete '("\\.pdf\\'" . default) org-file-apps)
                   (add-to-list 'org-file-apps '("\\.pdf\\'" . "zathura %s"))))
    #+END_SRC
+
+	 #+RESULTS:
+   | org-tempo-setup | (lambda nil (delete (quote (\.pdf\' . default)) org-file-apps) (add-to-list (quote org-file-apps) (quote (\.pdf\' . zathura %s)))) | org-ref-org-menu | org-bullets-mode | (lambda nil (require (quote org-tempo))) | add-pcomplete-to-capf | (closure (org-agenda-skip-regexp org-table1-hline-regexp org-table-tab-recognizes-table.el org-table-dataline-regexp org-table-any-border-regexp org-agenda-restriction-lock-overlay org-agenda-overriding-restriction org-agenda-diary-file org-complex-heading-regexp t) nil (setq imenu-create-index-function (quote org-imenu-get-tree))) | evil-org-mode | (closure (org--rds reftex-docstruct-symbol org-element-greater-elements org-clock-history org-agenda-current-date org-with-time org-defdecode org-def org-read-date-inactive org-ans2 org-ans1 org-columns-current-fmt-compiled org-clock-current-task org-clock-effort org-agenda-skip-function org-agenda-skip-comment-trees org-agenda-archives-mode org-end-time-was-given org-time-was-given org-log-note-extra org-log-note-purpose org-log-post-message org-last-inserted-timestamp org-last-changed-timestamp org-entry-property-inherited-from org-blocked-by-checkboxes org-state org-agenda-headline-snapshot-before-repeat org-agenda-start-on-weekday org-agenda-buffer-tmp-name org-priority-regexp org-mode-abbrev-table org-mode-syntax-table buffer-face-mode-face org-tbl-menu org-org-menu org-struct-menu org-entities org-last-state org-id-track-globally org-clock-start-time texmathp-why remember-data-file org-agenda-tags-todo-honor-ignore-options iswitchb-temp-buflist calc-embedded-open-mode calc-embedded-open-formula calc-embedded-close-formula align-mode-rules-list org-emphasis-alist org-emphasis-regexp-components org-export-registered-backends org-modules org-babel-load-languages org-id-overriding-file-name org-indent-indentation-per-level org-element-paragraph-separate ffap-url-regexp org-inlinetask-min-level t) nil (add-hook (quote change-major-mode-hook) (quote org-show-all) (quote append) (quote local))) | (closure (org-src-window-setup *this* org-babel-confirm-evaluate-answer-no org-babel-tangle-uncomment-comments org-src-preserve-indentation org-src-lang-modes org-edit-src-content-indentation org-babel-library-of-babel t) nil (add-hook (quote change-major-mode-hook) (quote org-babel-show-result-all) (quote append) (quote local))) | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-eldoc-load | org-ref-setup-label-finders |
 
    Enable a minor mode for dealing with math (it adds a few useful keybindings),
    and always treat the current file as the "main" file. That's intentional, since
@@ -2667,90 +2863,113 @@ provide me some nice garuntees
   :ID:       3d4ac824-a37e-48d9-8e4a-6fcadb8fdd3b
   :END:
 
-  Hide dotfiles by default, but toggle their visibility with =.=.
+   Hide dotfiles by default, but toggle their visibility with =.=.
 
-  #+BEGIN_SRC emacs-lisp
-    (use-package dired-hide-dotfiles
-      :config
-      (dired-hide-dotfiles-mode)
-      (define-key dired-mode-map "." 'dired-hide-dotfiles-mode))
-  #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package dired-hide-dotfiles
+       :config
+       (dired-hide-dotfiles-mode)
+       (define-key dired-mode-map "." 'dired-hide-dotfiles-mode))
+   #+END_SRC
 
-  Open media with the appropriate programs.
+	 #+RESULTS:
+   : t
 
-  #+BEGIN_SRC emacs-lisp
-    (use-package dired-open
-      :config
-      (setq dired-open-extensions
-            '(("pdf" . "zathura")
-              ("mkv" . "vlc")
-              ("mp3" . "vlc")
-              ("mp4" . "vlc")
-              ("avi" . "vlc"))))
-  #+END_SRC
+   Open media with the appropriate programs.
 
-  These are the switches that get passed to =ls= when =dired= gets a list of
-  files. We're using:
+   #+BEGIN_SRC emacs-lisp
+     (use-package dired-open
+       :config
+       (setq dired-open-extensions
+             '(("pdf" . "zathura")
+               ("mkv" . "vlc")
+               ("mp3" . "vlc")
+               ("mp4" . "vlc")
+               ("avi" . "vlc"))))
+   #+END_SRC
 
-  - =l=: Use the long listing format.
-  - =h=: Use human-readable sizes.
-  - =v=: Sort numbers naturally.
-  - =A=: Almost all. Doesn't include "=.=" or "=..=".
+	 #+RESULTS:
+   : t
 
-  #+BEGIN_SRC emacs-lisp
-    (setq-default dired-listing-switches "-lhvA")
-  #+END_SRC
+   These are the switches that get passed to =ls= when =dired= gets a list of
+   files. We're using:
 
-  Use "j" and "k" to move around in =dired=.
+   - =l=: Use the long listing format.
+   - =h=: Use human-readable sizes.
+   - =v=: Sort numbers naturally.
+   - =A=: Almost all. Doesn't include "=.=" or "=..=".
 
-  #+BEGIN_SRC emacs-lisp
-    ;; (evil-define-key 'normal dired-mode-map (kbd "j") 'dired-next-line)
-    ;; (evil-define-key 'normal dired-mode-map (kbd "k") 'dired-previous-line)
-  #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (setq-default dired-listing-switches "-lhvA")
+   #+END_SRC
 
-  Kill buffers of files/directories that are deleted in =dired=.
+	 #+RESULTS:
+   : -lhvA
 
-  #+BEGIN_SRC emacs-lisp
-    (setq dired-clean-up-buffers-too t)
-  #+END_SRC
+   Use "j" and "k" to move around in =dired=.
 
-  Always copy directories recursively instead of asking every time.
+   #+BEGIN_SRC emacs-lisp
+     ;; (evil-define-key 'normal dired-mode-map (kbd "j") 'dired-next-line)
+     ;; (evil-define-key 'normal dired-mode-map (kbd "k") 'dired-previous-line)
+   #+END_SRC
 
-  #+BEGIN_SRC emacs-lisp
-    (setq dired-recursive-copies 'always)
-  #+END_SRC
+	 #+RESULTS:
 
-  Ask before recursively /deleting/ a directory, though.
+   Kill buffers of files/directories that are deleted in =dired=.
 
-  #+BEGIN_SRC emacs-lisp
-    (setq dired-recursive-deletes 'top)
-  #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (setq dired-clean-up-buffers-too t)
+   #+END_SRC
 
-  Open a file with an external program (that is, through =xdg-open=) by hitting
-  =C-c C-o=.
+	 #+RESULTS:
+   : t
 
-  #+BEGIN_SRC emacs-lisp
-    (defun dired-xdg-open ()
-      "In dired, open the file named on this line."
-      (interactive)
-      (let* ((file (dired-get-filename nil t)))
-        (call-process "xdg-open" nil 0 nil file)))
+   Always copy directories recursively instead of asking every time.
 
-    (define-key dired-mode-map (kbd "C-c C-o") 'dired-xdg-open)
-  #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (setq dired-recursive-copies 'always)
+   #+END_SRC
 
+	 #+RESULTS:
+   : always
 
-  #+BEGIN_SRC emacs-lisp
-    (use-package ranger
-      :ensure ranger)
-    (ranger-override-dired-mode t)
-  #+END_SRC
+   Ask before recursively /deleting/ a directory, though.
 
-  #+RESULTS:
-  : t
+   #+BEGIN_SRC emacs-lisp
+     (setq dired-recursive-deletes 'top)
+   #+END_SRC
+
+	 #+RESULTS:
+   : top
+
+   Open a file with an external program (that is, through =xdg-open=) by hitting
+   =C-c C-o=.
+
+   #+BEGIN_SRC emacs-lisp
+     (defun dired-xdg-open ()
+       "In dired, open the file named on this line."
+       (interactive)
+       (let* ((file (dired-get-filename nil t)))
+         (call-process "xdg-open" nil 0 nil file)))
+
+     (define-key dired-mode-map (kbd "C-c C-o") 'dired-xdg-open)
+   #+END_SRC
+
+	 #+RESULTS:
+   : dired-xdg-open
+
 
 * Editing settings
 ** Quickly visit Emacs configuration
+   #+BEGIN_SRC emacs-lisp
+     (use-package ranger
+       :ensure ranger)
+     (ranger-override-dired-mode t)
+   #+END_SRC
+
+   #+RESULTS:
+   : t
+
    :PROPERTIES:
    :ID:       4fba2647-d14e-4730-98ae-95d113432932
    :END:
@@ -2941,7 +3160,7 @@ provide me some nice garuntees
    #+END_SRC
 
    #+RESULTS:
-   | company-yasnippet | company-org-roam | company-bbdb | company-semantic | company-cmake | company-capf | company-clang | company-files | (company-dabbrev-code company-gtags company-etags company-keywords) | company-oddmuse | company-dabbrev |
+   | company-capf | company-yasnippet | company-capf | company-bbdb | company-semantic | company-cmake | company-capf | company-clang | company-files | (company-dabbrev-code company-gtags company-etags company-keywords) | company-oddmuse | company-dabbrev |
 
    I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippet=
    enabled.
@@ -2950,6 +3169,9 @@ provide me some nice garuntees
                                              ; (setq yas-snippet-dirs '("~/.emacs.d/snippets/text-mode"))
      (yas-global-mode 1)
    #+END_SRC
+
+   #+RESULTS:
+   : t
 
    I /don’t/ want =yas= to automatically indent the snippets it inserts. Sometimes
    this looks pretty bad (when indenting org-mode, for example, or trying to guess
@@ -3158,335 +3380,348 @@ provide me some nice garuntees
   :ID:       de8c5bf2-00fe-465a-bff4-6f89e1296301
   :END:
 
-Man the ship! Helm is a sub community of emacs users who build
-applications ontop of the Helm framework for standard utilities.
+  Man the ship! Helm is a sub community of emacs users who build
+  applications ontop of the Helm framework for standard utilities.
 
-It's extremely handy for autocompleting without tab completion!
+  It's extremely handy for autocompleting without tab completion!
 
-#+BEGIN_SRC emacs-lisp
-  (print "Loading helm configs")
-  ;  :straight (helm :type git :host github :branch "master" :repo "emacs-helm/helm")
-  (use-package helm
-    :ensure t
-    :bind (("M-x" . helm-M-x)
-           ("C-x b" . helm-buffers-list)
-           ("C-x C-f" . helm-find-files)
-           ("C-x r b" . helm-bookmarks)))
-#+END_SRC
+  #+BEGIN_SRC emacs-lisp
+    (print "Loading helm configs")
+                                            ;  :straight (helm :type git :host github :branch "master" :repo "emacs-helm/helm")
+    (use-package helm
+      :ensure t
+      :bind (("M-x" . helm-M-x)
+             ("C-x b" . helm-buffers-list)
+             ("C-x C-f" . helm-find-files)
+             ("C-x r b" . helm-bookmarks)))
+  #+END_SRC
 
-#+RESULTS:
-: helm-bookmarks
+  #+RESULTS:
+  : helm-bookmarks
 
 ** High level helm setup modes and things
    :PROPERTIES:
    :ID:       7919025c-1896-4173-8971-b6708e2223de
    :END:
 
-#+BEGIN_SRC emacs-lisp
-  (require 'helm-config)
-  (helm-mode 1)
+   #+BEGIN_SRC emacs-lisp
+     (require 'helm-config)
+     (helm-mode 1)
 
-  ;; Globally enable fuzzy matching for helm-mode.
-  (setq helm-mode-fuzzy-match t)
-  (setq helm-completion-in-region-fuzzy-match t)
-  (setq helm-M-x-fuzzy-match t)
-  (setq helm-buffers-fuzzy-matching t)
-  (setq helm-recentf-fuzzy-match t)
-  (customize-set-variable 'helm-ff-lynx-style-map t)
+     ;; Globally enable fuzzy matching for helm-mode.
+     (setq helm-mode-fuzzy-match t)
+     (setq helm-completion-in-region-fuzzy-match t)
+     (setq helm-M-x-fuzzy-match t)
+     (setq helm-buffers-fuzzy-matching t)
+     (setq helm-recentf-fuzzy-match t)
+     (customize-set-variable 'helm-ff-lynx-style-map t)
 
-  ;; Enter directories with RET, same as ido
-  ;; http://emacs.stackexchange.com/questions/3798/how-do-i-make-pressing-ret-in-helm-find-files-open-the-directory/7896#7896
-  (defun helm-find-files-navigate-forward (orig-fun &rest args)
-    (if (file-directory-p (helm-get-selection))
-        (apply orig-fun args)
-      (helm-maybe-exit-minibuffer)))
-  (advice-add 'helm-execute-persistent-action :around #'helm-find-files-navigate-forward)
-  (with-eval-after-load 'helm-files
-    (define-key helm-find-files-map (kbd "<return>") 'helm-execute-persistent-action))
+     ;; Enter directories with RET, same as ido
+     ;; http://emacs.stackexchange.com/questions/3798/how-do-i-make-pressing-ret-in-helm-find-files-open-the-directory/7896#7896
+     (defun helm-find-files-navigate-forward (orig-fun &rest args)
+       (if (file-directory-p (helm-get-selection))
+           (apply orig-fun args)
+         (helm-maybe-exit-minibuffer)))
+     (advice-add 'helm-execute-persistent-action :around #'helm-find-files-navigate-forward)
+     (with-eval-after-load 'helm-files
+       (define-key helm-find-files-map (kbd "<return>") 'helm-execute-persistent-action))
 
-  ;; major key
-  (global-set-key [remap execute-extended-command] #'helm-smex)
-#+END_SRC
+     ;; major key
+     (global-set-key [remap execute-extended-command] #'helm-smex)
+   #+END_SRC
 
-#+RESULTS:
-: helm-smex
+   #+RESULTS:
+   : helm-smex
 
 ** Disable helm in some common emacs apps
    :PROPERTIES:
    :ID:       e9f2d505-bd52-4e49-b963-6ad8081eea39
    :END:
 
-#+BEGIN_SRC emacs-lisp
-;; Disable Helm in the following functions.
-;; See: https://github.com/emacs-helm/helm/wiki#customize-helm-mode
-(setq helm-completing-read-handlers-alist
-      '((magit-gitignore . nil)
-        (rename-file . ido)))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     ;; Disable Helm in the following functions.
+     ;; See: https://github.com/emacs-helm/helm/wiki#customize-helm-mode
+     (setq helm-completing-read-handlers-alist
+           '((magit-gitignore . nil)
+             (rename-file . ido)))
+   #+END_SRC
 
-#+RESULTS:
-: ((magit-gitignore) (rename-file . ido))
+   #+RESULTS:
+   : ((magit-gitignore) (rename-file . ido))
 
 ** auxilary helm
    :PROPERTIES:
    :ID:       b36942c1-2849-4230-a140-e7ccdcb3bd5f
    :END:
 
- This section is mainly for emacs...helm...packages...
+   This section is mainly for emacs...helm...packages...
 
-#+BEGIN_SRC emacs-lisp
-  ;; Install accompanying helm packages
-  (use-package helm-projectile
-    :ensure t
-    :init
-    (setq projectile-completion-system 'helm)
-    (helm-projectile-on))
-  (use-package helm-tramp
-    :ensure t
-    :bind ("C-c s" . helm-tramp))
-  (setq tramp-default-method "docker")
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     ;; Install accompanying helm packages
+     (use-package helm-projectile
+       :ensure t
+       :init
+       (setq projectile-completion-system 'helm)
+       (helm-projectile-on))
+     (use-package helm-tramp
+       :ensure t
+       :bind ("C-c s" . helm-tramp))
+     (setq tramp-default-method "docker")
+   #+END_SRC
 
-#+RESULTS:
-: docker
-
-
-Just a few handy functions.
-
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "M-o") 'other-window)
-#+END_SRC
-
-Remap when working in terminal Emacs.
-
-#+BEGIN_SRC emacs-lisp
-  (define-key input-decode-map "\e[1;2A" [S-up])
-#+END_SRC
-
-I like enlarging and shrinking windows easily
-
-#+BEGIN_SRC emacs-lisp
-;; hotkey window resizingx
-(global-set-key (kbd "C-M-<left>") 'shrink-window-horizontally)
-(global-set-key (kbd "C-M-<right>") 'enlarge-window-horizontally)
-(global-set-key (kbd "C-M-<down>") 'shrink-window)
-(global-set-key (kbd "C-M-<up>") 'enlarge-window)
-#+END_SRC
-
-#+RESULTS:
-: enlarge-window
-
-Also switching between windows
-
-#+BEGIN_SRC emacs-lisp
-;; window switching hotkeys
-(global-set-key (kbd "C-c <left>")  'windmove-left)
-(global-set-key (kbd "C-c <right>") 'windmove-right)
-(global-set-key (kbd "C-c <up>")    'windmove-up)
-(global-set-key (kbd "C-c <down>")  'windmove-down)
-#+END_SRC
-
-Nice sliding window scrolling
-
-#+BEGIN_SRC emacs-lisp
-;; hotkey scrolling
-(defun next-line-and-recenter () (interactive) (next-line) (recenter))
-(defun previous-line-and-recenter () (interactive) (previous-line) (recenter))
-(global-set-key (kbd "C-n") 'next-line-and-recenter)
-(global-set-key (kbd "C-p") 'previous-line-and-recenter)
-#+END_SRC
-
-Run polybar in the background
-
-#+begin_src emacs-lisp
-  (defun kill_polybar ()
-    (let ((auto-answer t))
-      (when (get-buffer "*trigger_polybar*")
-      (kill-buffer "*trigger_polybar*"))))
+   #+RESULTS:
+   : docker
 
 
-  (defun trigger_polybar (&optional default-monitor)
-    (interactive)
-    (unless default-monitor (setq default-monitor ""))
-    (kill_polybar)
-    (let ((display-buffer-alist
-           (cons (cons "\\*trigger_polybar\\*.*"
-                       (cons #'display-buffer-no-window nil))
-                 display-buffer-alist))) ;; suppress async shell command window
-      (async-shell-command
-       (concat "trigger_polybar " default-monitor) "*trigger_polybar*")))
-#+end_src
+   Just a few handy functions.
 
-#+RESULTS:
-: trigger_polybar
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "M-o") 'other-window)
+   #+END_SRC
+
+   #+RESULTS:
+   : other-window
+
+   Remap when working in terminal Emacs.
+
+   #+BEGIN_SRC emacs-lisp
+     (define-key input-decode-map "\e[1;2A" [S-up])
+   #+END_SRC
+
+   #+RESULTS:
+   : [S-up]
+
+   I like enlarging and shrinking windows easily
+
+   #+BEGIN_SRC emacs-lisp
+     ;; hotkey window resizingx
+     (global-set-key (kbd "C-M-<left>") 'shrink-window-horizontally)
+     (global-set-key (kbd "C-M-<right>") 'enlarge-window-horizontally)
+     (global-set-key (kbd "C-M-<down>") 'shrink-window)
+     (global-set-key (kbd "C-M-<up>") 'enlarge-window)
+   #+END_SRC
+
+   #+RESULTS:
+   : enlarge-window
+
+   Also switching between windows
+
+   #+BEGIN_SRC emacs-lisp
+     ;; window switching hotkeys
+     (global-set-key (kbd "C-c <left>")  'windmove-left)
+     (global-set-key (kbd "C-c <right>") 'windmove-right)
+     (global-set-key (kbd "C-c <up>")    'windmove-up)
+     (global-set-key (kbd "C-c <down>")  'windmove-down)
+   #+END_SRC
+
+   #+RESULTS:
+   : windmove-down
+
+   Nice sliding window scrolling
+
+   #+BEGIN_SRC emacs-lisp
+     ;; hotkey scrolling
+     (defun next-line-and-recenter () (interactive) (next-line) (recenter))
+     (defun previous-line-and-recenter () (interactive) (previous-line) (recenter))
+     (global-set-key (kbd "C-n") 'next-line-and-recenter)
+     (global-set-key (kbd "C-p") 'previous-line-and-recenter)
+   #+END_SRC
+
+   #+RESULTS:
+   : previous-line-and-recenter
+
+   Run polybar in the background
+
+   #+begin_src emacs-lisp
+     (defun kill_polybar ()
+       (let ((auto-answer t))
+         (when (get-buffer "*trigger_polybar*")
+           (kill-buffer "*trigger_polybar*"))))
+
+
+     (defun trigger_polybar (&optional default-monitor)
+       (interactive)
+       (unless default-monitor (setq default-monitor ""))
+       (kill_polybar)
+       (let ((display-buffer-alist
+              (cons (cons "\\*trigger_polybar\\*.*"
+                          (cons #'display-buffer-no-window nil))
+                    display-buffer-alist))) ;; suppress async shell command window
+         (async-shell-command
+          (concat "trigger_polybar " default-monitor) "*trigger_polybar*")))
+   #+end_src
+
+   #+RESULTS:
+   : trigger_polybar
 
 * EXWM
   :PROPERTIES:
   :ID:       530ded90-f950-4cb6-bd8f-ab73a304f7af
   :END:
 
-An attempt to switch from i3 to a better X window manager is EXWM.
+  An attempt to switch from i3 to a better X window manager is EXWM.
 
-In my opinion it is a pretty amazing blend of X and emacs
+  In my opinion it is a pretty amazing blend of X and emacs
 
-#+BEGIN_SRC emacs-lisp
-  (print "Loading exwm configs")
+  #+BEGIN_SRC emacs-lisp
+    (print "Loading exwm configs")
 
-  (eval-and-compile
-    (straight-use-package 'exwm)
-    (require 'exwm-core))
+    (eval-and-compile
+      (straight-use-package 'exwm)
+      (require 'exwm-core))
 
-  (use-package exwm
-    :straight t
-    :config
-    (require 'exwm-config)
-    (exwm-enable)
+    (use-package exwm
+      :straight t
+      :config
+      (require 'exwm-config)
+      (exwm-enable)
 
-    ;; Make a bunch of workspaces
-    (setq exwm-workspace-number 4)
-    (dotimes (i 4)
-      (exwm-input-set-key (kbd (format "s-%d" i))
-                          `(lambda ()
-                             (interactive)
-                             (exwm-workspace-switch-create ,i))))
+      ;; Make a bunch of workspaces
+      (setq exwm-workspace-number 4)
+      (dotimes (i 4)
+        (exwm-input-set-key (kbd (format "s-%d" i))
+                            `(lambda ()
+                               (interactive)
+                               (exwm-workspace-switch-create ,i))))
 
-    ;; config vars
-    (setq exwm-manage-codnfigurations '((t line-mode t)))
-    (setq exwm-workspace-show-all-buffers t)
-    (setq exwm-layout-show-all-buffers t)
+      ;; config vars
+      (setq exwm-manage-codnfigurations '((t line-mode t)))
+      (setq exwm-workspace-show-all-buffers t)
+      (setq exwm-layout-show-all-buffers t)
 
-    (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
-    (define-key exwm-mode-map (kbd "C-c") nil)
+      (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+      (define-key exwm-mode-map (kbd "C-c") nil)
 
-    (defun exwm-workspace--current-to-previous-index (_x)
-      (setq exwm-workspace-previous-index exwm-workspace-current-index))
+      (defun exwm-workspace--current-to-previous-index (_x)
+        (setq exwm-workspace-previous-index exwm-workspace-current-index))
 
-    (defun exwm-workspace-previous ()
-      (interactive)
-      "Switch to the previous workspace."
-      (let ((index exwm-workspace-current-index))
-        (if (= index 0)
-            (exwm-workspace-switch (- exwm-workspace-number 1))
-          (exwm-workspace-switch (% (- index 1) exwm-workspace-number)))))
+      (defun exwm-workspace-previous ()
+        (interactive)
+        "Switch to the previous workspace."
+        (let ((index exwm-workspace-current-index))
+          (if (= index 0)
+              (exwm-workspace-switch (- exwm-workspace-number 1))
+            (exwm-workspace-switch (% (- index 1) exwm-workspace-number)))))
 
-    (defun exwm-workspace-next ()
-      (interactive)
-      "Switch to the next workspace."
-      (let ((index exwm-workspace-current-index))
-        (exwm-workspace-switch (% (+ index 1) exwm-workspace-number))))
+      (defun exwm-workspace-next ()
+        (interactive)
+        "Switch to the next workspace."
+        (let ((index exwm-workspace-current-index))
+          (exwm-workspace-switch (% (+ index 1) exwm-workspace-number))))
 
-    (exwm-input-set-key (kbd "s-S-<up>") 'windmove-up)
-    (exwm-input-set-key (kbd "s-S-<down>") 'windmove-down)
-    (exwm-input-set-key (kbd "s-S-<left>") 'windmove-left)
-    (exwm-input-set-key (kbd "s-S-<right>") 'windmove-right)
+      (exwm-input-set-key (kbd "s-S-<up>") 'windmove-up)
+      (exwm-input-set-key (kbd "s-S-<down>") 'windmove-down)
+      (exwm-input-set-key (kbd "s-S-<left>") 'windmove-left)
+      (exwm-input-set-key (kbd "s-S-<right>") 'windmove-right)
 
-    (exwm-input-set-key (kbd "C-M-<left>") 'shrink-window-horizontally)
-    (exwm-input-set-key (kbd "C-M-<right>") 'enlarge-window-horizontally)
-    (exwm-input-set-key (kbd "C-M-<down>") 'shrink-window)
-    (exwm-input-set-key (kbd "C-M-<up>") 'enlarge-window)
+      (exwm-input-set-key (kbd "C-M-<left>") 'shrink-window-horizontally)
+      (exwm-input-set-key (kbd "C-M-<right>") 'enlarge-window-horizontally)
+      (exwm-input-set-key (kbd "C-M-<down>") 'shrink-window)
+      (exwm-input-set-key (kbd "C-M-<up>") 'enlarge-window)
 
-    (setq exwm-input-global-keys
-          `(([?\s-r] . exwm-reset)
-            ([?\s-w] . exwm-workspace-switch)
-            ([?\s-n] . exwm-workspace-next)
-            ([?\s-p] . exwm-workspace-previous)
-            ([?\s-&] . (lambda (command)
-                         (interactive (list (read-shell-command "$ ")))
-                         (start-process-shell-command command nil command)))
-            ,@(mapcar (lambda (i)
-                        `(,(kbd (format "s-%d" i)) .
-                          (lambda ()
-                            (interactive)
-                            (exwm-workspace-switch-create ,i))))
-                      (number-sequence 0 8))))
+      (setq exwm-input-global-keys
+            `(([?\s-r] . exwm-reset)
+              ([?\s-w] . exwm-workspace-switch)
+              ([?\s-n] . exwm-workspace-next)
+              ([?\s-p] . exwm-workspace-previous)
+              ([?\s-&] . (lambda (command)
+                           (interactive (list (read-shell-command "$ ")))
+                           (start-process-shell-command command nil command)))
+              ,@(mapcar (lambda (i)
+                          `(,(kbd (format "s-%d" i)) .
+                            (lambda ()
+                              (interactive)
+                              (exwm-workspace-switch-create ,i))))
+                        (number-sequence 0 8))))
 
-    (add-hook 'exwm-update-class-hook
-              (lambda ()
-                (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+      (add-hook 'exwm-update-class-hook
+                (lambda ()
+                  (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                              (string= "gimp" exwm-instance-name))
+                    (exwm-workspace-rename-buffer exwm-class-name))))
+      (add-hook 'exwm-update-title-hook
+                (lambda ()
+                  (when (or (not exwm-instance-name)
+                            (string-prefix-p "sun-awt-X11-" exwm-instance-name)
                             (string= "gimp" exwm-instance-name))
-                  (exwm-workspace-rename-buffer exwm-class-name))))
-    (add-hook 'exwm-update-title-hook
-              (lambda ()
-                (when (or (not exwm-instance-name)
-                          (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                          (string= "gimp" exwm-instance-name))
-                  (exwm-workspace-rename-buffer exwm-title))))
+                    (exwm-workspace-rename-buffer exwm-title))))
 
 
-    (setq window-divider-default-right-width 1)
-    (window-divider-mode))
+      (setq window-divider-default-right-width 1)
+      (window-divider-mode))
 
-  (ignore-errors
-    (trigger_polybar))
+    (ignore-errors
+      (trigger_polybar))
 
-  (use-package helm-exwm
-    :ensure t
-    :bind (("s-x" . helm-exwm)))
-#+END_SRC
+    (use-package helm-exwm
+      :ensure t
+      :bind (("s-x" . helm-exwm)))
+  #+END_SRC
 
-#+RESULTS:
-: helm-exwm
+  #+RESULTS:
+  : helm-exwm
 
-#+begin_src emacs-lisp
-  (use-package dmenu
-    :ensure t
-    :config
-    (setq dmenu-prompt-string "dmenu: ")
-    (exwm-input-set-key (kbd "s-<return>") 'dmenu))
-#+end_src
+  #+begin_src emacs-lisp
+    (use-package dmenu
+      :ensure t
+      :config
+      (setq dmenu-prompt-string "dmenu: ")
+      (exwm-input-set-key (kbd "s-<return>") 'dmenu))
+  #+end_src
 
-#+RESULTS:
-: t
+  #+RESULTS:
+  : t
 
-#+begin_src emacs-lisp
-  (use-package windmove
-    :ensure t)
-#+end_src
+  #+begin_src emacs-lisp
+    (use-package windmove
+      :ensure t)
+  #+end_src
 
-#+RESULTS:
+  #+RESULTS:
 
-#+begin_src emacs-lisp
-(global-set-key (kbd "<s-up>")     'buf-move-up)
-(global-set-key (kbd "<s-down>")   'buf-move-down)
-(global-set-key (kbd "<s-left>")   'buf-move-left)
-(global-set-key (kbd "<s-right>")  'buf-move-right)
-#+end_src
+  #+begin_src emacs-lisp
+    (global-set-key (kbd "<s-up>")     'buf-move-up)
+    (global-set-key (kbd "<s-down>")   'buf-move-down)
+    (global-set-key (kbd "<s-left>")   'buf-move-left)
+    (global-set-key (kbd "<s-right>")  'buf-move-right)
+  #+end_src
 
-#+RESULTS:
-: buf-move-right
+  #+RESULTS:
+  : buf-move-right
 
-#+begin_src emacs-lisp
-  (require 'exwm-randr)
-  (exwm-randr-enable)
-  (require 'exwm-systemtray)
-  (exwm-systemtray-enable)
-#+end_src
+  #+begin_src emacs-lisp
+    (require 'exwm-randr)
+    (exwm-randr-enable)
+    (require 'exwm-systemtray)
+    (exwm-systemtray-enable)
+  #+end_src
 
-#+RESULTS:
-| exwm-systemtray--exit | exwm-randr--exit |
+  #+RESULTS:
+  | exwm-systemtray--exit | exwm-randr--exit |
 
-#+begin_src emacs-lisp
-  (defun my/exwm-randr-auto-get-monitor ()
-    (let* ((result)
-     (monitors (nth 1 (exwm-randr--get-monitors))))
-      (dotimes (i (/ (length monitors) 2))
-        (push (nth (* i 2) monitors) result)
-        (push i result))
-      result))
+  #+begin_src emacs-lisp
+    (defun my/exwm-randr-auto-get-monitor ()
+      (let* ((result)
+             (monitors (nth 1 (exwm-randr--get-monitors))))
+        (dotimes (i (/ (length monitors) 2))
+          (push (nth (* i 2) monitors) result)
+          (push i result))
+        result))
 
-  (defun monitor-home-setup ()
-    (interactive)
-    (kill_polybar)
-    (setq exwm-randr-workspace-output-plist '(0 "eDP-1" 1 "HDMI-1"))
-    (shell-command "xrandr --output HDMI-1 --mode 1920x1080 --above eDP-1 --transform 1.0,0,-48,0,1.0,-20,0,0,1")
-    (trigger_polybar "eDP-1"))
+    (defun monitor-home-setup ()
+      (interactive)
+      (kill_polybar)
+      (setq exwm-randr-workspace-output-plist '(0 "eDP-1" 1 "HDMI-1"))
+      ;;(shell-command "xrandr --output HDMI-1 --mode 1920x1080 --above eDP-1 --transform 1.0,0,-48,0,1.0,-20,0,0,1")
+      (shell-command "xrandr --output HDMI-1 --mode 1280x720 --right-of eDP-1")
+      (trigger_polybar "eDP-1"))
 
-  (defun monitor-home-teardown ()
-    (interactive)
-    (kill_polybar)
-    (setq exwm-randr-workspace-output-plist '(0 "eDP-1"))
-    (shell-command "xrandr --output eDP-1 --auto --output HDMI-1 --off")
-    (trigger_polybar "eDP-1"))
+    (defun monitor-home-teardown ()
+      (interactive)
+      (kill_polybar)
+      (setq exwm-randr-workspace-output-plist '(0 "eDP-1"))
+      (shell-command "xrandr --output eDP-1 --auto --output HDMI-1 --off")
+      (trigger_polybar "eDP-1"))
 #+end_src
 
 #+RESULTS:
@@ -3505,8 +3740,8 @@ In my opinion it is a pretty amazing blend of X and emacs
        (add-hook 'after-init-hook 'dashboard-refresh-buffer)
        :config
        (setq dashboard-banner-logo-title "Welcome to Amacs!")
-       (setq dashboard-image-banner-max-height 1)
-       (setq dashboard-image-banner-max-width 1)
+       (setq dashboard-image-banner-max-height 200)
+       (setq dashboard-image-banner-max-width 200)
        (setq dashboard-center-content t)
        (setq dashboard-startup-banner "~/.emacs.d/resources/penrose.png")
        (dashboard-setup-startup-hook)
