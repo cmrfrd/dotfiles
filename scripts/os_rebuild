@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-sudo -E nixos-rebuild switch
+sudo -E NIXPKGS_ALLOW_UNFREE=1 NIXPKGS_ALLOW_BROKEN=1 nixos-rebuild switch --upgrade-all --install-bootloader
