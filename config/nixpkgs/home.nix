@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
 
@@ -11,10 +11,14 @@ let
   moz_overlay = import (builtins.fetchTarball https://github.com/mozilla/nixpkgs-mozilla/archive/master.tar.gz);
   moz = import <nixpkgs> { overlays = [ moz_overlay ]; };
 
-in rec {
+  emacs_overlay = import (builtins.fetchTarball {
+      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+  });
+  emac = import <nixpkgs> { overlays = [ emacs_overlay ]; };
 
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.allowBroken = true;
+  unstable = import <nixos-unstable> { config = { allowUnfree = true; allowBroken = true;}; };
+
+in rec {
   # nixpkgs.overlays = [
   #   (import (builtins.fetchTarball {
   #     url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
@@ -24,137 +28,150 @@ in rec {
   home.sessionVariables = {
     EDITOR = "emacs";
     XLIB_SKIP_ARGB_VISUALS = 1;
+    GOROOT = [ "${pkgs.go.out}/share/go" ];
   };
 
-  home.packages = with pkgs; [
+  home.packages = [
 
     ## Apps
-    brave
-    bitwarden
-    protonmail-bridge
-    thunderbird
-    pinentry
-    sqlite
+    pkgs.brave
+    pkgs.bitwarden
+    pkgs.protonmail-bridge
+    pkgs.thunderbird
+    pkgs.sqlite
 
     ## Bars
-    polybar
+    pkgs.polybar
 
     ## Fonts / Locales
-    font-awesome-ttf
-    fontconfig
-    dejavu_fonts
-    source-code-pro
-    source-sans-pro
-    source-serif-pro
-    glibcLocales
+    pkgs.font-awesome-ttf
+    pkgs.fontconfig
+    pkgs.dejavu_fonts
+    pkgs.source-code-pro
+    pkgs.source-sans-pro
+    pkgs.source-serif-pro
+    pkgs.glibcLocales
 
     ## windowing
-    xsel
-    wmctrl
-    screen
-    xdotool
+    pkgs.xsel
+    pkgs.wmctrl
+    pkgs.screen
+    pkgs.xdotool
+    pkgs.arandr
+    pkgs.gtk3
 
     ## shells
-    fish
-    bash
+    pkgs.fish
+    pkgs.bash
 
     ## cli/tools
     ## Git
-    git
-    tig
-    gitAndTools.gh
-    gitAndTools.git-sync
-    git-crypt
-    keychain
+    pkgs.git
+    pkgs.tig
+    pkgs.gitAndTools.gh
+    pkgs.gitAndTools.git-sync
+    pkgs.git-crypt
+    pkgs.keychain
     ## JSON
-    jq
+    pkgs.jq
 
-    arandr
     ## FS
-    exa
-    ack
-    fd
-    inotify-tools
-    entr
-    tree
-    autojump
-    pandoc
-    rclone
+    pkgs.exa
+    pkgs.ack
+    pkgs.fd
+    pkgs.inotify-tools
+    pkgs.entr
+    pkgs.tree
+    pkgs.autojump
+    pkgs.pandoc
+    pkgs.rclone
     ## Color
-    highlight
+    pkgs.highlight
     ## Build
-    gcc
-    glibc
-    cmake
-    gnumake
-    parallel
+    pkgs.gcc
+    pkgs.glibc
+    pkgs.cmake
+    pkgs.gnumake
+    pkgs.parallel
     ## Sec
-    gnupg
-    openssl
+    pkgs.gnupg
+    pkgs.openssl
     ## Net
-    openssh
-    curl
-    bind
-    wireshark
-    ddclient
+    pkgs.openssh
+    pkgs.curl
+    pkgs.bind
+    pkgs.wireshark
+    pkgs.ddclient
     ## Img
-    feh
-    shutter
-    imagemagick
+    pkgs.feh
+    pkgs.shutter
+    pkgs.imagemagick
     ## Lang
-    ispell
-    wordnet
+    pkgs.ispell
+    pkgs.wordnet
     ## Desktop
-    libnotify
-    notify-desktop
-    dunst
-    light
+    pkgs.libnotify
+    pkgs.notify-desktop
+    pkgs.dunst
+    pkgs.light
     ## Torrent
-    deluge
+    pkgs.deluge
     ## Misc
-    plantuml
-    graphviz
-    libtool
-    libvterm-neovim
-    neofetch
-    licensor
-    at
-    direnv
-    graph-easy
+    pkgs.plantuml
+    pkgs.graphviz
+    pkgs.libtool
+    pkgs.binutils
+    unstable.pkgs.libvterm-neovim
+    pkgs.neofetch
+    pkgs.licensor
+    pkgs.at
+    pkgs.direnv
+    pkgs.graph-easy
+    pkgs.mesa
+    pkgs.envsubst
+    pkgs.pinentry
+    pkgs.texlive.combined.scheme-full
+    # pkgs.shadow
+    # pkgs.nsjail
 
     ## containers
-    docker_compose
-    kubectl
+    pkgs.docker_compose
+    pkgs.kubectl
+    pkgs.kube3d
+    pkgs.k3s
+    pkgs.k9s
 
     ## js
-    nodejs
-    yarn
+    pkgs.nodejs
+    pkgs.yarn
 
     ## java
-    openjdk
+    pkgs.openjdk
 
     ## rust
-    wasm-pack
-    cargo-web
-    (moz.latest.rustChannels.nightly.rust.override {
-      targets = ["wasm32-unknown-unknown"];
-    })
+    pkgs.wasm-pack
+    pkgs.cargo-web
+    # (moz.latest.rustChannels.nightly.rust.override {
+    #   targets = ["wasm32-unknown-unknown"];
+    # })
 
     ## extra...
-    terminator
-    glib-networking
-    nodePackages.eslint
-    nodePackages.jsonlint
-    nodePackages.prettier
-    nodePackages.typescript-language-server
-    nodePackages.typescript
-    nodePackages.vscode-html-languageserver-bin
-    nodePackages.vscode-css-languageserver-bin
-    nodePackages.node2nix
-    nodePackages.bitwarden-cli
-    haskellPackages.hledger
+    pkgs.terminator
+    pkgs.glib-networking
+    pkgs.nodePackages.eslint
+    pkgs.nodePackages.jsonlint
+    pkgs.nodePackages.prettier
+    pkgs.nodePackages.typescript-language-server
+    pkgs.nodePackages.typescript
+    pkgs.nodePackages.vscode-html-languageserver-bin
+    pkgs.nodePackages.vscode-css-languageserver-bin
+    pkgs.nodePackages.node2nix
+    pkgs.nodePackages.bitwarden-cli
+    pkgs.nodePackages.mermaid-cli
+    pkgs.haskellPackages.hledger
 
-    (makeDesktopItem {
+
+    (pkgs.makeDesktopItem {
       name = "org-protocol";
       exec = "emacsclient %u";
       comment = "Org Protocol";
@@ -196,20 +213,36 @@ in rec {
   #   };
   # };
 
+  xsession = {
+    enable = true;
+    windowManager.command = ''
+      [[ "$DESKTOP_SESSION" == *"exwm"* ]] && ${emac.emacsGcc}/bin/emacs -f exwm-enable
+    '';
+  };
+
   programs.emacs = {
     enable = true;
-    package = (pkgs.emacs.override {
+    package = (emac.emacsGcc.override {
       withX = true;
       withGTK3 = true;
       withGTK2 = false;
       withXwidgets = true;
+      nativeComp = true;
     });
     extraPackages = epkgs: [
       epkgs.exwm
       epkgs.vterm
+      epkgs.helm
       epkgs.dictionary
     ];
   };
+  home.file.".emacs.d/load-path.el".source = pkgs.writeText "load-path.el" ''
+    (let ((default-directory (file-name-as-directory
+                           "${config.programs.emacs.finalPackage.deps}/share/emacs/site-lisp/"))
+          (normal-top-level-add-subdirs-inode-list nil))
+      (normal-top-level-add-subdirs-to-load-path))
+
+  '';
 
   programs.chromium = {
     enable = true;
@@ -251,10 +284,10 @@ in rec {
   #   };
   # };
 
-  programs.fish = {
-    enable = true;
-    promptInit = builtins.readFile "${builtins.getEnv "HOME"}/.dotfiles/config/fish/rc.fish";
-  };
+  # programs.fish = {
+  #   enable = true;
+  #   promptInit = builtins.readFile "${builtins.getEnv "HOME"}/.dotfiles/config/fish/rc.fish";
+  # };
 
   programs.zsh = {
     enable = true;
@@ -283,6 +316,10 @@ in rec {
         user = "git";
       };
     };
+  };
+
+  programs.go = {
+    enable = true;
   };
 
   services.gpg-agent = {
