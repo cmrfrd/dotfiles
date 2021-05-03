@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=EXWM
 Comment=Woot emacs!
-Exec=emacs-27.1
+Exec=XLIB_SKIP_ARGB_VISUALS=1 exec dbus-launch --exit-with-session emacs-28.0.50 -mm --debug-init
+TryExec=sh
 Type=Application
