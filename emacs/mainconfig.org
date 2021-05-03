@@ -5,39 +5,42 @@
 
 * Configure =use-package=
 
-The primary goal with this configuration file
-is that on loading emacs for the first time, my
-personal development environment will be fully
-setup and ready for me to use.
+  The primary goal with this configuration file
+  is that on loading emacs for the first time, my
+  personal development environment will be fully
+  setup and ready for me to use.
 
-#+BEGIN_SRC emacs-lisp
-  (require 'use-package-ensure)
-  (setq use-package-always-ensure t)
-#+END_SRC
+  #+BEGIN_SRC emacs-lisp
+    (require 'use-package-ensure)
+    (setq use-package-always-ensure t)
+  #+END_SRC
 
-#+RESULTS:
-: t
+  #+RESULTS:
+  : t
 
-Always compile packages, and use the newest version available.
+  Always compile packages, and use the newest version available.
 
-#+BEGIN_SRC emacs-lisp
-  (use-package auto-compile
-    :config (auto-compile-on-load-mode))
+  #+BEGIN_SRC emacs-lisp
+    (use-package auto-compile
+      :config (auto-compile-on-load-mode))
 
-  (setq load-prefer-newer t)
-#+END_SRC
+    (setq load-prefer-newer t)
+  #+END_SRC
 
-#+RESULTS:
-: t
+  #+RESULTS:
+  : t
 
 * Use sensible-defaults.el
 
-[[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] is a fantastic setup script allowing users
-to get started with nice emacs defaults that gets them started
-quickly.
+  [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] is a fantastic setup script allowing users
+  to get started with nice emacs defaults that gets them started
+  quickly.
 
 
-#+BEGIN_SRC emacs-lisp
-  (load-file "~/.emacs.d/resources/sensible-defaults.el")
-  (sensible-defaults/backup-to-temp-directory)
-#+END_SRC
+  #+BEGIN_SRC emacs-lisp
+    (load-file "~/.emacs.d/resources/sensible-defaults.el")
+    (sensible-defaults/backup-to-temp-directory)
+  #+END_SRC
+
+  #+RESULTS:
+  | .* | /tmp/ | t |
