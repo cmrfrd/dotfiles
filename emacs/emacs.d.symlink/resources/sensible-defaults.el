@@ -89,6 +89,13 @@ to (recursively) create the file's parent directories."
                              (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
                     (make-directory dir t)))))))
 
+(defun sensible-defaults/hide-compile-buffer ()
+  "Hide the compile buffer"
+  (add-hook 'compilation-finish-functions
+            (lambda (buf strg)
+              (let ((win  (get-buffer-window buf 'visible)))
+                (when win (delete-window win))))))
+
 (defun sensible-defaults/apply-changes-to-highlighted-region ()
   "Turn on transient-mark-mode."
   (transient-mark-mode t))
