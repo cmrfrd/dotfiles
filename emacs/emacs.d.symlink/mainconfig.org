@@ -59,7 +59,7 @@ provide me some nice garuntees
   #+END_SRC
 
   #+RESULTS:
-	: t
+  : t
 
 * Setup =straight= package manager
 
@@ -80,7 +80,7 @@ provide me some nice garuntees
   #+end_src
 
   #+RESULTS:
-	: t
+  : t
 
   #+begin_src emacs-lisp
     (straight-use-package 'enwc)
@@ -88,7 +88,7 @@ provide me some nice garuntees
   #+end_src
 
   #+RESULTS:
-	: nm
+  : nm
 
   #+begin_src emacs-lisp
     (defun nm-connect-to-wifi-network ()
@@ -106,7 +106,7 @@ provide me some nice garuntees
   #+end_src
 
   #+RESULTS:
-	: nm-connect-to-wifi-network
+  : nm-connect-to-wifi-network
 
 * Use sensible-defaults.el and load custom scripts
 
@@ -140,7 +140,7 @@ provide me some nice garuntees
   #+END_SRC
 
   #+RESULTS:
-	| lambda | (buf strg) | (let ((win (get-buffer-window buf 'visible))) (if win (progn (delete-window win)))) |
+  | lambda | (buf strg) | (let ((win (get-buffer-window buf 'visible))) (if win (progn (delete-window win)))) |
 
   Just write elisp to resources to have it auto eval'd
 
@@ -610,11 +610,13 @@ provide me some nice garuntees
 
        ;; Corrects (and improves) org-mode's native fontification.
        (doom-themes-org-config)
+
+       (load-theme 'doom-spacegrey t)
        )
    #+end_src
 
    #+RESULTS:
-	 : t
+   : t
 
 ** Emojis!
 
@@ -922,6 +924,9 @@ provide me some nice garuntees
        (setq projectile-indexing-method 'alien)
        (setq projectile-require-project-root nil))
    #+END_SRC
+
+   #+RESULTS:
+   : t
 
 ** =undo-tree=
 
@@ -1791,7 +1796,7 @@ provide me some nice garuntees
               (pub-key (--first (equal (list 'sign 'certify) (epg-sub-key-capability it)) keys)))
          (epg-sub-key-id pub-key)))
 
-                                             ; gpg stuff
+     ;; gpg stuff
      (defun pinentry-emacs (desc prompt ok error)
        (let ((str (read-passwd
                    (concat
@@ -1804,7 +1809,7 @@ provide me some nice garuntees
      (setq epg-gpg-program "gpg2")
      (setq epa-file-encrypt-to user-mail-address)
      (setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
-                                             ; (pinentry-start)
+     ;; (pinentry-start)
      (epa-file-enable)
      (setq epa-file-select-keys (gpg-get-pub-id user-mail-address))
      '()
@@ -2202,7 +2207,7 @@ provide me some nice garuntees
        ;;   :config
        ;;   (push 'company-org-roam company-backends))
 
-       ;; ;; use org protocol so we can use bookmarklets
+       ;; use org protocol so we can use bookmarklets
        (require 'org-roam-protocol)
 
        ;; Set the initial variables and hooks for configuration
@@ -2405,7 +2410,7 @@ provide me some nice garuntees
      #+END_SRC
 
 		 #+RESULTS:
-		 : ajc/demote-concept-to-fleeting
+     : ajc/demote-concept-to-fleeting
 
 
      When I'm starting an Org capture template I'd like to begin in insert mode. I'm
