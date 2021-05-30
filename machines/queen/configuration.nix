@@ -32,8 +32,6 @@ in {
 
   networking.hostName = "queen";
   networking.networkmanager.enable = true;
-  networking.useDHCP = false;
-  networking.interfaces.wlo1.useDHCP = true;
   networking.proxy.noProxy = "127.0.0.1,localhost";
   networking.firewall.enable = true;
   networking.extraHosts =
