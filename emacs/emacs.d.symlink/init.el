@@ -30,7 +30,7 @@
 
 ;; Load personal config and ensure no prompt per eval
 (setq org-confirm-babel-evaluate nil)
-(org-babel-load-file "~/.emacs.d/mainconfig.org")
+(org-babel-load-file "~/.emacs.d/mainconfig.org" t)
 
 ;; Start daemon server
 (server-start)
