@@ -6,6 +6,7 @@
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 (setq package-check-signature nil)
+(setq warning-minimum-level :emergency)
 
 ;; Native compilation in emacs
 (if (and (fboundp 'native-comp-available-p)
@@ -30,7 +31,7 @@
 
 ;; Load personal config and ensure no prompt per eval
 (setq org-confirm-babel-evaluate nil)
-(org-babel-load-file "~/.emacs.d/mainconfig.org" t)
+(org-babel-load-file "~/.emacs.d/mainconfig.org" nil)
 
 ;; Start daemon server
 (server-start)

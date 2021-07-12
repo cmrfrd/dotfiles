@@ -14,8 +14,6 @@
 #        \`_..--""--.;.--""--.._.\
 #
 
-
-
 This goal of this file `mainconfig.org` is to centralize
 most of my development environment configuration to a single
 easily searchable, modifyable, and portable format/place
@@ -64,7 +62,8 @@ provide me some nice garuntees
 * Setup =straight= package manager
 
   #+begin_src emacs-lisp
-    (setq straight-repository-branch "master")
+    (setq straight-repository-branch "develop")
+    (setq package-enable-at-startup nil)
     (defvar bootstrap-version)
     (let ((bootstrap-file
            (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -163,11 +162,11 @@ provide me some nice garuntees
   #+END_SRC
 
   #+RESULTS:
-  | ~/.emacs.d/resources/bitwarden.el | ~/.emacs.d/resources/brightness.el | ~/.emacs.d/resources/crontab.el | ~/.emacs.d/resources/eslint.el | ~/.emacs.d/resources/kv.el | ~/.emacs.d/resources/org-inline-image.el | ~/.emacs.d/resources/org-protocol-capture-html.el | ~/.emacs.d/resources/org-utils.el | ~/.emacs.d/resources/pocket-lib.el | ~/.emacs.d/resources/sensible-defaults.el |
+  | ~/.emacs.d/resources/bitwarden.el | ~/.emacs.d/resources/brightness.el | ~/.emacs.d/resources/crontab.el | ~/.emacs.d/resources/eslint.el | ~/.emacs.d/resources/kv.el | ~/.emacs.d/resources/org-inline-image.el | ~/.emacs.d/resources/org-protocol-capture-html.el | ~/.emacs.d/resources/org-utils.el | ~/.emacs.d/resources/ox-jekyll-lite.el | ~/.emacs.d/resources/pocket-lib.el | ~/.emacs.d/resources/sensible-defaults.el |
 
 
   #+BEGIN_SRC emacs-lisp
-    (setq user-full-name "Alexander J. Comerford"
+    (setq user-full-name "Alexander Comerford"
           user-mail-address "alex@taoa.io"
           user-alternate-mail-address "alexanderjcomerford@gmail.com"
           calendar-latitude 40.6501
@@ -411,6 +410,8 @@ provide me some nice garuntees
      (use-package aio
        :ensure t)
    #+end_src
+
+   #+RESULTS:
 
 ** Bitwarden Secrets
 
@@ -951,6 +952,13 @@ provide me some nice garuntees
    a bunch of things just to see a simple change.
 
    #+BEGIN_SRC emacs-lisp
+     (use-package tramp
+       :ensure t
+       :defer t
+       :config
+       (setf tramp-persistency-file-name
+             (concat temporary-file-directory "tramp-" (user-login-name))))
+
      ;; use docker tramp names
      (use-package docker-tramp
        :ensure docker-tramp
@@ -962,13 +970,10 @@ provide me some nice garuntees
        :ensure t)
 
      (require 'docker-tramp-compat)
-     (use-package tramp
-       :ensure t
-       :defer t
-       :config
-       (setf tramp-persistency-file-name
-             (concat temporary-file-directory "tramp-" (user-login-name))))
    #+END_SRC
+
+   #+RESULTS:
+   : docker-tramp-compat
 
 ** =neotree=
 
@@ -2120,15 +2125,23 @@ provide me some nice garuntees
    #+begin_src emacs-lisp
      (use-package ox-reveal :ensure t)
      (use-package ob-go :ensure t)
+     (use-package ob-ipython :ensure t)
      (use-package ox-gfm
        :ensure t
        :config
        (eval-after-load "org"
          '(require 'ox-gfm nil t)))
+     (use-package ox-hugo
+       :ensure t
+       :config
+       (eval-after-load "org"
+         '(require 'ox-hugo nil t)))
      (use-package org-bullets
        :init
        (add-hook 'org-mode-hook 'org-bullets-mode))
    #+end_src
+
+   #+RESULTS:
 
 ** Org journal
 	 #+RESULTS:
@@ -2199,7 +2212,7 @@ provide me some nice garuntees
                     ("C-c r g" . org-roam-graph)))
        :config
        (setq org-roam-buffer "Org-roam Sidebar")
-       (setq org-roam-encrypt-files t)
+       (setq org-roam-encrypt-files nil)
 
        ;; use company as org roam backend
        ;; (use-package company-org-roam
@@ -2495,6 +2508,7 @@ provide me some nice garuntees
    #+BEGIN_SRC emacs-lisp
      (use-package gnuplot)
 
+     (setq org-babel-inline-result-wrap "%s")
      (org-babel-do-load-languages
       'org-babel-load-languages
       '((emacs-lisp . t)
@@ -3133,16 +3147,18 @@ provide me some nice garuntees
      (setq helm-buffers-fuzzy-matching t)
      (setq helm-recentf-fuzzy-match t)
      (customize-set-variable 'helm-ff-lynx-style-map t)
+     (define-key helm-find-files-map "\t" 'helm-execute-persistent-action)
+
 
      ;; Enter directories with RET, same as ido
      ;; http://emacs.stackexchange.com/questions/3798/how-do-i-make-pressing-ret-in-helm-find-files-open-the-directory/7896#7896
-     (defun helm-find-files-navigate-forward (orig-fun &rest args)
-       (if (file-directory-p (helm-get-selection))
-           (apply orig-fun args)
-         (helm-maybe-exit-minibuffer)))
-     (advice-add 'helm-execute-persistent-action :around #'helm-find-files-navigate-forward)
-     (with-eval-after-load 'helm-files
-       (define-key helm-find-files-map (kbd "<return>") 'helm-execute-persistent-action))
+     ;(defun helm-find-files-navigate-forward (orig-fun &rest args)
+     ;  (if (file-directory-p (helm-get-selection))
+     ;      (apply orig-fun args)
+     ;    (helm-maybe-exit-minibuffer)))
+     ;(advice-add 'helm-execute-persistent-action :around #'helm-find-files-navigate-forward)
+     ;(with-eval-after-load 'helm-files
+     ;  (define-key helm-find-files-map (kbd "<return>") 'helm-execute-persistent-action))
 
      ;; major key
      (global-set-key [remap execute-extended-command] #'helm-smex)
