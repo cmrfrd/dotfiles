@@ -53,7 +53,7 @@ end
 
 function bw_get_note;
     set search "$argv[1]"
-    test -z "$search"; and set search "\$\$\$"
+    # test -z "$search"; and set search "\$\$\$"
     bw list items --session $BW_SESSION --search "$search" | jq -r ".[] | .notes | select (.!=null)"
 end
 
