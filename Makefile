@@ -30,7 +30,7 @@ nix-install:
 # nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
 nix-update:
 	bash -c "\
-		export NIX_PATH=$$HOME/.nix-defexpr/channels ;\
+		export NIX_PATH=$$HOME/.nix-defexpr/channels:nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos:nixos-config=/etc/nixos/configuration.nix:/nix/var/nix/profiles/per-user/root/channels ;\
     export NIXPKGS_ALLOW_BROKEN=1 ;\
     export NIXPKGS_ALLOW_UNFREE=1 ;\
 		nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager \
