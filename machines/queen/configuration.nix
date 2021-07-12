@@ -16,6 +16,7 @@ in {
       ../../home-manager/nixos
     ];
 
+  nix.autoOptimiseStore = true;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowBroken = true;
 
@@ -27,6 +28,7 @@ in {
   # https://github.com/NixOS/nixpkgs/issues/98766
   boot.kernelModules = [ "br_netfilter" "ip_conntrack" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "overlay" "fuse" "coretemp" ];
   boot.kernelParams = [ "cgroup_memory=1 cgroup_enable=memory" ];
+  boot.extraModprobeConfig = "options kvm_intel nested=1";
 
   powerManagement.enable = true;
 
@@ -135,13 +137,19 @@ in {
     podman = {
       enable = true;
     };
+    containers = {
+      enable = true;
+    };
+    libvirtd = {
+      enable = true;
+    };
     # cri-o = {
     #   enable = true;
     # };
   };
 
   environment.systemPackages = with pkgs; [
-    ((emacsPackagesNgGen emacs).emacsWithPackages (epkgs: [
+    ((emacsPackagesNgGen emac.emacsGcc).emacsWithPackages (epkgs: [
       epkgs.vterm
       epkgs.helm
     ]))
@@ -153,13 +161,12 @@ in {
     isNormalUser = true;
     extraGroups = [
 	    "wheel"
+      "libvirtd"
 	    "networkmanager"
 	    "audio"
       "video"
 	    "tty"
 	    "dialout"
-      "fcron"
-      "atd"
       "docker"
       "shadow"
     ];
@@ -169,7 +176,7 @@ in {
     imports = [ ../../config/nixpkgs/home.nix ];
   };
 
-  system.stateVersion = "21.03";
-  system.autoUpgrade.enable = true;
+  system.stateVersion = "21.05";
+  system.autoUpgrade.enable = false;
 
 }
