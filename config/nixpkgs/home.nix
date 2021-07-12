@@ -19,11 +19,6 @@ let
   unstable = import <nixos-unstable> { config = { allowUnfree = true; allowBroken = true;}; };
 
 in rec {
-  # nixpkgs.overlays = [
-  #   (import (builtins.fetchTarball {
-  #     url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
-  #   }))
-  # ];
 
   home.sessionVariables = {
     EDITOR = "emacs";
@@ -39,6 +34,10 @@ in rec {
     pkgs.protonmail-bridge
     pkgs.thunderbird
     pkgs.sqlite
+    pkgs.terminator
+
+    ## virt
+    pkgs.vagrant
 
     ## Bars
     pkgs.polybar
@@ -64,16 +63,13 @@ in rec {
     pkgs.fish
     pkgs.bash
 
-    ## cli/tools
-    ## Git
+    ## git
     pkgs.git
     pkgs.tig
     pkgs.gitAndTools.gh
     pkgs.gitAndTools.git-sync
     pkgs.git-crypt
     pkgs.keychain
-    ## JSON
-    pkgs.jq
 
     ## FS
     pkgs.exa
@@ -117,11 +113,13 @@ in rec {
     ## Torrent
     pkgs.deluge
     ## Misc
+    pkgs.jq
     pkgs.plantuml
     pkgs.graphviz
     pkgs.libtool
     pkgs.binutils
-    unstable.pkgs.libvterm-neovim
+    # unstable.pkgs.libvterm-neovim
+    pkgs.libvterm-neovim
     pkgs.neofetch
     pkgs.licensor
     pkgs.at
@@ -131,32 +129,28 @@ in rec {
     pkgs.envsubst
     pkgs.pinentry
     pkgs.texlive.combined.scheme-full
-    # pkgs.shadow
-    # pkgs.nsjail
 
     ## containers
     pkgs.docker_compose
     pkgs.kubectl
     pkgs.kube3d
     pkgs.k3s
-    pkgs.k9s
 
     ## js
     pkgs.nodejs
     pkgs.yarn
 
     ## java
-    pkgs.openjdk
+    pkgs.openjdk16
 
-    ## rust
-    pkgs.wasm-pack
-    pkgs.cargo-web
+    ## rust/wasm
+    # pkgs.wasm-pack
+    # pkgs.cargo-web
     # (moz.latest.rustChannels.nightly.rust.override {
     #   targets = ["wasm32-unknown-unknown"];
     # })
 
     ## extra...
-    pkgs.terminator
     pkgs.glib-networking
     pkgs.nodePackages.eslint
     pkgs.nodePackages.jsonlint
@@ -169,7 +163,6 @@ in rec {
     pkgs.nodePackages.bitwarden-cli
     pkgs.nodePackages.mermaid-cli
     pkgs.haskellPackages.hledger
-
 
     (pkgs.makeDesktopItem {
       name = "org-protocol";
@@ -213,10 +206,12 @@ in rec {
   #   };
   # };
 
+  # [[ "$DESKTOP_SESSION" == *"exwm"* ]] &&
+  # ${emac.emacsGcc}/bin/emacs -f exwm-enable
   xsession = {
     enable = true;
     windowManager.command = ''
-      [[ "$DESKTOP_SESSION" == *"exwm"* ]] && ${emac.emacsGcc}/bin/emacs -f exwm-enable
+      ${emac.emacsGcc}/bin/emacs -f exwm-enable
     '';
   };
 
