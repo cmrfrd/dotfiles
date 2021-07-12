@@ -40,7 +40,7 @@ cd $USER_HOME/.dotfiles
 
 ## Creating a new machine
 
-If you are creating a new machine, use `nixos-generate-config` to create new basic 
+If you are creating a new machine, use `nixos-generate-config` to create new basic
 template under the `machines` directory.
 
 ```bash
@@ -49,9 +49,18 @@ mkdir -p $USER_HOME/.dotfiles/machines/$MACHINE_NAME
 nixos-generate-config --root $USER_HOME/.dotfiles/machines --dir /$MACHINE_NAME
 ```
 
+To ensure we are sourcing packages from the right places, update the nix channels
+to something like this (depending how unstable you want it to be)
+
+```bash
+home-manager https://github.com/nix-community/home-manager/archive/master.tar.gz
+nixos-unstable https://nixos.org/channels/nixos-unstable
+nixpkgs https://nixos.org/channels/nixpkgs-unstable
+```
+
 Now go configure the generated `configuration.nix` with the basic changes needed.
 
-After you are ready to apply your changes, create a symlink to your desired machine 
+After you are ready to apply your changes, create a symlink to your desired machine
 for `nixos-rebuild` and apply the new configuration.
 
 ```
