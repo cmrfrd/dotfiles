@@ -35,8 +35,3 @@
 
 ;; Start daemon server
 (server-start)
-
-;; Setup tabs
-(elscreen-start)
-(elscreen-tab-mode)
-(elscreen-tab-set-position 'top)
