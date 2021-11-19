@@ -1,13 +1,28 @@
+(defun org-global-props (&optional property buffer)
+  "Get the plists of global org properties of current buffer."
+  (unless property (setq property "PROPERTY"))
+  (with-current-buffer (or buffer (current-buffer))
+    (org-element-map
+        (org-element-parse-buffer)
+        'keyword
+      (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
+
+(defun org-global-prop-value (key)
+  "Get global org property KEY of current buffer."
+  (org-element-property :value (car (org-global-props key))))
+
+
 ;; This function is to use ux-hugo in blog posts
 ;; and leverage the 'CREATED' tag
 ;; example:
 ;; #+HUGO_CUSTOM_FRONT_MATTER: :date (org-created-to-blog-date)
-(defun org-created-to-blog-date ()
-  (pcase-let ((`(,_ ,_ ,_ ,d ,m ,y . ,_)
-               (org-parse-time-string (org-global-prop-value "CREATED"))))
-    (format "%s-%s-%s" y m d)))
+(defun org-to-blog-date (date)
+  (format-time-string "%Y-%m-%d"
+                      (apply #'encode-time
+                             (org-parse-time-string
+                              date))))
 
-;; Save the current 
+;; Save the current
 (defun* org-save-to-mdx (&key (filename "index"))
   (interactive)
   (let ((export-filename (concat
@@ -37,8 +52,10 @@
           ("\\\\[" . "$$")
           ("\\\\(" . "$")
           ("\\\\)" . "$")
+          ("\\\\}" . "\\}")
+          ("\\\\{" . "\\{")
           ("\\\\_" . "_")
-          ("\\_" . "_")          
+          ("\\_" . "_")
           ) text)))))
 
 ;; Org mode to markdown converters add curly braces
