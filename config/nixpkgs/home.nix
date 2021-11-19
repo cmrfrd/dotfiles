@@ -23,7 +23,7 @@ in rec {
   home.sessionVariables = {
     EDITOR = "emacs";
     XLIB_SKIP_ARGB_VISUALS = 1;
-    GOROOT = [ "${pkgs.go.out}/share/go" ];
+    GOPATH = [ "${builtins.getEnv "HOME"}/go/" ];
   };
 
   home.packages = [
