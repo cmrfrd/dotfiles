@@ -38,6 +38,7 @@ in rec {
 
     ## virt
     pkgs.vagrant
+    pkgs.ignite
 
     ## Bars
     pkgs.polybar
@@ -87,6 +88,7 @@ in rec {
     pkgs.gcc
     pkgs.glibc
     pkgs.cmake
+    pkgs.autoconf
     pkgs.gnumake
     pkgs.parallel
     ## Sec
@@ -102,14 +104,15 @@ in rec {
     pkgs.feh
     pkgs.shutter
     pkgs.imagemagick
+    pkgs.ffmpeg-full
     ## Lang
     pkgs.ispell
+    pkgs.languagetool
     pkgs.wordnet
     ## Desktop
     pkgs.libnotify
     pkgs.notify-desktop
     pkgs.dunst
-    pkgs.light
     ## Torrent
     pkgs.deluge
     ## Misc
@@ -129,6 +132,9 @@ in rec {
     pkgs.envsubst
     pkgs.pinentry
     pkgs.texlive.combined.scheme-full
+
+    ## infra
+    pkgs.terraform
 
     ## containers
     pkgs.docker_compose
@@ -151,6 +157,7 @@ in rec {
     # })
 
     ## extra...
+    pkgs.espeak
     pkgs.glib-networking
     pkgs.nodePackages.eslint
     pkgs.nodePackages.jsonlint
@@ -163,6 +170,9 @@ in rec {
     pkgs.nodePackages.bitwarden-cli
     pkgs.nodePackages.mermaid-cli
     pkgs.haskellPackages.hledger
+    pkgs.godef
+    pkgs.goimports
+    pkgs.gopls
 
     (pkgs.makeDesktopItem {
       name = "org-protocol";
@@ -211,7 +221,10 @@ in rec {
   xsession = {
     enable = true;
     windowManager.command = ''
-      ${emac.emacsGcc}/bin/emacs -f exwm-enable
+      ${pkgs.xorg.xhost}/bin/xhost +SI:localuser:$USER
+      [[ "$DESKTOP_SESSION" == *"exwm"* ]] && \
+      exec dbus-launch --exit-with-session ${emac.emacsGcc}/bin/emacs \
+      --eval "(exwm-enable)"
     '';
   };
 
@@ -311,11 +324,17 @@ in rec {
         user = "git";
       };
     };
+    extraConfig = ''
+    Include ~/.ssh/config.d/*
+    '';
   };
 
   programs.go = {
     enable = true;
+    goPath = "${builtins.getEnv "HOME"}/go";
   };
+
+  services.flameshot.enable = true;
 
   services.gpg-agent = {
     enable = true;
