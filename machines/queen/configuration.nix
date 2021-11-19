@@ -29,6 +29,7 @@ in {
   boot.kernelModules = [ "br_netfilter" "ip_conntrack" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "overlay" "fuse" "coretemp" ];
   boot.kernelParams = [ "cgroup_memory=1 cgroup_enable=memory" ];
   boot.extraModprobeConfig = "options kvm_intel nested=1";
+  boot.plymouth.enable = false;
 
   powerManagement.enable = true;
 
@@ -39,6 +40,7 @@ in {
   networking.extraHosts =
     ''
     127.0.0.1 *.localhost
+    127.0.0.1 home
   '';
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -51,6 +53,7 @@ in {
   time.timeZone = "America/New_York";
 
   programs.mtr.enable = true;
+  programs.light.enable = true;
 
   # Enable sound.
   sound.enable = true;
@@ -89,17 +92,21 @@ in {
     iptables -A INPUT -i cni+ -j ACCEPT
   '';
 
+
   # Base desktop manager, not default
   services.xserver = {
     # Enable the X11 windowing system.
     enable = true;
-    layout = "us";
+    updateDbusEnvironment = true;
     libinput.enable = true;
     desktopManager = {
       xfce = {
         enable = true;
         noDesktop = true;
-        enableXfwm = false;
+        thunarPlugins = with pkgs; [
+          xfce.thunar-archive-plugin
+          xfce.thunar_volman
+        ];
       };
       pantheon.enable = true;
     };
@@ -113,10 +120,10 @@ in {
       };
     };
     displayManager = {
+      sessionCommands = "${pkgs.xorg.xhost}/bin/xhost +SI:localuser:$USER";
       lightdm = {
         enable = true;
       };
-      sessionCommands = "${pkgs.xorg.xhost}/bin/xhost +SI:localuser:$USER";
     };
   };
 
@@ -157,6 +164,7 @@ in {
   ];
 
   # Default user for machines
+  users.extraUsers.root.initialHashedPassword = "";
   users.users."${username}" = {
     isNormalUser = true;
     extraGroups = [
