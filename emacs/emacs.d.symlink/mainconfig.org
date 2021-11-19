@@ -2395,20 +2395,43 @@ provide me some nice garuntees
          (interactive)
          (setq org-file--name (s-replace-all '((" " . "_")) (read-string "Name: ")))
          (f-join org-directory "map" (format "%s.org" org-file--name)))
+       (defun format-filename (filename)
+         (f-join org-directory "map"
+                 (format "%s.org"
+                         (s-replace-all '((" " . "_")) filename))))
+
+       (defun org+-rename-to-title ()
+         "Configure Org to rename buffer to value of #+TITLE:."
+         (if (and (org-roam-file-p (buffer-file-name))
+                  (f-ancestor-of? org-directory (buffer-file-name)))
+             (let ((new-buffer-filename (format "%s.org"
+                                                (s-replace-all '((" " . "_"))
+                                                               (org-global-prop-value "TITLE")))))
+               (if (not (get-buffer new-buffer-filename))
+                   (progn
+                     (message (format "Renaming file to %s" new-buffer-filename))
+                     (rename-file-and-buffer new-buffer-filename)
+                     (org-roam-db-sync))
+                 ))))
+       (add-hook 'after-save-hook #'org+-rename-to-title)
 
        (setq org-capture-templates
-             '(("f" "fleeting" plain (file read-filename)
-                "%(format \"#+TITLE: %s\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_TAGS: fleeting\n\" org-file--name)"
+             '(("f" "fleeting" plain
+                "#+TITLE: ${slug}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+FILETAGS: fleeting\n"
+                :target (file "%(format-filename \"${slug}\")")
                 :jump-to-captured t)
-               ("c" "concept" plain (file read-filename)
-                "%(format \"#+TITLE: %s\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_TAGS: concept\n\" org-file--name)"
+               ("c" "concept" plain
+                "#+TITLE: ${slug}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+FILETAGS: concept\n"
+                :target (file "%(format-filename \"${slug}\")")
                 :jump-to-captured t)
-               ("C" "composition" plain (file read-filename)
-                "%(format \"#+TITLE: %s\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+ROAM_TAGS: composition\n\" org-file--name)"
+               ("C" "composition" plain
+                "#+TITLE: ${slug}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+FILETAGS: composition\n"
+                :target (file "%(format-filename \"${slug}\")")
                 :jump-to-captured t)
                ("j" "Journal entry" plain (function org-journal-find-location)
                 "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
                 :jump-to-captured t :immediate-finish t)))
+       (setq org-roam-capture-templates org-capture-templates)
 
        (defun org-roam-replace-tag (tag replacement)
          (progn
