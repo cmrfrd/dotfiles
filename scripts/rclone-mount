@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+RCLONE_REMOTE_NAME=${1}
+BUCKET_NAME=${2}
+
+if [ "$( rclone config dump | jq -r "has(\"${RCLONE_REMOTE_NAME}\")" )" == "false" ]; then
+  echo "rclone cannot find ${1}, exiting ..."
+  exit 0;
+fi
+
+mkdir -p ~/fuse/${RCLONE_REMOTE_NAME}
+systemd-run \
+  --user \
+  --scope \
+  -p CPUShares=512 \
+  -p MemorySwapMax=0M \
+  rclone mount ${RCLONE_REMOTE_NAME}:/${BUCKET_NAME} ~/fuse/${RCLONE_REMOTE_NAME} \
+  --allow-non-empty \
+  --transfers 5 \
+  --no-modtime \
+  --attr-timeout 0 \
+  --buffer-size 0 \
+  --vfs-write-back 0s \
+  --vfs-cache-max-size 0M \
+  --vfs-cache-mode writes \
+  --vfs-read-chunk-size 0M \
+  --vfs-read-chunk-size-limit 50M \
+  -v
