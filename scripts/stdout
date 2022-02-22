@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+eval "$@" 2> /dev/null
