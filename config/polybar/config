@@ -234,6 +234,8 @@ date = %%{F#fff}%A, %d %B %Y  %%{F#fff}%H:%M%%{F#666}:%%{F#fba922}%S%%{F-}
 [bar/top]
 bottom = true
 monitor = ${env:MONITOR:}
+border-size = 1px
+border-color = #474747
 
 enable-ipc = false
 ; override-redirect = true
@@ -264,8 +266,8 @@ font-1 = MaterialIcons:size=8;0
 font-2 = Termsynu:size=8;-1
 font-3 = FontAwesome:size=10;0
 
-modules-left = xworkspaces
-modules-right = filesystem memory wireless-network battery date
+modules-left =
+modules-right = filesystem memory wireless-network battery backlight date
 
 [bar/top-secondary]
 monitor = ${env:MONITOR:}
@@ -297,15 +299,17 @@ modules-right = filesystem memory wireless-network battery date
 
 
 [module/backlight]
-; type = internal/backlight
-; card = intel_backlight
-; format = <ramp> <bar>
+type = internal/backlight
+card = intel_backlight
+use-actual-brightness = true
+enable-scroll = true
+format = <ramp>
 ;
-; ramp-0 = 
-; ramp-1 = 
-; ramp-2 = 
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
 ;
-; bar-width = 10
+;bar-width = 10
 ; bar-format = %{A4:backlight_percentage%__p5:}%{A5:backlight_percentage%__m5:}%{+u}%{+o}%fill%%{-u}%{-o}%indicator%%{+u}%{+o}%empty%%{-u}%{-o}%{A}%{A}
 ; bar-indicator = |
 ; bar-indicator-foreground = #ff
@@ -475,10 +479,10 @@ label-active-underline = #fff
 
 label-occupied = %icon%
 label-occupied-padding = 1
-label-occupied-background = #ffffff
+label-occupied-background = #DEE2E6
 
 label-urgent = %icon%
-label-urgent-background = #bd2c40
+label-urgent-background = #DEE2E6
 label-urgent-padding = 1
 
 label-empty = %icon%
