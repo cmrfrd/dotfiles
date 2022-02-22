@@ -4,7 +4,8 @@ let
   username = "cmrfrd";
 
   emacs_overlay = import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+    # url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+    url = https://github.com/nix-community/emacs-overlay/archive/57378ea2f62e9f450f420dc9d01cc06e0d3dd15e.tar.gz;
   });
   emac = import <nixpkgs> { overlays = [ emacs_overlay ]; };
 
@@ -26,8 +27,8 @@ in {
   # boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # https://github.com/NixOS/nixpkgs/issues/98766
-  boot.kernelModules = [ "br_netfilter" "ip_conntrack" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "overlay" "fuse" "coretemp" ];
-  boot.kernelParams = [ "cgroup_memory=1 cgroup_enable=memory" ];
+  boot.kernelModules = [ "br_netfilter" "ip_conntrack" "ip_vs" "ip_vs_rr" "ip_vs_wrr" "ip_vs_sh" "overlay" "fuse" "coretemp" "tun" "nfs" ];
+  boot.kernelParams = [ ''cgroup_memory=1'' ''cgroup_enable=memory'' ];
   boot.extraModprobeConfig = "options kvm_intel nested=1";
   boot.plymouth.enable = false;
 
@@ -184,7 +185,6 @@ in {
     imports = [ ../../config/nixpkgs/home.nix ];
   };
 
-  system.stateVersion = "21.05";
+  system.stateVersion = "21.11";
   system.autoUpgrade.enable = false;
-
 }
