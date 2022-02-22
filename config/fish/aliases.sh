@@ -75,3 +75,5 @@ alias gdcw='git diff --cached --word-diff'
 alias gds='git diff --staged'
 alias gdt='git diff-tree --no-commit-id --name-only -r'
 alias gdw='git diff --word-diff'
+
+# export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/Public/scripts:$HOME/.local/bin:$HOME/.dotfiles/scripts:$HOME/.nix-profile/bin/
