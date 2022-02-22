@@ -12,7 +12,8 @@ let
   moz = import <nixpkgs> { overlays = [ moz_overlay ]; };
 
   emacs_overlay = import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+    # url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+    url = https://github.com/nix-community/emacs-overlay/archive/dd54cb4be116d3ca13f6e90a5bfb0e792b5133b5.tar.gz;
   });
   emac = import <nixpkgs> { overlays = [ emacs_overlay ]; };
 
@@ -34,6 +35,7 @@ in rec {
     pkgs.protonmail-bridge
     pkgs.thunderbird
     pkgs.sqlite
+    pkgs.wget
     pkgs.terminator
 
     ## virt
@@ -57,8 +59,9 @@ in rec {
     pkgs.wmctrl
     pkgs.screen
     pkgs.xdotool
+    pkgs.xorg.xwininfo
     pkgs.arandr
-    pkgs.gtk3
+    # pkgs.gtk3
 
     ## shells
     pkgs.fish
@@ -77,7 +80,7 @@ in rec {
     pkgs.ack
     pkgs.fd
     pkgs.inotify-tools
-    pkgs.entr
+    # pkgs.entr
     pkgs.tree
     pkgs.autojump
     pkgs.pandoc
@@ -98,8 +101,8 @@ in rec {
     pkgs.openssh
     pkgs.curl
     pkgs.bind
-    pkgs.wireshark
-    pkgs.ddclient
+    # pkgs.wireshark
+    # pkgs.ddclient
     ## Img
     pkgs.feh
     pkgs.shutter
@@ -114,7 +117,7 @@ in rec {
     pkgs.notify-desktop
     pkgs.dunst
     ## Torrent
-    pkgs.deluge
+    # pkgs.deluge
     ## Misc
     pkgs.jq
     pkgs.plantuml
@@ -123,9 +126,9 @@ in rec {
     pkgs.binutils
     # unstable.pkgs.libvterm-neovim
     pkgs.libvterm-neovim
-    pkgs.neofetch
-    pkgs.licensor
-    pkgs.at
+    # pkgs.neofetch
+    # pkgs.licensor
+    # pkgs.at
     pkgs.direnv
     pkgs.graph-easy
     pkgs.mesa
@@ -139,7 +142,7 @@ in rec {
     ## containers
     pkgs.docker_compose
     pkgs.kubectl
-    pkgs.kube3d
+    # pkgs.kube3d
     pkgs.k3s
 
     ## js
@@ -147,7 +150,7 @@ in rec {
     pkgs.yarn
 
     ## java
-    pkgs.openjdk16
+    pkgs.openjdk
 
     ## rust/wasm
     # pkgs.wasm-pack
@@ -157,7 +160,8 @@ in rec {
     # })
 
     ## extra...
-    pkgs.espeak
+    pkgs.vscode
+    # pkgs.espeak
     pkgs.glib-networking
     pkgs.nodePackages.eslint
     pkgs.nodePackages.jsonlint
@@ -169,7 +173,12 @@ in rec {
     pkgs.nodePackages.node2nix
     pkgs.nodePackages.bitwarden-cli
     pkgs.nodePackages.mermaid-cli
-    pkgs.haskellPackages.hledger
+    (pkgs.python3.withPackages(ps: with ps; [
+      numpy
+      jupyter
+      matplotlib
+      pandas
+    ]))
     pkgs.godef
     pkgs.goimports
     pkgs.gopls
@@ -238,7 +247,7 @@ in rec {
       nativeComp = true;
     });
     extraPackages = epkgs: [
-      epkgs.exwm
+      # epkgs.exwm
       epkgs.vterm
       epkgs.helm
       epkgs.dictionary
@@ -260,6 +269,11 @@ in rec {
       "cjpalhdlnbpafiamejdnhcphjbkeiagm" # ublock origin
       "nngceckbapebfimnlniiiahkandclblb" # bitwarden
       "kkkjlfejijcjgjllecmnejhogpbcigdc" # org capture
+      "niloccemoadcdkdjlinkgdfekeahmflj" # pocket
+      "nkbihfbeogaeaoehlefnkodbefgpgknn" # metamask
+      "fhbohimaelbohpjbbldcngcnapndodjp" # binance wallet
+      "dmkamcknogkgcdfhhbddcghachkejeap" # kepler (cosmos)
+      "aiifbnbfobpmeekipheeijimdpnlpgpp" # terra station
     ];
   };
 
