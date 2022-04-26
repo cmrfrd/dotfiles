@@ -1,0 +1,50 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -p android-tools scrcpy -i bash
+
+get_first_device_line() {
+  adb devices | tail -n+2 | awk 'NF'
+}
+
+get_num_devices() {
+  get_first_device_line | wc -l
+}
+
+mirror_screen() {
+  scrcpy --bit-rate 5M --max-size 1024 --no-control
+}
+
+try_mirror_screen() {
+  if [[ "$(get_num_devices)" -gt "0" ]]
+  then
+    if [[ "$(get_first_device_line | awk '{ print $2 }')" -eq "device" ]]
+    then
+      echo "Found alive device, connecting ..."
+      mirror_screen
+      exit 0
+    else
+      echo "Found offline device, please correct ..."
+      get_num_devices
+      exit 0
+    fi
+  else
+    echo "No devices found ..."
+  fi
+}
+
+pair_phone() {
+  read -p 'Pair Port: ' PAIRPORT
+  read -p 'Pair Code: ' PAIRCODE
+  adb pair ${IP}:${PAIRPORT} ${PAIRCODE}
+}
+
+connect_phone() {
+  read -p 'Connect Port: ' CONNECTPORT
+  adb connect ${IP}:${CONNECTPORT}
+}
+
+try_mirror_screen
+echo "Unable to find phone, trying to pair and connect ..."
+read -p 'Phone IP: ' IP
+pair_phone
+connect_phone
+try_mirror_screen
