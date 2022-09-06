@@ -1,6 +1,7 @@
 [user]
 	name = cmrfrd
-	email = alexanderjcomerford@gmail.com
+	email = alex@taoa.io
+	signingkey = 23F6FE4B0B41EF3D81CFCE1764DF35FA2BAD3764
 [core]
 	askpass = git-gui--askpass
 [github]
