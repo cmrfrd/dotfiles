@@ -30,6 +30,7 @@ set -U LC_TELEPHONE "en_US.UTF-8"
 set -U LC_MEASUREMENT "en_US.UTF-8"
 set -U LC_IDENTIFICATION "en_US.UTF-8"
 set -U LC_ALL
+set -U SCRIPTS "$HOME/.dotfiles/scripts"
 
 set -x LC_ALL C
 set -x LC_CTYPE C
