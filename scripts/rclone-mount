@@ -16,13 +16,16 @@ systemd-run \
   -p MemorySwapMax=0M \
   rclone mount ${RCLONE_REMOTE_NAME}:/${BUCKET_NAME} ~/fuse/${RCLONE_REMOTE_NAME} \
   --allow-non-empty \
+  --links \
   --transfers 5 \
   --no-modtime \
   --attr-timeout 0 \
-  --buffer-size 0 \
-  --vfs-write-back 0s \
-  --vfs-cache-max-size 0M \
+  --bwlimit=10M \
   --vfs-cache-mode writes \
-  --vfs-read-chunk-size 0M \
-  --vfs-read-chunk-size-limit 50M \
-  -v
+  -vv
+#  --buffer-size 0 \
+#  --vfs-write-back 0s \
+#  --vfs-cache-max-size 0M \
+#  --vfs-cache-mode writes \
+#  --vfs-read-chunk-size 0M \
+#  --vfs-read-chunk-size-limit 50M \
