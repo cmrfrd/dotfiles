@@ -56,6 +56,10 @@ in {
   programs.mtr.enable = true;
   programs.light.enable = true;
 
+  programs.fuse = {
+    userAllowOther = true;
+  };
+
   # Enable sound.
   sound.enable = true;
   hardware.bluetooth.enable = true;
