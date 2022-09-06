@@ -4,3 +4,12 @@ cf -a -t A add @ 185.199.109.153
 cf -a -t A add @ 185.199.110.153
 cf -a -t A add @ 185.199.111.153
 cf -a -t CNAME add www cmrfrd.github.io
+
+cf -t TXT add @ protonmail-verification=a1084d1b66f9b58bd0815cc381a685d5019cf198
+
+cf -p 10 -t MX add @ mail.protonmail.ch
+cf -p 20 -t MX add @ mailsec.protonmail.ch
+
+cf -t TXT add @ "v=spf1 include:_spf.protonmail.ch mx ~all"
+
+# cf -a -t A add sink.taoa.io 3.17.141.173

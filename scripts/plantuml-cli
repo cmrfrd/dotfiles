@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-NAME=plantuml
+NAME=plantuml_local
 PLANTUML_VERSION=1.2018.5
 
 # cat << EOF > /tmp/Dockerfile.${NAME}
@@ -26,5 +26,7 @@ ENV LANG en_US.UTF-8
 ENTRYPOINT [ "sh", "-c", "java -classpath plantuml.jar:\$(find ~/.m2/ -type f -name '*.jar' | tr '\n' ':') net.sourceforge.plantuml.Run -pipe" ]
 EOF
 
-docker build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles > /dev/null
-cat - | docker run --rm -i ${NAME} $@
+mkdir -p /tmp/none
+podman build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles > /dev/null
+# podman build -t ${NAME} -f /tmp/Dockerfile.${NAME} /tmp/none
+cat - | podman run --rm -i ${NAME} $@

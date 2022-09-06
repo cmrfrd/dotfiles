@@ -15,4 +15,4 @@ ENTRYPOINT [ "motivate" ]
 EOF
 
 docker build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles > /dev/null
-docker run --rm -it ${NAME} $@
+docker run --rm -t ${NAME} $@
