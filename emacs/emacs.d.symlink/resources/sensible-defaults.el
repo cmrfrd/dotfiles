@@ -240,4 +240,9 @@ this setting."
   buffer."
   (insert (shell-command-to-string command)))
 
+(defun set-base-env ()
+  "Set base env variables"
+  (setenv "SCRIPTS" (f-join (getenv "HOME") ".dotfiles" "scripts"))
+  )
+
 ;;; sensible-defaults.el ends here

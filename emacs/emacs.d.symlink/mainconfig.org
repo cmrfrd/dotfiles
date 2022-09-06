@@ -175,7 +175,7 @@ provide me some nice garuntees
   #+END_SRC
 
   #+RESULTS:
-  | ~/.emacs.d/resources/bitwarden.el | ~/.emacs.d/resources/brightness.el | ~/.emacs.d/resources/crontab.el | ~/.emacs.d/resources/eslint.el | ~/.emacs.d/resources/helm-icons.el | ~/.emacs.d/resources/kv.el | ~/.emacs.d/resources/mls-battery.el | ~/.emacs.d/resources/mls-common.el | ~/.emacs.d/resources/mls-cpu.el | ~/.emacs.d/resources/mls-disk.el | ~/.emacs.d/resources/mls-memory.el | ~/.emacs.d/resources/mls-misc.el | ~/.emacs.d/resources/mls-sensors.el | ~/.emacs.d/resources/mode-line-stats.el | ~/.emacs.d/resources/network-speed.el | ~/.emacs.d/resources/ob-async.el | ~/.emacs.d/resources/ob-podman-build.el | ~/.emacs.d/resources/org-inline-image.el | ~/.emacs.d/resources/org-protocol-capture-html.el | ~/.emacs.d/resources/org-utils.el | ~/.emacs.d/resources/ox-jekyll-lite.el | ~/.emacs.d/resources/pocket-lib.el | ~/.emacs.d/resources/sensible-defaults.el | ~/.emacs.d/resources/symon.el | ~/.emacs.d/resources/taoa.el |
+  | ~/.emacs.d/resources/bitwarden.el | ~/.emacs.d/resources/brightness.el | ~/.emacs.d/resources/crontab.el | ~/.emacs.d/resources/eslint.el | ~/.emacs.d/resources/helm-icons.el | ~/.emacs.d/resources/kv.el | ~/.emacs.d/resources/mode-line-stats.el | ~/.emacs.d/resources/network-speed.el | ~/.emacs.d/resources/ob-async.el | ~/.emacs.d/resources/ob-podman-build.el | ~/.emacs.d/resources/org-inline-image.el | ~/.emacs.d/resources/org-protocol-capture-html.el | ~/.emacs.d/resources/org-utils.el | ~/.emacs.d/resources/ox-jekyll-lite.el | ~/.emacs.d/resources/pocket-lib.el | ~/.emacs.d/resources/sensible-defaults.el | ~/.emacs.d/resources/taoa.el |
 
   #+BEGIN_SRC emacs-lisp
     (setq user-full-name "Alexander Comerford"
@@ -257,6 +257,7 @@ provide me some nice garuntees
 ** Big ol' bunch of handy utility functions.
 
    #+BEGIN_SRC emacs-lisp
+     (setenv "SCRIPTS" (f-join (getenv "HOME") ".dotfiles" "scripts"))
 
      (defun ajc/add-auto-mode (mode &rest patterns)
        "Add entries to `auto-mode-alist' to use `MODE' for all given file `PATTERNS'."
@@ -285,10 +286,12 @@ provide me some nice garuntees
        (while keys
          (setq alist (cdr (assoc (pop keys) alist))))
        alist)
+
+     (ajc/append-to-path (getenv "SCRIPTS"))
    #+END_SRC
 
    #+RESULTS:
-   : assoc-recursive
+   | /home/cmrfrd/.dotfiles/scripts | /usr/local/bin | ~/.local/bin | ~/.cabal/bin | /run/wrappers/bin | /home/cmrfrd/.nix-profile/bin | /etc/profiles/per-user/cmrfrd/bin | /nix/var/nix/profiles/default/bin | /run/current-system/sw/bin | /nix/store/ikwpbdy77521f175bwhbm0vpd231wj25-emacs-gcc-20210723.0/libexec/emacs/28.0.50/x86_64-pc-linux-gnu |
 
    #+BEGIN_SRC emacs-lisp
      (defvar auto-answer 'ask
@@ -516,34 +519,6 @@ provide me some nice garuntees
 
    #+RESULTS:
 
-** Make tabs
-
-   #+BEGIN_SRC emacs-lisp
-     (tab-bar-mode 1)
-     (bind-keys
-      :prefix "C-q"
-      :prefix-map tab-prefix-map
-      ("n" . tab-next)
-      ("p" . tab-previous)
-      ("c" . tab-new)
-      ("d" . tab-close)
-      )
-
-     (defun call-keymap (map &optional prompt)
-       "Read a key sequence and call the command it's bound to in MAP."
-       ;; Note: MAP must be a symbol so we can trick `describe-bindings' into giving
-       ;; us a nice help text.
-       (let* ((overriding-local-map `(keymap (,map . ,map)))
-              (help-form `(describe-bindings ,(vector map)))
-              (key (read-key-sequence prompt))
-              (cmd (lookup-key map key t)))
-         (if (functionp cmd) (call-interactively cmd)
-           (user-error "%s is undefined" key))))
-   #+END_SRC
-
-   #+RESULTS:
-   : call-keymap
-
 ** Use fancy lambdas
 
    Why not?
@@ -597,7 +572,6 @@ provide me some nice garuntees
                       "/fonts/")))
          (cond ((not (f-exists? path)) (all-the-icons-install-fonts t))))
 
-       (doom-modeline-mode 1)
        (setq doom-modeline-icon (display-graphic-p))
        (setq doom-modeline-buffer-file-name-style 'truncate-all)
        (setq doom-modeline-buffer-state-icon t)
@@ -610,11 +584,60 @@ provide me some nice garuntees
        (setq doom-modeline-minor-modes nil)
        (setq doom-modeline-github nil)
        (set-face-attribute 'mode-line nil :height 80)
-       (set-face-attribute 'mode-line-inactive nil :height 80))
+       (set-face-attribute 'mode-line-inactive nil :height 80)
+
+       (doom-modeline-def-segment exwm-workspaces
+         (exwm-workspace--update-switch-history)
+         (concat
+          (doom-modeline-spc)
+          (elt (let* ((num (exwm-workspace--count))
+                      (sequence (number-sequence 0 (1- num)))
+                      (not-empty (make-vector num nil)))
+                 (dolist (i exwm--id-buffer-alist)
+                   (with-current-buffer (cdr i)
+                     (when exwm--frame
+                       (setf (aref not-empty
+                                   (exwm-workspace--position exwm--frame))
+                             t))))
+                 (mapcar
+                  (lambda (i)
+                    (mapconcat
+                     (lambda (j)
+                       (format (if (= i j) "%s" (if (= j (- num 1)) "/%s" ""))
+                               (propertize
+                                (apply exwm-workspace-index-map (list j))
+                                'face
+                                (cond ((frame-parameter (elt exwm-workspace--list j)
+                                                        'exwm-urgency)
+                                       '(:inherit warning :weight bold))
+                                      ((= i j) '(:inherit underline :weight bold))
+                                      ((aref not-empty j) '(:inherit success :weight bold))
+                                      (t `((:foreground ,(face-foreground 'mode-line-inactive))))))))
+                     sequence ""))
+                  sequence))
+               (exwm-workspace--position (selected-frame)))))
+       (setf (alist-get 'exwm-mode all-the-icons-mode-icon-alist)
+             '(all-the-icons-octicon "browser" :v-adjust -0.05))
+       (doom-modeline-def-modeline 'exwm
+         '(bar exwm-workspaces workspace-name debug buffer-info remote-host)
+         '(objed-state misc-info persp-name grip mu4e gnus github repl lsp major-mode process buffer-position))
+       (defun doom-modeline-set-exwm-modeline ()
+         "Set exwm mode-line"
+         (doom-modeline-set-modeline 'exwm))
+       (add-hook 'exwm-mode-hook 'doom-modeline-set-exwm-modeline)
+       (add-hook 'after-change-major-mode-hook 'doom-modeline-set-exwm-modeline)
+       (add-hook 'doom-modeline-mode-hook 'doom-modeline-set-exwm-modeline))
+     (doom-modeline-mode 1)
+     (mapc (lambda (buffer)
+             (condition-case nil
+                 (with-current-buffer buffer
+                   (doom-modeline-set-exwm-modeline))
+               (buffer-read-only nil)))
+           (buffer-list))
    #+END_SRC
 
    #+RESULTS:
-   : t
+   | mainconfig.org | Brave-browser | .bash_history | *scratch* | *brave* | *Minibuf-1* | .Xauthority | *Messages* | *dashboard* | *Minibuf-2* | *Minibuf-0* | *Echo Area 0* | *Echo Area 1* | *code-conversion-work* | *straight-process* | Pfuture-Callback (/home/cmrfrd/.nix-profile/bin/python3 -O /home/cmrfrd/.emacs.d/elpa/treemacs-20210912.1811/treemacs-find-ignored-files.py /home/cmrfrd/.dotfiles /home/cmrfrd/Public/repos/taoa) | *gpg-update-tty* | *emacsql-sqlite* | *trigger_polybar* | *Warnings* | *helm candidates:Emacs Commands history* | *helm candidates:Emacs Commands* | *helm M-x* | *helm-mode-completion-at-point* | *eldoc* | *org-src-fontification:emacs-lisp-mode* | *helm buffers* | *helm find files* | *helm candidates:dmenu* | *helm-mode-dmenu* |
 
    Also don't forget about doom themes!!!
 
@@ -645,6 +668,20 @@ provide me some nice garuntees
 
    #+RESULTS:
    : t
+
+  #+begin_src emacs-lisp
+    (with-eval-after-load 'doom-modeline
+      (add-hook 'exwm-workspace-switch-hook #'doom-modeline-set-selected-window))
+  #+end_src
+
+  #+RESULTS:
+  | exwm-systemtray--on-workspace-switch | doom-modeline-set-selected-window |
+
+  #+begin_src emacs-lisp
+  #+end_src
+
+  #+RESULTS:
+  : t
 
 ** Emojis!
 
@@ -778,6 +815,34 @@ provide me some nice garuntees
        (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
        (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
    #+END_SRC
+
+** Make tabs
+
+   #+BEGIN_SRC emacs-lisp
+     (tab-bar-mode 1)
+     (bind-keys
+      :prefix "C-q"
+      :prefix-map tab-prefix-map
+      ("n" . tab-next)
+      ("p" . tab-previous)
+      ("c" . tab-new)
+      ("d" . tab-close)
+      )
+
+     (defun call-keymap (map &optional prompt)
+       "Read a key sequence and call the command it's bound to in MAP."
+       ;; Note: MAP must be a symbol so we can trick `describe-bindings' into giving
+       ;; us a nice help text.
+       (let* ((overriding-local-map `(keymap (,map . ,map)))
+              (help-form `(describe-bindings ,(vector map)))
+              (key (read-key-sequence prompt))
+              (cmd (lookup-key map key t)))
+         (if (functionp cmd) (call-interactively cmd)
+           (user-error "%s is undefined" key))))
+   #+END_SRC
+
+   #+RESULTS:
+   : call-keymap
 
 * Project management
 
@@ -1396,6 +1461,8 @@ provide me some nice garuntees
 
    #+BEGIN_SRC emacs-lisp
      (use-package python-mode)
+     (setq python-indent-guess-indent-offset t)
+     (setq python-indent-guess-indent-offset-verbose nil)
    #+END_SRC
 
 	 #+RESULTS:
@@ -1461,6 +1528,25 @@ provide me some nice garuntees
      (use-package company-anaconda
        :ensure company-anaconda)
    #+END_SRC
+
+** LEAN
+
+   Lean is an interactive theorem prover
+
+   #+begin_src emacs-lisp
+     (use-package lean-mode
+       :ensure t
+       :config
+       (setq lean-rootdir (shell-command-to-string "nix eval --raw nixpkgs.lean.outPath 2>/dev/null"))
+       )
+     (use-package company-lean
+       :ensure t)
+     (use-package helm-lean
+       :ensure t)
+   #+end_src
+
+   #+RESULTS:
+
 
 ** Rust
 
@@ -2389,6 +2475,15 @@ provide me some nice garuntees
        (defun org+-do-rename-to-title ()
          (interactive)
              (let ((new-buffer-filename (format "%s.org"
+                                                 (org+-title-head (org-global-prop-value "TITLE") ""))))
+               (if (not (get-buffer new-buffer-filename))
+                   (progn
+                     (message (format "Renaming file to %s" new-buffer-filename))
+                     (rename-file-and-buffer new-buffer-filename)))
+               new-buffer-filename))
+       (defun org+-do-rename-to-title-date ()
+         (interactive)
+             (let ((new-buffer-filename (format "%s.org"
                                                 (org+-get-name
                                                  (org-global-prop-value "TITLE")
                                                  (or "" (org-global-prop-value "URL"))
@@ -2398,14 +2493,14 @@ provide me some nice garuntees
                      (message (format "Renaming file to %s" new-buffer-filename))
                      (rename-file-and-buffer new-buffer-filename)))
                new-buffer-filename))
-       (defun org+-rename-to-title ()
+       (defun org+-rename-to-title-date ()
          "Configure Org to rename buffer to value of #+TITLE:."
          (if (and (org-roam-file-p (buffer-file-name))
                   (f-ancestor-of? org-directory (buffer-file-name)))
              (progn
-               (org+-do-rename-to-title)
+               (org+-do-rename-to-title-date)
                (org-roam-db-sync))))
-       (add-hook 'after-save-hook #'org+-rename-to-title)
+       (add-hook 'after-save-hook #'org+-rename-to-title-date)
 
        (require 'ucs-normalize)
        (defun org-roam--title-to-slug (title)
@@ -2720,10 +2815,12 @@ provide me some nice garuntees
       'org-babel-load-languages
       '((emacs-lisp . t)
         (ruby . t)
+        (C . t)
         (ein . t)
         (jupyter . t)
         (mermaid . t)
         (shell . t)
+        (sqlite . t)
         (plantuml . t)
         (dot . t)
         (docker-build . t)
@@ -2764,7 +2861,7 @@ provide me some nice garuntees
    #+END_SRC
 
 	 #+RESULTS:
-	 | ek/babel-ansi |
+   | ek/babel-ansi |
 
    #+begin_src emacs-lisp
      (use-package ox-reveal
@@ -3729,7 +3826,9 @@ provide me some nice garuntees
     (exwm-randr-enable)
     (require 'exwm-systemtray)
     (exwm-systemtray-enable)
-    (setq exwm-systemtray-height 0)
+    ;; Pick some height for the system tray. Some applet icons don't appear
+    ;; otherwise.
+    (setq exwm-systemtray-height (line-pixel-height))
     (defun exwm-reload-tray ()
       "Restart the systemtray"
       (interactive)
@@ -3752,9 +3851,10 @@ provide me some nice garuntees
     (defun monitor-home-setup ()
       (interactive)
       (kill_polybar)
-      (setq exwm-randr-workspace-output-plist '(0 "eDP-1" 1 "HDMI-1"))
+      (setq exwm-randr-workspace-output-plist '(0 "HDMI-1" 1 "eDP-1"))
       ;;(shell-command "xrandr --output HDMI-1 --mode 1920x1080 --above eDP-1 --transform 1.0,0,-48,0,1.0,-20,0,0,1")
-      (shell-command "xrandr --output HDMI-1 --auto --left-of eDP-1")
+      ;;(shell-command "xrandr --output HDMI-1 --auto --left-of eDP-1")
+      (shell-command "xrandr --output HDMI-1 --mode 3840x1600 --left-of eDP-1")
       (trigger_polybar "eDP-1"))
 
     (defun monitor-home-teardown ()
@@ -3797,59 +3897,6 @@ provide me some nice garuntees
 
 
 * Finish
-
-  #+begin_src emacs-lisp
-    (with-eval-after-load 'doom-modeline
-      (add-hook 'exwm-workspace-switch-hook #'doom-modeline-set-selected-window))
-  #+end_src
-
-  #+RESULTS:
-  | exwm-systemtray--on-workspace-switch | doom-modeline-set-selected-window |
-
-  #+begin_src emacs-lisp
-    (doom-modeline-def-segment exwm-workspaces
-      (exwm-workspace--update-switch-history)
-      (concat
-       (doom-modeline-spc)
-       (elt (let* ((num (exwm-workspace--count))
-                   (sequence (number-sequence 0 (1- num)))
-                   (not-empty (make-vector num nil)))
-              (dolist (i exwm--id-buffer-alist)
-                (with-current-buffer (cdr i)
-                  (when exwm--frame
-                    (setf (aref not-empty
-                                (exwm-workspace--position exwm--frame))
-                          t))))
-              (mapcar
-               (lambda (i)
-                 (mapconcat
-                  (lambda (j)
-                    (format (if (= i j) "[%s]" " %s ")
-                            (propertize
-                             (apply exwm-workspace-index-map (list j))
-                             'face
-                             (cond ((frame-parameter (elt exwm-workspace--list j)
-                                                     'exwm-urgency)
-                                    '(:inherit warning :weight bold))
-                                   ((= i j) '(:inherit underline :weight bold))
-                                   ((aref not-empty j) '(:inherit success :weight bold))
-                                   (t `((:foreground ,(face-foreground 'mode-line-inactive))))))))
-                  sequence ""))
-               sequence))
-            (exwm-workspace--position (selected-frame)))))
-    (setf (alist-get 'exwm-mode all-the-icons-mode-icon-alist)
-          '(all-the-icons-octicon "browser" :v-adjust -0.05))
-    (doom-modeline-def-modeline 'exwm
-      '(bar workspace-name exwm-workspaces debug buffer-info remote-host)
-      '(objed-state misc-info persp-name grip mu4e gnus github repl lsp major-mode process buffer-position))
-    (defun doom-modeline-set-exwm-modeline ()
-      "Set exwm mode-line"
-      (doom-modeline-set-modeline 'exwm))
-    (add-hook 'exwm-mode-hook #'doom-modeline-set-exwm-modeline)
-  #+end_src
-
-  #+RESULTS:
-  | doom-modeline-set-exwm-modeline |
 
   Just a simple end log to let me know the config finished
 

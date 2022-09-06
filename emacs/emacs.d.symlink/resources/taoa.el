@@ -43,20 +43,19 @@
 ;; Org mode to markdown converters do some funky stuff to TeX
 ;; here we go through the process of 'undoing' most of them
 (defun sub-paren-for-dollar-sign (text backend info)
-  (when (org-export-derived-backend-p backend 'hugo)
-    (progn
-      (s-replace-all
-       '(("\\$$" . "\\\\["))
-       (s-replace-all
-        '(("\\\\]" . "$$")
-          ("\\\\[" . "$$")
-          ("\\\\(" . "$")
-          ("\\\\)" . "$")
-          ("\\\\}" . "\\}")
-          ("\\\\{" . "\\{")
-          ("\\\\_" . "_")
-          ("\\_" . "_")
-          ) text)))))
+  (progn
+    (s-replace-all
+     '(("\\$$" . "\\\\["))
+     (s-replace-all
+      '(("\\\\]" . "$$")
+        ("\\\\[" . "$$")
+        ("\\\\(" . "$")
+        ("\\\\)" . "$")
+        ("\\\\}" . "\\}")
+        ("\\\\{" . "\\{")
+        ("\\\\_" . "_")
+        ("\\_" . "_")
+        ) text))))
 
 ;; Org mode to markdown converters add curly braces
 ;; to headlines, here we remove them
@@ -70,8 +69,23 @@
 ;; latex inline via macros are little wrapper funcs
 (defun latex-inline-wrap (str) (format "$%s$" str))
 (defun latex-display-wrap (str) (format "$$%s$$" str))
+(defun latex-display-wrap-newline (str) (format "$$\n%s\n$$" str))
 
-;; Hugo is great, but ox-hugo doesn't render images
+;; Latex is annoying so hopefull this will make
+;; exporting it easier
+(defun org-hugo-export-block (export-block _contents _info)
+  (cond
+   ((string= (org-element-property :type export-block) "HUGO")
+    (org-remove-indentation (org-element-property :value export-block)))
+   ((string= (org-element-property :type export-block) "LATEX")
+    (latex-display-wrap (org-remove-indentation (org-element-property :value export-block))))
+   (t
+    (org-export-with-backend 'md export-block nil nil))))
+
+
+;; ox-hugo is great, but ox-hugo doesn't render images / code
 ;; the way we like so lets stub it out
 (defun org-hugo-link (link desc info)
   (org-md-link link desc info))
+(defun org-blackfriday--get-reference (elem)
+  nil)
