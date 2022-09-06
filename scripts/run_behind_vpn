@@ -58,6 +58,7 @@ tun="tunvpn"
 podman run --rm --cap-add NET_ADMIN,NET_RAW --device /dev/net/tun \
        --name ${CONTAINER_NAME} \
        -v ${OVPN_DIR}:${OVPN_DIR} \
+       -u $(id -u):$(id -g) \
        -it -d ${NAME} \
        bash -c "
        openvpn \
@@ -96,5 +97,7 @@ done
 printf "Connected ...\n" 1>&2
 
 ## Run command and cleanup
+# nsenter -U -n -t $PID -- nsenter -S $(id -u) -G $(id -g) -m -t $$ $@
+# nsenter -U -S $(id -u) -G $(id -G) -n -t $PID $@
 nsenter -U -n -t $PID $@
 cleanup
