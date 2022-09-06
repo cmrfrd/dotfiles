@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+NAME=oci
+
+cat << EOF > /tmp/Dockerfile.${NAME}
+FROM python:alpine
+WORKDIR /usr/src/app
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
+RUN apk add --update alpine-sdk libffi libffi-dev openssl openssl-dev && \
+    pip install oci oci-cli cryptography
+EOF
+
+podman build -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles
+podman run --rm -it ${NAME} sh # -c '/usr/local/bin/oci $@'

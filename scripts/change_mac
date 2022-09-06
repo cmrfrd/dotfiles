@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+NEW_MAC=$(openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/:$//')
+sudo systemctl stop NetworkManager
+sudo ifconfig wlo1 down
+sudo ip link set dev wlo1 address ${NEW_MAC}
+sudo systemctl start NetworkManager

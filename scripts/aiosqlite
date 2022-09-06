@@ -1,0 +1,3 @@
+#! /usr/bin/env nix-shell
+#! nix-shell --quiet -p python39Packages.nest-asyncio python39Packages.aiosqlite python39Packages.typing-extensions -i bash
+python3 $@

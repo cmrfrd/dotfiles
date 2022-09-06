@@ -1,0 +1,15 @@
+#! /usr/bin/env nix-shell
+#! nix-shell --quiet -p sage -i bash
+sage -ipython3 $@
+
+
+#####!/usr/bin/env bash
+#####NAME=sage
+# cat << EOF > /tmp/Dockerfile.${NAME}
+# FROM nixos/nix
+# RUN nix-shell -p sage
+# ENTRYPOINT [ "bash", "-c", "nix-shell -p sage && sage" ]
+# EOF
+
+# docker build -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles
+# docker run --rm -v $(pwd):/mnt -w /mnt -it sagemath/sagemath $@

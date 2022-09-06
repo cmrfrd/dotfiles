@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+sudo -E \
+     nix-env \
+     -p /nix/var/nix/profiles/system \
+     --delete-generations old
+sudo -E nix-collect-garbage -d

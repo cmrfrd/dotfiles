@@ -1,0 +1,4 @@
+#! /usr/bin/env nix-shell
+#! nix-shell --quiet -p entr pandoc -i bash
+ls *.md
+pandoc --standalone --mathjax -f markdown -t html index.mdx -o index.html

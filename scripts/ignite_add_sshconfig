@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+if [ $(ignite ps -a --filter '{{.ObjectMeta.Name}}=$1' | wc -l) -lt 2 ]; then
+  echo "Unable to find $1 ..."
+  exit 0
+fi
+
+VM_UID=$(ignite inspect vm $1 | jq -r '.metadata.uid')
+VM_IP=$(ignite inspect vm $1 | jq -r '.status.network.ipAddresses[0]')
+VM_SSH_KEY=/var/lib/firecracker/vm/${VM_UID}/id_${VM_UID}
+sudo chown :users ${VM_SSH_KEY}
+SSH_CONFIG_FILE=~/.ssh/config.d/${VM_UID}
+
+cat << EOF > ${SSH_CONFIG_FILE}
+Host $1
+  User root
+  HostName ${VM_IP}
+  IdentityFile ${VM_SSH_KEY}
+  StrictHostKeyChecking false
+  PasswordAuthentication no
+EOF

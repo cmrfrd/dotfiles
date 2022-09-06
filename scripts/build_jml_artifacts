@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+#!/usr/bin/env bash
+#
+# Cloud flare cli tool.
+#
+# Ensure env vars prefixed with "CF" get passed in
+
+NAME=plantuml-cli
+
+docker build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} ~/.dotfiles > /dev/null
+docker run --rm --env-file <(env | grep CF) -it ${NAME} $@
+
+# docker run -it zenika/alpine-maven
+
+# apk add git apache-ant
+
+# nix eval nixpkgs.plantuml.outPath
+
+# mvn dependency:get -Dartifact=org.scilab.forge:jlatexmath:1.0.7 \
+#                    -Dartifact=org.apache.xmlgraphics:batik-all:1.14 \
+#                    -Dartifact=org.scilab.forge:jlatexmath-font-cyrillic:1.0.7 \
+#                    -Dartifact=org.scilab.forge:jlatexmath-font-greek:1.0.7
+
+# mvn clean install -DskipTests
+# ant dist
+
+echo "beep"
+cat test.plantuml | java -classpath "$(find . -type f -name '*.jar' | tr '\n' ':')" net.sourceforge.plantuml.Run -pipe > test2.png

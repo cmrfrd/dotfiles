@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+podman run \
+       -u $(id -u):$(id -g) \
+       --userns=keep-id \
+       -v $(pwd):/mnt \
+       -v $(mktemp -d):/tmp \
+       -w /mnt \
+       --rm \
+       -ti $@
+
+# example
+# nixery.dev/shell/git/htop bash

@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+import os
+import shutil
+import argparse
+import datetime
+from pathlib import Path
+
+BASE_HTML_FILE="/home/cmrfrd/.dotfiles/scripts/base.html"
+
+'''
+<script>addRow(".android",".android",1,4096,"4.0 kB",1650995539,"4/26/22, 1:52:19 PM");</script>
+'''
+def add_link(name, link, isdir, size, time, path):
+    with open(path, "a+") as f:
+        f.writelines([f'<script>addRow("{name}","{link}",{isdir},1,"{size}B",1650995539,"{time}");</script>'])
+
+def modification_date(filename):
+    t = os.path.getmtime(filename)
+    return datetime.datetime.fromtimestamp(t)
+
+def analyze_dir(path, base):
+    print("Analyzing dir", path, base)
+
+    dst = Path(path) / "index.html"
+    shutil.copyfile(BASE_HTML_FILE, dst)
+
+    for file in sorted(os.listdir(path), key = lambda x: (os.path.isdir(x), x)):
+        if not os.path.isdir(os.path.join(path, file)):
+            if file == "index.html":
+                continue
+            size = os.stat(os.path.join(path, file)).st_size
+            t = modification_date(os.path.join(path, file))
+            print(f"File: ", os.path.join(path, file), base + "/" + file)
+            add_link(file, base + "/" + file, 0, size, t, dst)
+        else:
+            if file == "index.html":
+                continue
+            size = os.stat(os.path.join(path, file)).st_size
+            t = modification_date(os.path.join(path, file))
+            analyze_dir(os.path.join(path, file), base + "/" + file)
+            print(f"Dir: ", os.path.join(path, file), base + "/" + file)
+            add_link(file, base + "/" + file, 1, size, t, dst)
+    print("ret")
+
+parser = argparse.ArgumentParser(description='Static file explorer')
+parser.add_argument('-b','--base', help='Link base', required=True)
+args = vars(parser.parse_args())
+analyze_dir(path='.', base=args['base'])

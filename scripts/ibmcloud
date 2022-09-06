@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+##
+## IBM cloud cli
+
+docker run --rm -it ibmcom/ibm-cloud-developer-tools-amd64 ibmcloud $@

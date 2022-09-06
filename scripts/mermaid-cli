@@ -1,0 +1,3 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -p nodePackages.mermaid-cli -i bash
+mmdc $@

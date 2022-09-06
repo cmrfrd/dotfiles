@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# nord vpn cli tool.
+#
+set -e
+
+## Download ovpn files if necessary
+if [ ! -d "/tmp/ovpn/" ]
+then
+  mkdir -p /tmp/ovpn/
+  nix-shell -p wget --command "wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip -O /tmp/ovpn_nord/ovpn.zip && cd /tmp/ovpn_nord/ && unzip ovpn.zip && cd - && rm /tmp/ovpn_nord/ovpn.zip"
+fi
+
+## Get file arg to determine location
+FILE=${1}
+if ! [[ -f $FILE ]]; then
+   echo "Defaulting to US"
+   FILE=/tmp/ovpn/ovpn_tcp/us2723.nordvpn.com.tcp.ovpn
+else
+   echo "Using file $FILE"
+   shift;
+fi
+
+NAME=ovpn
+cat << EOF > /tmp/Dockerfile.${NAME}
+FROM alpine:3.12
+RUN apk add --no-cache openvpn bash curl
+EOF
+mkdir -p /tmp/empty/
+podman build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} /tmp/empty/ 2>&1 > /dev/null
+
+BW_NORD_INFO=$(bw list items --search "nord" | jq -r '.[0]')
+USERNAME=$(echo $BW_NORD_INFO | jq -r '.login.username')
+PASSWORD=$(echo $BW_NORD_INFO | jq -r '.login.password')
+
+podman run --rm --cap-add NET_ADMIN,NET_RAW --device /dev/net/tun \
+       --name vpn \
+       -v /tmp/:/tmp/ \
+       -it ${NAME} \
+       bash -c "
+       openvpn \
+       --config $FILE \
+       --auth-user-pass <(echo -e '$USERNAME\n$PASSWORD')
+       "
+
+vpn_run_instant /tmp/ovpn/ovpn_tcp/tw100.nordvpn.com.tcp.ovpn curl -s ipinfo.io
+vpn_run_instant /tmp/ovpn/ovpn_tcp/lu100.nordvpn.com.tcp.ovpn curl -s ipinfo.io
+vpn_run_instant /tmp/ovpn/ovpn_tcp/cz100.nordvpn.com.tcp.ovpn curl -s ipinfo.io
+vpn_run_instant /tmp/ovpn/ovpn_tcp/at100.nordvpn.com.tcp.ovpn curl -s ipinfo.io
+vpn_run_instant /tmp/ovpn/ovpn_tcp/in100.nordvpn.com.tcp.ovpn curl -s ipinfo.io

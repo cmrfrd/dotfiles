@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+# short
+# curl https://api.nordvpn.com/vpn/check/full
+
+URL='https://api.nordvpn.com/vpn/check/full'
+JSON=$(curl -s $URL)
+echo $JSON | jq -r
