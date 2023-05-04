@@ -19,6 +19,34 @@ let
 
   unstable = import <nixos-unstable> { config = { allowUnfree = true; allowBroken = true;}; };
 
+  colors = {
+    bg = "#282a36";
+    bgalt = "#1E2029";
+    base0 = "#1E2029";
+    base1 = "#282a36";
+    base2 = "#373844";
+    base3 = "#44475a";
+    base4 = "#565761";
+    base5 = "#6272a4";
+    base6 = "#b6b6b2";
+    base7 = "#ccccc7";
+    base8 = "#f8f8f2";
+    fg = "#f8f8f2";
+    fgalt = "#e2e2dc";
+    grey = "#565761";
+    red = "#ff5555";
+    orange = "#ffb86c";
+    green = "#50fa7b";
+    teal = "#0189cc";
+    yellow = "#f1fa8c";
+    blue = "#61bfff";
+    darkblue = "#0189cc";
+    magenta = "#ff79c6";
+    violet = "#bd93f9";
+    cyan = "#8be9fd";
+    darkcyan = "#8be9fd";
+  };
+
 in rec {
 
   home.sessionVariables = {
@@ -46,7 +74,7 @@ in rec {
     pkgs.polybar
 
     ## Fonts / Locales
-    pkgs.font-awesome-ttf
+    pkgs.font-awesome
     pkgs.fontconfig
     pkgs.dejavu_fonts
     pkgs.source-code-pro
@@ -60,6 +88,7 @@ in rec {
     pkgs.screen
     pkgs.xdotool
     pkgs.xorg.xwininfo
+    pkgs.xorg.xhost
     pkgs.arandr
     # pkgs.gtk3
 
@@ -80,7 +109,7 @@ in rec {
     pkgs.ack
     pkgs.fd
     pkgs.inotify-tools
-    # pkgs.entr
+    pkgs.entr
     pkgs.tree
     pkgs.autojump
     pkgs.pandoc
@@ -140,7 +169,7 @@ in rec {
     pkgs.terraform
 
     ## containers
-    pkgs.docker_compose
+    pkgs.docker-compose
     pkgs.kubectl
     # pkgs.kube3d
     pkgs.k3s
@@ -171,7 +200,7 @@ in rec {
     pkgs.nodePackages.vscode-html-languageserver-bin
     pkgs.nodePackages.vscode-css-languageserver-bin
     pkgs.nodePackages.node2nix
-    pkgs.nodePackages.bitwarden-cli
+    # pkgs.nodePackages.bitwarden-cli
     pkgs.nodePackages.mermaid-cli
     (pkgs.python3.withPackages(ps: with ps; [
       numpy
@@ -180,17 +209,17 @@ in rec {
       pandas
     ]))
     pkgs.godef
-    pkgs.goimports
+    pkgs.gotools
     pkgs.gopls
 
-    (pkgs.makeDesktopItem {
-      name = "org-protocol";
-      exec = "emacsclient %u";
-      comment = "Org Protocol";
-      desktopName = "org-protocol";
-      type = "Application";
-      mimeType = "x-scheme-handler/org-protocol";
-    })
+    # (pkgs.makeDesktopItem {
+    #  name = "org-protocol";
+    #  exec = "emacsclient %u";
+    #  comment = "Org Protocol";
+    #  desktopName = "org-protocol";
+    #  type = "Application";
+    #  mimeTypes = [ "x-scheme-handler/org-protocol" ];
+    # })
   ];
 
   ## Not sure why but I need this
@@ -213,7 +242,7 @@ in rec {
     };
   };
 
-  # # https://tecosaur.github.io/emacs-config/config.html
+  # https://tecosaur.github.io/emacs-config/config.html
   # home.file.".local/share/applications/org-protocol.desktop".source = ../xorg/org-protocol.desktop ;
   # xdg = {
   #   enable = true;
@@ -225,21 +254,21 @@ in rec {
   #   };
   # };
 
-  # [[ "$DESKTOP_SESSION" == *"exwm"* ]] &&
-  # ${emac.emacsGcc}/bin/emacs -f exwm-enable
-  xsession = {
-    enable = true;
-    windowManager.command = ''
-      ${pkgs.xorg.xhost}/bin/xhost +SI:localuser:$USER
-      [[ "$DESKTOP_SESSION" == *"exwm"* ]] && \
-      exec dbus-launch --exit-with-session ${emac.emacsGcc}/bin/emacs \
-      --eval "(exwm-enable)"
-    '';
-  };
+  #[[ "$DESKTOP_SESSION" == *"exwm"* ]] &&
+  #${emac.emacsGcc}/bin/emacs -f exwm-enable
+  #      [[ "$DESKTOP_SESSION" == *"exwm"* ]] && exec dbus-launch --exit-with-session ${emac.emacsNativeComp}/bin/emacs --eval "(exwm-enable)"
+  # exec ${emac.emacsNativeComp}/bin/emacs --eval "(exwm-enable)"
+
+  # xsession = {
+  #  enable = true;
+  #  windowManager.command = ''
+  #    ${pkgs.xorg.xhost}/bin/xhost +SI:localuser:$USER
+  #  '';
+  # };
 
   programs.emacs = {
     enable = true;
-    package = (emac.emacsGcc.override {
+    package = (emac.emacsNativeComp.override {
       withX = true;
       withGTK3 = true;
       withGTK2 = false;
@@ -247,10 +276,12 @@ in rec {
       nativeComp = true;
     });
     extraPackages = epkgs: [
-      # epkgs.exwm
+      epkgs.exwm
       epkgs.vterm
       epkgs.helm
       epkgs.dictionary
+      epkgs.org
+      epkgs.org-contrib
     ];
   };
   home.file.".emacs.d/load-path.el".source = pkgs.writeText "load-path.el" ''
@@ -273,7 +304,6 @@ in rec {
       "nkbihfbeogaeaoehlefnkodbefgpgknn" # metamask
       "fhbohimaelbohpjbbldcngcnapndodjp" # binance wallet
       "dmkamcknogkgcdfhhbddcghachkejeap" # kepler (cosmos)
-      "aiifbnbfobpmeekipheeijimdpnlpgpp" # terra station
     ];
   };
 
@@ -350,34 +380,41 @@ in rec {
 
   services.flameshot.enable = true;
 
-  services.gpg-agent = {
+  services.screen-locker = {
     enable = true;
-    defaultCacheTtl = 1800;
-    enableSshSupport = true;
-    enableExtraSocket = true;
-    pinentryFlavor = "emacs";
-    extraConfig = ''
-    allow-emacs-pinentry
-    allow-loopback-pinentry
-    '';
+    lockCmd = "${pkgs.i3lock-fancy}/bin/i3lock-fancy -p -t ''";
+    inactiveInterval = 20;
+  };
+
+  services.gpg-agent = {
+   enable = true;
+   defaultCacheTtl = 1800;
+   enableSshSupport = true;
+   enableExtraSocket = true;
+   pinentryFlavor = "emacs";
+   extraConfig = ''
+   allow-emacs-pinentry
+   allow-loopback-pinentry
+   '';
   };
 
   services.dunst = {
-    enable = true;
+   enable = true;
 
-    settings = {
-      global = {
-        geometry = "500x5-30+50";
-        transparency = 10;
-        padding = 15;
-        horizontal_padding = 17;
-        word_wrap = true;
-        follow = "keyboard";
-      };
-      shortcuts = {
-        close = "ctrl+space";
-      };
-    };
+   settings = {
+     global = {
+       geometry = "500x5-30+50";
+       transparency = 10;
+       padding = 15;
+       horizontal_padding = 17;
+       word_wrap = true;
+       follow = "keyboard";
+     };
+     shortcuts = {
+       close = "ctrl+space";
+     };
+  };
   };
 
+  home.stateVersion = "22.05";
 }
