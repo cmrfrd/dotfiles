@@ -37,6 +37,8 @@
 ;(require 'ob-ref)
 ;(require 'ob-comint)
 ;(require 'ob-eval)
+(use-package dockerfile-mode
+  :ensure t)
 (require 'dockerfile-mode)
 
 ;; possibly require modes required for your language

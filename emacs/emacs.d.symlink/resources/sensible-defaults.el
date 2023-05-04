@@ -190,10 +190,10 @@ insert the text where point is, not where the mouse cursor is."
 
 ;; Keybindings:
 
-(defun sensible-defaults/bind-commenting-and-uncommenting ()
+(defun sensible-defaults/bind-eval-expression ()
   "Comment or uncomment a region by hitting M-;."
-  (global-set-key (kbd "M-;")
-                  'sensible-defaults/comment-or-uncomment-region-or-line))
+  (global-set-key ( kbd "C-c C-e")
+                  'eval-expression))
 
 (defun sensible-defaults/bind-home-and-end-keys ()
   "Make <home> and <end> move point to the beginning and end of

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+sudo iptables -I INPUT -p tcp -m tcp --dport 4444 -j ACCEPT
+function finish {
+  sudo iptables -D INPUT -p tcp -m tcp --dport 4444 -j ACCEPT
+}
+trap finish EXIT
+$@

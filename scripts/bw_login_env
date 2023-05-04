@@ -7,7 +7,7 @@ if [ -z ${CRED_SEARCH_TERM} ]; then
 fi
 shift;
 
-BW_INFO=$(bw list items --search "${CRED_SEARCH_TERM}" | jq -r '.[0]')
+BW_INFO=$(bw list items | jq -r ".[] | select(.name == \"${CRED_SEARCH_TERM}\")")
 USERNAME=$(echo $BW_INFO | jq -er '.login.username')
 PASSWORD=$(echo $BW_INFO | jq -er '.login.password')
 

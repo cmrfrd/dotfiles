@@ -6,7 +6,7 @@
 ;; URL: https://github.com/seanfarley/emacs-bitwarden
 ;; Version: 0.1.3
 ;; Created: 2018-09-04
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: extensions processes bw bitwarden
 
 ;;; License
@@ -50,13 +50,18 @@
   :type 'string)
 
 (defcustom bitwarden-data-file
-  (expand-file-name (cond
-		     ((eq system-type 'darwin)
-		      "~/Library/Application Support/Bitwarden CLI/data.json")
-		     ((eq system-type 'windows-nt)
-		      "~/AppData/Bitwarden CLI/data.json")
-		     (t
-		      "~/.config/Bitwarden CLI/data.json")))
+  (expand-file-name "Bitwarden CLI/data.json"
+                    (cond
+                     ((getenv "BITWARDENCLI_APPDATA_DIR")
+                      (getenv "BITWARDENCLI_APPDATA_DIR"))
+                     ((eq system-type 'darwin)
+                      "~/Library/Application Support")
+                     ((eq system-type 'windows-nt)
+                      (getenv "APPDATA"))
+                     ((getenv "XDG_CONFIG_HOME")
+                      (getenv "XDG_CONFIG_HOME"))
+                     (t
+                      "~/.config")))
   "The bw data file used by Bitwarden."
   :group 'bitwarden
   :type 'string)
@@ -69,11 +74,26 @@
 (defcustom bitwarden-automatic-unlock nil
   "Optional function to be called to attempt to unlock the vault.
 
-Set this to a lamdba that will evaluate to a password. For
+Set this to a function that will evaluate to a password. For
 example, this can be the :secret plist from
 `auth-source-search'."
   :group 'bitwarden
   :type 'function)
+
+(defcustom bitwarden-api-secret-key nil
+  "Optional function to be called to return API secret key.
+
+Set this to a function that will evaluate to a string (the API secret key)."
+  :group 'bitwarden
+  :type 'function)
+
+(defcustom bitwarden-api-client-id nil
+  "Optional function to be called to return the API client id..
+
+Set this to a function that will evaluate to a string (the API client id)."
+  :group 'bitwarden
+  :type 'function)
+
 
 (defconst bitwarden--err-logged-in "you are not logged in")
 (defconst bitwarden--err-multiple  "more than one result found")
@@ -85,14 +105,14 @@ example, this can be the :secret plist from
   "Check if `bitwarden-user' is logged in.
 Returns nil if not logged in."
   (let* ((ret (apply #'bitwarden--raw-runcmd "login" '("--check")))
-	 (exit-code (nth 0 ret)))
+         (exit-code (nth 0 ret)))
     (eq exit-code 0)))
 
 (defun bitwarden-unlocked-p ()
   "Check if `bitwarden-user' is loged in.
 Returns nil if not unlocked."
   (let* ((ret (apply #'bitwarden--raw-runcmd "unlock" '("--check")))
-	 (exit-code (nth 0 ret)))
+         (exit-code (nth 0 ret)))
     (eq exit-code 0)))
 
 (defun bitwarden--raw-runcmd (cmd &rest args)
@@ -213,17 +233,21 @@ printed to minibuffer."
 
 ;;;###autoload
 (defun bitwarden-login (&optional print-message)
-  "Prompts user for password if not logged in.
+  "Prompt user for password if not logged in.
 
 If run interactively PRINT-MESSAGE gets set and messages are
 printed to minibuffer."
   (interactive "p")
-  (unless bitwarden-user
-    (setq bitwarden-user (read-string "Bitwarden email: ")))
-
-  (let ((pass (when bitwarden-automatic-unlock
-                (funcall bitwarden-automatic-unlock))))
-    (bitwarden--raw-unlock (list "login" bitwarden-user pass) print-message)))
+  (if (and bitwarden-api-client-id bitwarden-api-secret-key)
+      (progn
+        (setenv "BW_CLIENTID" (funcall bitwarden-api-client-id))
+        (setenv "BW_CLIENTSECRET" (funcall bitwarden-api-secret-key))
+        (bitwarden--raw-unlock (list "login") print-message))
+    (unless bitwarden-user
+      (setq bitwarden-user (read-string "Bitwarden email: ")))
+    (let ((pass (when bitwarden-automatic-unlock
+                  (funcall bitwarden-automatic-unlock))))
+      (bitwarden--raw-unlock (list "login" bitwarden-user pass) print-message))))
 
 (defun bitwarden-lock ()
   "Lock the bw vault.  Does not ask for confirmation."
@@ -349,7 +373,7 @@ search which will call `bitwarden-search' as a convenience."
          (accounts (seq-filter (lambda (elt) (gethash "login" elt)) accounts)))
     (if (and (stringp username) (not (string= username "")))
         (seq-filter (lambda (elt)
-                      (when-let* ((login (gethash "login" elt)))
+                      (when-let ((login (gethash "login" elt)))
                         (string= (gethash "username" login) username)))
                     accounts)
       accounts)))
@@ -591,23 +615,25 @@ Creates a widget with text KEY and items VAL."
   "Show a dialog, listing all entries associated with `bitwarden-user'.
 If optional argument GROUP is given, only entries in GROUP will be listed."
   (interactive)
-  (bitwarden-list-dialog "*bitwarden-list*"
+  (if (bitwarden-unlocked-p)
+      (bitwarden-list-dialog "*bitwarden-list*"
 
-    ;; Use a L&F that looks like the recentf menu.
-    (tree-widget-set-theme "folder")
+        ;; Use a L&F that looks like the recentf menu.
+        (tree-widget-set-theme "folder")
 
-    (apply 'widget-create
-           `(group
-             :indent 0
-             :format "%v\n"
-             ,@(bitwarden-list-all-items
-                (bitwarden-search))))
+        (apply 'widget-create
+               `(group
+                 :indent 0
+                 :format "%v\n"
+                 ,@(bitwarden-list-all-items
+                    (bitwarden-search))))
 
-    (widget-create
-     'push-button
-     :notify 'bitwarden-list-cancel-dialog
-     "Cancel")
-    (goto-char (point-min))))
+        (widget-create
+         'push-button
+         :notify 'bitwarden-list-cancel-dialog
+         "Cancel")
+        (goto-char (point-min)))
+    (bitwarden--message "vault not unlocked!" nil t)))
 
 (provide 'bitwarden)
 

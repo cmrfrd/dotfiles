@@ -18,6 +18,34 @@ let
     exec -a "$0" "$@"
     '';
 
+    colors = {
+      bg = "#282a36";
+      bgalt = "#1E2029";
+      base0 = "#1E2029";
+      base1 = "#282a36";
+      base2 = "#373844";
+      base3 = "#44475a";
+      base4 = "#565761";
+      base5 = "#6272a4";
+      base6 = "#b6b6b2";
+      base7 = "#ccccc7";
+      base8 = "#f8f8f2";
+      fg = "#f8f8f2";
+      fgalt = "#e2e2dc";
+      grey = "#565761";
+      red = "#ff5555";
+      orange = "#ffb86c";
+      green = "#50fa7b";
+      teal = "#0189cc";
+      yellow = "#f1fa8c";
+      blue = "#61bfff";
+      darkblue = "#0189cc";
+      magenta = "#ff79c6";
+      violet = "#bd93f9";
+      cyan = "#8be9fd";
+      darkcyan = "#8be9fd";
+    };
+
 in
 {
   imports =
@@ -26,6 +54,7 @@ in
       ../../home-manager/nixos
     ];
 
+  nix.extraOptions = ''experimental-features = nix-command flakes'';
   nix.settings.auto-optimise-store = true;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowBroken = true;
@@ -76,20 +105,19 @@ in
       };
     };
     displayManager = {
-      sessionCommands = "${pkgs.xorg.xhost}/bin/xhost +SI:localuser:$USER";
       lightdm = {
-        enable = true;
+          enable = true;
       };
     };
   };
 
+  boot.plymouth.enable = false;
   boot.blacklistedKernelModules = [ "nouveau" "intel" ];
   boot.kernelParams = [ "nouveau.modeset=0" ];
   boot.kernelPackages = pkgs.linuxPackages_5_19;
-  services.xserver.videoDrivers = lib.mkDefault [ "nvidia"  ];
+  services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
-  boot.plymouth.enable = false;
-  hardware.nvidia.nvidiaPersistenced = true;
+  hardware.nvidia.nvidiaPersistenced = false;
   hardware.nvidia = {
     modesetting.enable = true;
     prime = {
@@ -114,6 +142,8 @@ in
   sound.enable = true;
   hardware.bluetooth.enable = true;
   hardware.opengl.enable = true;
+  hardware.opengl.driSupport = true;
+  hardware.opengl.driSupport32Bit = true;
   hardware.pulseaudio = {
     enable = true;
     package = pkgs.pulseaudioFull;
@@ -125,6 +155,17 @@ in
   # Logind don't close on lid switch
   # services.logind.lidSwitch = "ignore";
   services.logind.lidSwitch = "suspend";
+
+  services.flatpak.enable = true;
+  services.avahi = {
+    nssmdns = true;
+    enable = true;
+    publish = {
+      enable = true;
+      userServices = true;
+      domain = true;
+    };
+  };
 
   #services.k3s = {
   #  enable = true;
@@ -143,6 +184,7 @@ in
   virtualisation = {
     docker = {
       enable = true;
+      enableNvidia = true;
     };
     podman = {
       enable = true;
@@ -160,7 +202,7 @@ in
 
   environment.systemPackages = with pkgs; [
     nvidia-offload
-    ((emacsPackagesFor emac.emacsGcc).emacsWithPackages (epkgs: [
+    ((emacsPackagesFor emac.emacsNativeComp).emacsWithPackages (epkgs: [
       epkgs.vterm
       epkgs.helm
     ]))

@@ -1,6 +1,5 @@
-# file: ~/bin/run-with-port
-
 #!/usr/bin/env bash
+# source: https://discourse.nixos.org/t/how-to-temporarily-open-a-tcp-port-in-nixos/12306/2
 # Usage: sudo run-with-port <port> <cmd> <args...>
 
 set -ueo pipefail

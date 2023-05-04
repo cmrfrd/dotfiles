@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+run() {
+    number=$1
+    shift
+    for i in `seq $number`; do
+      $@
+    done
+}
+run $@

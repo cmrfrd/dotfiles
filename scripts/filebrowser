@@ -1,0 +1,5 @@
+#! /usr/bin/env bash
+docker run \
+       -u 0 \
+       -p 9090:80 \
+       filebrowser/filebrowser
